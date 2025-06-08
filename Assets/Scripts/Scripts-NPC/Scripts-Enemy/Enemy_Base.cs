@@ -11,9 +11,19 @@ public class Enemy_Base : MonoBehaviour
 
     public float currentHealth = 5;
     public bool mortal = true;
-    public string direction = "up";
-
+    
     private Rigidbody2D rb;
+
+    [Header("Behavior")]
+    public Direction direction = Direction.Up;
+
+    public enum Direction
+    {
+        Up,
+        Down,
+        Left,
+        Right
+    }
 
     //protected = accessed by this class and subclasses
     //virtual = overridable
@@ -33,27 +43,25 @@ public class Enemy_Base : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-
-        //There's probably a way to do this in one dynamic statement
-        //but this should work OK for now.
-        if (direction == "up")
-        {
-            rb.AddRelativeForce(Vector2.up * stats.moveSpeed, ForceMode2D.Impulse);
-        }
-        else if (direction=="down")
-        {
-            rb.AddRelativeForce(Vector2.down * stats.moveSpeed, ForceMode2D.Impulse);
-        }
-        else
-        {
-            Debug.LogError($"{gameObject.name} has no valid direction assigned!");
-        }
+        rb.AddRelativeForce(GetDirectionVector(direction) * stats.moveSpeed, ForceMode2D.Impulse);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
+    }
+
+    private Vector2 GetDirectionVector(Direction dir)
+    {
+        return dir switch
+        {
+            Direction.Up => Vector2.up,
+            Direction.Down => Vector2.down,
+            Direction.Left => Vector2.left,
+            Direction.Right => Vector2.right,
+            _ => Vector2.zero
+        };
     }
 
     // Called by sword/bullet scripts

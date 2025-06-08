@@ -102,7 +102,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   deathEvent: {fileID: 11400000, guid: f90a0a5740f564e429c5ddd4444a3186, type: 2}
   stats: {fileID: 11400000, guid: 03258f5c74f81554da979dfafa378515, type: 2}
-  currentHealth: 0
+  currentHealth: 5
+  mortal: 1
+  direction: left
 --- !u!50 &8446444103075056557
 Rigidbody2D:
   serializedVersion: 4
