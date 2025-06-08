@@ -11,6 +11,10 @@ public class EnemyData : ScriptableObject
     public float contactDamage = 1f;
     public float attackDamage = 2f;
 
+    //Boolean added to determine IMMORTALITY
+    public bool mortal = true;
+
     public GameObject deathEffect;
+    public GameObject hitEffect;
 
 }

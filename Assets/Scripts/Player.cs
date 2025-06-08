@@ -240,6 +240,8 @@ public class Player : MonoBehaviour
     }
 
     private void OnEnemyDeath()
+    // The trigger for this should be changed to "on enemy hit",
+    // but everything else is good.
     {
         ammoCharge += 1;
         Debug.Log($"Current ammo charge is {ammoCharge} / {ammoChargeMax}.");

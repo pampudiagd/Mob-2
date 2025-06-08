@@ -1,0 +1,35 @@
+﻿<Properties StartupConfiguration="{4F3B91AF-754D-8D0A-A3EA-E72A9EE96998}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Scripts-NPC/Scripts-Enemy/Enemy_Base.cs">
+    <Files>
+      <File FileName="Assets/Scripts/Player.cs" Line="35" Column="37" />
+      <File FileName="Assets/Scripts/Scripts-NPC/Scripts-Enemy/Enemy_Base.cs" Line="38" Column="14" />
+      <File FileName="Assets/Scripts/ScriptableObjects/EnemyData.cs" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="Mob-2" expanded="True">
+            <Node name="Assets" expanded="True">
+              <Node name="Prefabs" expanded="True" />
+              <Node name="Resources" expanded="True" />
+              <Node name="Scripts" expanded="True">
+                <Node name="ScriptableObjects" expanded="True" />
+                <Node name="Scripts-NPC" expanded="True">
+                  <Node name="Scripts-Enemy" expanded="True" />
+                </Node>
+                <Node name="Player.cs" selected="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="7996ad46-8929-41e1-9061-7256ef0a5d40" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>

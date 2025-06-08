@@ -10,9 +10,14 @@ public class Enemy_Base : MonoBehaviour
     public EnemyData stats;
 
     public float currentHealth = 5;
+    public bool mortal = true;
+    public string direction = "up";
 
     private Rigidbody2D rb;
 
+    //protected = accessed by this class and subclasses
+    //virtual = overridable
+    //Awake() = class used for initialization, before the game starts
     protected virtual void Awake()
     {
         if (stats == null)
@@ -22,12 +27,27 @@ public class Enemy_Base : MonoBehaviour
         }
 
         currentHealth = stats.maxHealth;
+
     }
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        rb.AddRelativeForce(Vector2.up * stats.moveSpeed, ForceMode2D.Impulse);
+
+        //There's probably a way to do this in one dynamic statement
+        //but this should work OK for now.
+        if (direction == "up")
+        {
+            rb.AddRelativeForce(Vector2.up * stats.moveSpeed, ForceMode2D.Impulse);
+        }
+        else if (direction=="down")
+        {
+            rb.AddRelativeForce(Vector2.down * stats.moveSpeed, ForceMode2D.Impulse);
+        }
+        else
+        {
+            Debug.LogError($"{gameObject.name} has no valid direction assigned!");
+        }
     }
 
     // Update is called once per frame
@@ -42,7 +62,7 @@ public class Enemy_Base : MonoBehaviour
         currentHealth -= amount;
         Debug.Log($"{gameObject.name} took {amount} damage!");
 
-        if (currentHealth <= 0)
+        if (currentHealth <= 0 && mortal == true)
         {
             Die();
         }
