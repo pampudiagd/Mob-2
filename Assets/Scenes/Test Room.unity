@@ -299,8 +299,13 @@ MonoBehaviour:
   ammoCount: 4
   ammoCharge: 0
   moveSpeed: 10
+  rollMod: 5
+  rollSpeed: 40
+  rollInvulWindow: 0.07
   canMove: 1
   isAttacking: 0
+  isRolling: 0
+  isInvulnerable: 0
   mySwordData: {fileID: 11400000, guid: 0f68da07366eff54b99edf5a83d7bc7a, type: 2}
   myGunData: {fileID: 11400000, guid: 6d78b52cdbfc53641803f460446c48fc, type: 2}
   deathEvent: {fileID: 11400000, guid: f90a0a5740f564e429c5ddd4444a3186, type: 2}

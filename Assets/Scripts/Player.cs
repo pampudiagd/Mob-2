@@ -14,13 +14,23 @@ public class Player : MonoBehaviour
     private int ammoChargeMax = 4;
 
     public float moveSpeed = 10;
+    public float rollMod = 5;
+    public float rollSpeed = 10f;
+    public float rollInvulWindow = 0.15f;
+    private float invulTimer;
 
     [Header("Bools")]
     public bool canMove = true;
     public bool isAttacking = false;
+    public bool isRolling = false;
+    public bool isInvulnerable = false;
 
-    private float moveDelay = 0.4f; // Seconds before player can move after an attack
-    private float moveTimer;
+    private float moveDelayAttack = 0.4f; // Seconds before player can move after an attack
+    private float moveDelayRoll = 0.05f; // Seconds before player can move after a roll
+    private float moveTimer; // Timer that will be set to a moveDelay variable
+
+    private float rollCooldown = 0.5f;
+    private float rollTimer;
 
     //public float comboStart = 5;
     //public float comboTimer = 0;
@@ -36,6 +46,7 @@ public class Player : MonoBehaviour
     private CircleCollider2D hurtBox; // Component that detects collisions with damage-sources
     private Rigidbody2D rb; // Component that allows player to be stopped by walls
     private Vector2 input;
+    private Vector2 rollInput;
 
     [Header("Event Listeners")]
     public EnemyDeathEvent deathEvent;
@@ -65,15 +76,30 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        // Prevents movement/attacks during a roll's execution
+        if (isRolling)
+            return;
+
         MoveAndRotate();
 
+        if (Input.GetKeyDown(KeyCode.LeftControl) && !isAttacking && rollTimer <= 0)
+            StartCoroutine(Roll());
         if (Input.GetKeyDown(KeyCode.Space) && !isAttacking)
             StartCoroutine(SwordAttackCoroutine());
         else if (Input.GetKeyDown(KeyCode.LeftShift) && !isAttacking && ammoCount > 0)
             StartCoroutine(GunAttackCoroutine());
 
         if (moveTimer > 0)
-            StallMove();
+            StallTimer(ref moveTimer);
+        if (rollTimer > 0)
+            StallTimer(ref rollTimer);
+    }
+
+    // Occurs every 0.2 seconds (50 per second) (Independent of framerate)
+    private void FixedUpdate()
+    {
+        if (isInvulnerable)
+            InvulTimer();
     }
 
     // Moves the player based on current inputs
@@ -82,6 +108,10 @@ public class Player : MonoBehaviour
         // Get raw input (no smoothing, instant start/stop)
         input.x = Input.GetAxisRaw("Horizontal");
         input.y = Input.GetAxisRaw("Vertical");
+
+        // Saves the last non-stationary movement vector to allow rolling from a stand-still
+        if (input != Vector2.zero)
+            rollInput = input;
 
         // Ends execution if standing still
         if (input == Vector2.zero) return;
@@ -102,7 +132,8 @@ public class Player : MonoBehaviour
                 transform.rotation = Quaternion.Euler(0, 0, 180);   // Down
         }
 
-        if (!canMove) return;
+        // Prevents the movement step from running during an attack, allowing the player to only rotate like in GB Zelda
+        if (moveTimer > 0) return;
 
         // Clamp to 8 directions only
         if (input.x != 0 && input.y != 0)
@@ -112,12 +143,49 @@ public class Player : MonoBehaviour
         rb.MovePosition(newPos);
     }
 
+    // Grants player a burst of speed while locking their movement and actions and granting a brief window of invulnerability
+    IEnumerator Roll()
+    {
+        isRolling = true;
+        rollTimer = rollCooldown;
+        isInvulnerable = true;
+
+        float elapsed = 0f;
+        float duration = rollMod / rollSpeed; // Total roll duration
+        Vector2 start = rb.position;
+        Vector2 target = start + rollInput.normalized * rollMod; // Distance of roll
+        invulTimer = rollInvulWindow;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.fixedDeltaTime;
+
+            float t = Mathf.Clamp01(elapsed / duration);
+            rb.MovePosition(Vector2.Lerp(start, target, t));
+
+            yield return new WaitForFixedUpdate(); // Wait for next FixedUpdate
+        }
+
+        rb.MovePosition(target); // Ensure precise final position
+
+        isRolling = false;
+        moveTimer = moveDelayRoll;
+    }
+
+    // Timer used to end invulnerability from rolling
+    private void InvulTimer() 
+    {
+        invulTimer -= Time.fixedDeltaTime;
+        if (invulTimer <= 0f)
+            isInvulnerable = false;
+    }
+
     // Positions and enables sword, calls its attack, then disables
     IEnumerator SwordAttackCoroutine()
     {
         isAttacking = true;
-        canMove = false;
-        moveTimer = moveDelay;
+        //canMove = false;
+        moveTimer = moveDelayAttack;
 
         mySwordObject.transform.position = transform.position + transform.up;
         mySwordObject.transform.rotation = transform.rotation;
@@ -140,8 +208,8 @@ public class Player : MonoBehaviour
         ammoCount--;
         Debug.Log($"New ammo count is {ammoCount}.");
         isAttacking = true;
-        canMove = false;
-        moveTimer = moveDelay;
+        //canMove = false;
+        moveTimer = moveDelayAttack;
 
         myGunObject.transform.position = transform.position + transform.up;
         myGunObject.transform.rotation = transform.rotation;
@@ -157,12 +225,12 @@ public class Player : MonoBehaviour
     }
 
     // Timer used to re-enable player movement
-    void StallMove()
+    void StallTimer(ref float timer)
     {
-        moveTimer -= Time.deltaTime;
+        timer -= Time.deltaTime;
         
-        if (moveTimer <= 0)
-            canMove = true;
+        //if (moveTimer <= 0)
+        //    canMove = true;
     }
 
     // Instantiate and prepare sword
@@ -212,6 +280,12 @@ public class Player : MonoBehaviour
 
     public IEnumerator TakeDamage(float amount)
     {
+        if (isInvulnerable)
+        {
+            Debug.Log("Immune");
+            yield break;
+        }
+
         myHealth -= amount;
         Debug.Log("Player took damage.");
 
