@@ -49,7 +49,7 @@ public class Player : MonoBehaviour
     private Vector2 rollInput;
 
     [Header("Event Listeners")]
-    public EnemyDeathEvent deathEvent;
+    public EnemyEvent enemyEvent;
 
     // Start is called before the first frame update
     void Start()
@@ -66,12 +66,14 @@ public class Player : MonoBehaviour
 
     private void OnEnable()
     {
-        deathEvent.onEnemyDeath.AddListener(OnEnemyDeath);
+        enemyEvent.onEnemyDeath.AddListener(OnEnemyDeath);
+        enemyEvent.onEnemyHit.AddListener(OnEnemyHit);
     }
 
     void OnDisable()
     {
-        deathEvent.onEnemyDeath.RemoveListener(OnEnemyDeath);
+        enemyEvent.onEnemyDeath.RemoveListener(OnEnemyDeath);
+        enemyEvent.onEnemyHit.AddListener(OnEnemyHit);
     }
 
     void Update()
@@ -313,11 +315,11 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void OnEnemyDeath()
-    // The trigger for this should be changed to "on enemy hit",
-    // but everything else is good.
+    // Adds 1 to AmmoCharge
+    public void GainAmmoCharge()
     {
-        ammoCharge += 1;
+        ammoCharge++;
+
         Debug.Log($"Current ammo charge is {ammoCharge} / {ammoChargeMax}.");
 
         if (ammoCharge >= ammoChargeMax)
@@ -326,5 +328,18 @@ public class Player : MonoBehaviour
             ammoCount++;
             Debug.Log("Made a full ammo!");
         }
+    }
+
+    // Runs when recieving a signal upon an enemy dying
+    private void OnEnemyDeath()
+    {
+        
+
+    }
+
+    // Runs when recieving a signal upon an enemy taking damage
+    private void OnEnemyHit()
+    {
+        GainAmmoCharge();
     }
 }

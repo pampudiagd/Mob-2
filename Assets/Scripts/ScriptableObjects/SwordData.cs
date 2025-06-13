@@ -7,6 +7,7 @@ public class SwordData : ScriptableObject
 {
     public string swordName;
     public float damage;
+    public string damageType;
     public Sprite attackSprite;
     public GameObject swordAttackPrefab;
 }

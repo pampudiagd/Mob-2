@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Enemy_Base : MonoBehaviour
 {
-    public EnemyDeathEvent deathEvent;
+    public EnemyEvent enemyEvent;
 
     [Header("Enemy Stats")]
     public EnemyData stats;
@@ -65,9 +65,11 @@ public class Enemy_Base : MonoBehaviour
     }
 
     // Called by sword/bullet scripts
-    public virtual void TakeDamage(float amount)
+    public virtual void TakeDamage(float amount, string damageSource, string damageType)
     {
         currentHealth -= amount;
+        if (damageSource == "sword")
+            enemyEvent.RaiseEnemyHit();
         Debug.Log($"{gameObject.name} took {amount} damage!");
 
         if (currentHealth <= 0 && mortal == true)
@@ -81,12 +83,13 @@ public class Enemy_Base : MonoBehaviour
         if (stats.deathEffect != null)
             Instantiate(stats.deathEffect, transform.position, Quaternion.identity);
 
-        deathEvent.Raise();
+        enemyEvent.RaiseEnemyDeath();
         Destroy(gameObject);
     }
 
     protected virtual void OnTriggerEnter2D(Collider2D other)
     {
+        Debug.Log(other.tag);
         if (other.CompareTag("Player"))
         {
             TouchedPlayer(other.gameObject);

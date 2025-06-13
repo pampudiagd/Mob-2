@@ -32,7 +32,7 @@ public class SwordEffect_Base : MonoBehaviour
         Enemy_Base enemy = collision.GetComponent<Enemy_Base>();
         if (enemy != null)
         {
-            enemy.TakeDamage(damage);
+            enemy.TakeDamage(damage, "sword", "Normal");
         }
     }
 }

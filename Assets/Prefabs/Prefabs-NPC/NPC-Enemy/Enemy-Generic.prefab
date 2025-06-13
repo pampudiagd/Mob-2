@@ -100,11 +100,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93a6a891c8c580748bc701c6a5e561b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  deathEvent: {fileID: 11400000, guid: f90a0a5740f564e429c5ddd4444a3186, type: 2}
+  enemyEvent: {fileID: 11400000, guid: 97fe82375b6951948b804939f6e4868e, type: 2}
   stats: {fileID: 11400000, guid: 03258f5c74f81554da979dfafa378515, type: 2}
   currentHealth: 5
   mortal: 1
-  direction: left
+  direction: 0
 --- !u!50 &8446444103075056557
 Rigidbody2D:
   serializedVersion: 4

@@ -308,7 +308,7 @@ MonoBehaviour:
   isInvulnerable: 0
   mySwordData: {fileID: 11400000, guid: 0f68da07366eff54b99edf5a83d7bc7a, type: 2}
   myGunData: {fileID: 11400000, guid: 6d78b52cdbfc53641803f460446c48fc, type: 2}
-  deathEvent: {fileID: 11400000, guid: f90a0a5740f564e429c5ddd4444a3186, type: 2}
+  enemyEvent: {fileID: 11400000, guid: 97fe82375b6951948b804939f6e4868e, type: 2}
 --- !u!58 &139883891
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -611,9 +611,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 03258f5c74f81554da979dfafa378515, type: 2}
     - target: {fileID: 1231505325884043173, guid: de6408e3817a292448961d90a40aad1a, type: 3}
+      propertyPath: hitEvent
+      value: 
+      objectReference: {fileID: 11400000, guid: 97fe82375b6951948b804939f6e4868e, type: 2}
+    - target: {fileID: 1231505325884043173, guid: de6408e3817a292448961d90a40aad1a, type: 3}
       propertyPath: direction
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 1231505325884043173, guid: de6408e3817a292448961d90a40aad1a, type: 3}
+      propertyPath: deathEvent
+      value: 
+      objectReference: {fileID: 11400000, guid: 97fe82375b6951948b804939f6e4868e, type: 2}
     - target: {fileID: 1231505325884043173, guid: de6408e3817a292448961d90a40aad1a, type: 3}
       propertyPath: currentHealth
       value: 5

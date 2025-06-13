@@ -38,7 +38,7 @@ public class Bullet_Base : MonoBehaviour
         Enemy_Base enemy = collision.GetComponent<Enemy_Base>();
         if (enemy != null)
         {
-            enemy.TakeDamage(damage);
+            enemy.TakeDamage(damage, "gun", "Normal");
             Destroy(gameObject);
         }
     }
