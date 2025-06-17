@@ -82,14 +82,7 @@ public class Player : MonoBehaviour
         if (isRolling)
             return;
 
-        MoveAndRotate();
-
-        if (Input.GetKeyDown(KeyCode.LeftControl) && !isAttacking && rollTimer <= 0)
-            StartCoroutine(Roll());
-        if (Input.GetKeyDown(KeyCode.Space) && !isAttacking)
-            StartCoroutine(SwordAttackCoroutine());
-        else if (Input.GetKeyDown(KeyCode.LeftShift) && !isAttacking && ammoCount > 0)
-            StartCoroutine(GunAttackCoroutine());
+        ReadInput();
 
         if (moveTimer > 0)
             StallTimer(ref moveTimer);
@@ -100,17 +93,29 @@ public class Player : MonoBehaviour
     // Occurs every 0.2 seconds (50 per second) (Independent of framerate)
     private void FixedUpdate()
     {
+        MoveAndRotate();
         if (isInvulnerable)
             InvulTimer();
     }
 
-    // Moves the player based on current inputs
-    private void MoveAndRotate()
+    // Takes the player's input and calls methods/stores it
+    private void ReadInput()
     {
         // Get raw input (no smoothing, instant start/stop)
         input.x = Input.GetAxisRaw("Horizontal");
         input.y = Input.GetAxisRaw("Vertical");
 
+        if (Input.GetKeyDown(KeyCode.LeftControl) && !isAttacking && rollTimer <= 0)
+            StartCoroutine(Roll());
+        if (Input.GetKeyDown(KeyCode.Space) && !isAttacking)
+            StartCoroutine(SwordAttackCoroutine());
+        else if (Input.GetKeyDown(KeyCode.LeftShift) && !isAttacking && ammoCount > 0)
+            StartCoroutine(GunAttackCoroutine());
+    }
+
+    // Moves the player based on current inputs
+    private void MoveAndRotate()
+    {
         // Saves the last non-stationary movement vector to allow rolling from a stand-still
         if (input != Vector2.zero)
             rollInput = input;
@@ -137,11 +142,12 @@ public class Player : MonoBehaviour
         // Prevents the movement step from running during an attack, allowing the player to only rotate like in GB Zelda
         if (moveTimer > 0) return;
 
+        Vector2 moveInput = input;
         // Clamp to 8 directions only
-        if (input.x != 0 && input.y != 0)
-            input *= 0.7071f; // Normalize diagonal movement (1/sqrt(2))
+        if (moveInput.x != 0 && moveInput.y != 0)
+            moveInput *= 0.7071f; // Normalize diagonal movement (1/sqrt(2))
 
-        Vector2 newPos = rb.position + input * moveSpeed * Time.fixedDeltaTime;
+        Vector2 newPos = rb.position + moveInput * moveSpeed * Time.fixedDeltaTime;
         rb.MovePosition(newPos);
     }
 

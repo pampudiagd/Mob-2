@@ -7,35 +7,42 @@ public class Enemy_Base : MonoBehaviour
     public EnemyEvent enemyEvent;
 
     [Header("Enemy Stats")]
-    public EnemyData stats;
+    public EnemyData statSheet;
+    protected EnemyData stats; // Clone of statSheet to allow editing of individual enemies' stats
 
     public float currentHealth = 5;
     public bool mortal = true;
     
-    private Rigidbody2D rb;
+    protected Rigidbody2D rb;
 
     [Header("Behavior")]
     public Direction direction = Direction.Up;
+    public GameObject target;
 
     public enum Direction
     {
         Up,
         Down,
         Left,
-        Right
+        Right,
+        UpRight,
+        UpLeft,
+        DownRight,
+        DownLeft
     }
 
-    //protected = accessed by this class and subclasses
-    //virtual = overridable
-    //Awake() = class used for initialization, before the game starts
+    // protected = accessed by this class and subclasses
+    // virtual = overridable
+    // Awake() = class used for initialization, before the game starts
     protected virtual void Awake()
     {
-        if (stats == null)
+        if (statSheet == null)
         {
             Debug.LogError($"{gameObject.name} has no stats assigned!");
             return;
         }
 
+        stats = Instantiate(statSheet);
         currentHealth = stats.maxHealth;
 
     }
@@ -43,7 +50,7 @@ public class Enemy_Base : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        rb.AddRelativeForce(GetDirectionVector(direction) * stats.moveSpeed, ForceMode2D.Impulse);
+        //rb.AddRelativeForce(GetDirectionVector(direction) * stats.moveSpeed, ForceMode2D.Impulse);
     }
 
     // Update is called once per frame
@@ -52,7 +59,19 @@ public class Enemy_Base : MonoBehaviour
 
     }
 
-    private Vector2 GetDirectionVector(Direction dir)
+    // Override in Enemy_Behavior scripts
+    // Should be the enemy's default behavior upon entering a room
+    protected virtual void Behavior_1()
+    {
+
+    }
+
+    public void AssignTarget(GameObject gameObject)
+    {
+        target = gameObject;
+    }
+
+    protected Vector2 GetDirectionVector(Direction dir)
     {
         return dir switch
         {
@@ -60,6 +79,10 @@ public class Enemy_Base : MonoBehaviour
             Direction.Down => Vector2.down,
             Direction.Left => Vector2.left,
             Direction.Right => Vector2.right,
+            Direction.UpRight => Vector2.up + Vector2.right,
+            Direction.UpLeft => Vector2.up + Vector2.left,
+            Direction.DownRight => Vector2.down + Vector2.right,
+            Direction.DownLeft => Vector2.down + Vector2.left,
             _ => Vector2.zero
         };
     }
