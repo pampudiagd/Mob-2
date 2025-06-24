@@ -5,10 +5,11 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [Header("Stats")]
-    public float myHealth = 100;
-    //private float myMaxHealth = 100;
+    public float myMaxHealth = 48; //max health needs to be separate from current health, and...
+    public float myHealth = 48; //... the player can never have more than 48 health (12 1/4 hearts)
     //public float myXP = 0;
 
+    public int maxAmmoCount = 48; //max ammo needs to be separate from current ammo
     public int ammoCount = 4;
     public int ammoCharge = 0;
     private int ammoChargeMax = 4;
@@ -40,6 +41,10 @@ public class Player : MonoBehaviour
     [Header("Event Listeners")]
     public EnemyDeathEvent deathEvent;
 
+    //Variables to store HeartsVisual.cs and AmmoVisual.cs for UI
+    HeartsVisual heartsVisualCS;
+    AmmoVisual ammoVisualCS;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -49,6 +54,20 @@ public class Player : MonoBehaviour
 
         EquipSword(Resources.Load<SwordData>("SwordData/Ice Sword")); // Grabs sword from filepath and instantiates its related object
         EquipGun(Resources.Load<GunData>("GunData/Base Gun")); // Grabs gun from filepath and instantiates its related object
+
+        //This is for the UI, and while .Find seems to sometimes pose problems, it should work OK if put in Start()
+        GameObject heartsVisualObject = GameObject.Find("HeartsVisual");
+        GameObject ammoVisualObject = GameObject.Find("AmmoVisual");
+
+        if(heartsVisualObject != null)
+        {
+            heartsVisualCS = heartsVisualObject.GetComponent<HeartsVisual>(); //now we can reference HeartsVisual.cs
+        }
+
+        if (ammoVisualObject != null)
+        {
+            ammoVisualCS = ammoVisualObject.GetComponent<AmmoVisual>(); //now we can reference AmmoVisual.cs
+        }
 
         Debug.Log(mySwordData.swordName);
     }
@@ -137,11 +156,18 @@ public class Player : MonoBehaviour
     // Positions and enables gun, calls its attack, then disables
     IEnumerator GunAttackCoroutine()
     {
+        //Change variable values
         ammoCount--;
         Debug.Log($"New ammo count is {ammoCount}.");
         isAttacking = true;
         canMove = false;
         moveTimer = moveDelay;
+
+        //Shows ammo change in UI
+        if (ammoVisualCS != null)
+        {
+            ammoVisualCS.UpdateAmmo(ammoCount);
+        }
 
         myGunObject.transform.position = transform.position + transform.up;
         myGunObject.transform.rotation = transform.rotation;
@@ -215,6 +241,12 @@ public class Player : MonoBehaviour
         myHealth -= amount;
         Debug.Log("Player took damage.");
 
+        //Show health loss in UI
+        if (heartsVisualCS != null)
+        {
+            heartsVisualCS.UpdateHearts(myHealth);
+        }
+
         if (myHealth <= 0)
         {
             // Do player death
@@ -239,18 +271,38 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void OnEnemyDeath()
-    // The trigger for this should be changed to "on enemy hit",
-    // but everything else is good.
+    //Adds 1 to ammo charge
+    public void GainAmmoCharge()
     {
-        ammoCharge += 1;
-        Debug.Log($"Current ammo charge is {ammoCharge} / {ammoChargeMax}.");
-
-        if (ammoCharge >= ammoChargeMax)
         {
-            ammoCharge = 0;
-            ammoCount++;
-            Debug.Log("Made a full ammo!");
+            //Handles the actual ammo variables
+            ammoCharge ++;
+            Debug.Log($"Current ammo charge is {ammoCharge} / {ammoChargeMax}.");
+
+            if (ammoCharge >= ammoChargeMax)
+            {
+                ammoCharge = 0;
+                ammoCount++;
+                Debug.Log("Made a full ammo!");
+            }
+
+            //Shows ammo change in UI
+            if (ammoVisualCS != null)
+            {
+                ammoVisualCS.UpdateAmmo(ammoCount);
+            }
         }
+    }
+
+    //Runs upon receiving a signal for enemy death
+    private void OnEnemyDeath()
+    {
+
+    }
+
+    //Runs upon receiving a signal for enemy getting hit
+    private void OnEnemyHit()
+    {
+        GainAmmoCharge();
     }
 }
