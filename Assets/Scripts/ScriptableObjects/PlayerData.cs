@@ -5,6 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "NewPlayerStats", menuName = "Player/Stats")]
 public class PlayerData : CharacterData
 {
+    [Tooltip("MUST be a multiple of 4.")]
     public int baseMaxAmmo = 4;
 
     public float BaseRollSpeed = 40f;
