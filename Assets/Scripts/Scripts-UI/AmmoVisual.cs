@@ -127,9 +127,9 @@ public class AmmoVisual : MonoBehaviour
         {
             playerCS = playerObject.GetComponent<Player>();
 
-            if (playerCS.maxAmmoCount % 4 == 0)
+            if (playerCS.ammoMax % 4 == 0)
             {
-                maxAmmo = playerCS.maxAmmoCount / 4;
+                maxAmmo = playerCS.ammoMax / 4;
             }
             else
             {

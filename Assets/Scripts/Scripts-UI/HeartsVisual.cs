@@ -40,7 +40,7 @@ public class HeartsVisual : MonoBehaviour
         //determine which sprite to show
         public void SetHeartFractions(int fractions)
         {
-            switch(fractions)
+            switch (fractions)
             {
                 case 0: heartImage.sprite = heartsVisual.heart0Sprite; heartFraction = 0; break; //empty
                 case 1: heartImage.sprite = heartsVisual.heart1Sprite; heartFraction = 1; break; //1/4
@@ -99,14 +99,14 @@ public class HeartsVisual : MonoBehaviour
 
         //Locate and size heart
         heartGameObject.GetComponent<RectTransform>().anchoredPosition = anchoredPosition;
-        heartGameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(10,10);
+        heartGameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(10, 10);
 
         //Set heart sprite
         Image heartImageUI = heartGameObject.GetComponent<Image>(); //making this a variable makes the code cleaner
         heartImageUI.sprite = heart0Sprite;
 
         //constructor to receive heart image
-        HeartImage heartImage = new HeartImage(this,heartImageUI,4); //use "this" for HeartsVisual parameter
+        HeartImage heartImage = new HeartImage(this, heartImageUI, 4); //use "this" for HeartsVisual parameter
         heartImageList.Add(heartImage);
 
         return heartImage;
@@ -120,19 +120,19 @@ public class HeartsVisual : MonoBehaviour
     {
         //Set up variables
 
-    //Get Player object
-    GameObject playerObject = GameObject.Find("Player"); //I've heard this function is bad if called in Update()
-                                                            //but OK when called in Start()
+        //Get Player object
+        GameObject playerObject = GameObject.Find("Player"); //I've heard this function is bad if called in Update()
+                                                             //but OK when called in Start()
 
         //Get Player script
         if (playerObject != null)
         {
             playerCS = playerObject.GetComponent<Player>();
-            Debug.Log("Player's max health:" + playerCS.myMaxHealth);
+            Debug.Log("Player's max health:" + playerCS.healthMax);
 
-            if (playerCS.myMaxHealth % 4 == 0)
+            if (playerCS.healthMax % 4 == 0)
             {
-                maxHearts = playerCS.myMaxHealth / 4;
+                maxHearts = playerCS.healthMax / 4;
             }
             else
             {
@@ -141,14 +141,15 @@ public class HeartsVisual : MonoBehaviour
         }
 
         //draw rows 1 and 2, up to 6 hearts each
-        for (int i=0;i<maxHearts;i++)
+        for (int i = 0; i < maxHearts; i++)
         {
             //adjust drawing location based on row
             if (i < 6)
             {
                 iAdjust = 0;
                 yCoord = 200;
-            } else if (i < 12)
+            }
+            else if (i < 12)
             {
                 iAdjust = -6;
                 yCoord = 175;
@@ -157,25 +158,25 @@ public class HeartsVisual : MonoBehaviour
 
             //Now for the once-per-heart stuff
             //If current health is enough that the current heart being drawn is full
-            if (playerCS.myHealth >= (i * 4) + 4)
+            if (playerCS.healthCurrent >= (i * 4) + 4)
             {
                 //create image
-                CreateHeartImage(new Vector2(-375 + 30 * (i+iAdjust), yCoord)).SetHeartFractions(4);
+                CreateHeartImage(new Vector2(-375 + 30 * (i + iAdjust), yCoord)).SetHeartFractions(4);
             }
             //And, if the current heart is partly full:
-            else if ((i * 4) < playerCS.myHealth && playerCS.myHealth < (i * 4) + 4)
+            else if ((i * 4) < playerCS.healthCurrent && playerCS.healthCurrent < (i * 4) + 4)
             {
                 //set value of lastHeartFraction
-                lastHeartFraction = Mathf.Floor(playerCS.myHealth - (i * 4));
+                lastHeartFraction = Mathf.Floor(playerCS.healthCurrent - (i * 4));
 
                 //create image
-                CreateHeartImage(new Vector2(-375 + 30 * (i+iAdjust), yCoord)).SetHeartFractions((int)lastHeartFraction);
+                CreateHeartImage(new Vector2(-375 + 30 * (i + iAdjust), yCoord)).SetHeartFractions((int)lastHeartFraction);
             }
             //And, if the current heart is empty:
-            else if (playerCS.myHealth <= (i * 4))
+            else if (playerCS.healthCurrent <= (i * 4))
             {
                 //create image
-                CreateHeartImage(new Vector2(-375 + 30 * (i+iAdjust), yCoord)).SetHeartFractions(0);
+                CreateHeartImage(new Vector2(-375 + 30 * (i + iAdjust), yCoord)).SetHeartFractions(0);
             }
         }
 
@@ -186,7 +187,7 @@ public class HeartsVisual : MonoBehaviour
     // U P D A T E
     // Update is called once per frame
     void Update()
-    {        
-        
+    {
+
     }
 }

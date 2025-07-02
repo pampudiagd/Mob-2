@@ -74,8 +74,8 @@ public class Player : StatEntity, IDamageable
 
     //[Header("UI")]
     //Variables to store HeartsVisual.cs and AmmoVisual.cs for UI
-    //HeartsVisual heartsVisualCS;
-    //AmmoVisual ammoVisualCS;
+    HeartsVisual heartsVisualCS;
+    AmmoVisual ammoVisualCS;
 
     // Start is called before the first frame update
     void Start()
@@ -92,20 +92,19 @@ public class Player : StatEntity, IDamageable
         EquipSword(Resources.Load<SwordData>("Sword Stats/Ice Sword")); // Grabs sword from filepath and instantiates its related object
         EquipGun(Resources.Load<GunData>("Gun Stats/Base Gun")); // Grabs gun from filepath and instantiates its related object
 
-        //This is for the UI, and while .Find seems to sometimes pose problems, it should work OK if put in Start()Add commentMore actions
-        //GameObject heartsVisualObject = GameObject.Find("HeartsVisual");
-        //GameObject ammoVisualObject = GameObject.Find("AmmoVisual");
+        //This is for the UI, and while .Find seems to sometimes pose problems, it should work OK if put in Start()
+        GameObject heartsVisualObject = GameObject.Find("HeartsVisual");
+        GameObject ammoVisualObject = GameObject.Find("AmmoVisual");
 
-        //if (heartsVisualObject != null)
-        //{
-        //    Add commentMore actions
-        //    heartsVisualCS = heartsVisualObject.GetComponent<HeartsVisual>(); //now we can reference HeartsVisual.cs
-        //}
+        if (heartsVisualObject != null)
+        {
+            heartsVisualCS = heartsVisualObject.GetComponent<HeartsVisual>(); //now we can reference HeartsVisual.cs
+        }
 
-        //if (ammoVisualObject != null)
-        //{
-        //    ammoVisualCS = ammoVisualObject.GetComponent<AmmoVisual>(); //now we can reference AmmoVisual.cs
-        //}
+        if (ammoVisualObject != null)
+        {
+            ammoVisualCS = ammoVisualObject.GetComponent<AmmoVisual>(); //now we can reference AmmoVisual.cs
+        }
 
         Debug.Log(mySwordData.swordName);
     }
@@ -252,10 +251,10 @@ public class Player : StatEntity, IDamageable
         moveTimer = moveDelayAttack;
 
         //Shows ammo change in UI
-        //if (ammoVisualCS != null)
-        //{
-        //    ammoVisualCS.UpdateAmmo(ammoCount);
-        //}
+        if (ammoVisualCS != null)
+        {
+            ammoVisualCS.UpdateAmmo(ammoCount);
+        }
 
         myGunObject.transform.position = transform.position + transform.up;
         myGunObject.transform.rotation = transform.rotation;
@@ -334,11 +333,11 @@ public class Player : StatEntity, IDamageable
         healthCurrent -= amount * globalDamageMod;
         Debug.Log($"Player took {amount * globalDamageMod} direct damage.");
 
-        //Show health loss in UIAdd commentMore actions
-        //if (heartsVisualCS != null)
-        //{
-        //    heartsVisualCS.UpdateHearts(myHealth);
-        //}
+        //Show health loss in UI
+        if (heartsVisualCS != null)
+        {
+            heartsVisualCS.UpdateHearts(healthCurrent);
+        }
 
         if (healthCurrent <= 0)
         {
@@ -360,11 +359,11 @@ public class Player : StatEntity, IDamageable
         healthCurrent -= amount;
         Debug.Log($"Player took {amount} passive damage.");
 
-        //Show health loss in UIAdd commentMore actions
-        //if (heartsVisualCS != null)
-        //{
-        //    heartsVisualCS.UpdateHearts(myHealth);
-        //}
+        //Show health loss in UI
+        if (heartsVisualCS != null)
+        {
+            heartsVisualCS.UpdateHearts(healthCurrent);
+        }
 
         if (healthCurrent <= 0)
         {
@@ -402,10 +401,10 @@ public class Player : StatEntity, IDamageable
         }
 
         //Shows ammo change in UI
-        //if (ammoVisualCS != null)
-        //{
-        //    ammoVisualCS.UpdateAmmo(ammoCount);
-        //}
+        if (ammoVisualCS != null)
+        {
+            ammoVisualCS.UpdateAmmo(ammoCount);
+        }
     }
 
     // Runs when recieving a signal upon an enemy dying
