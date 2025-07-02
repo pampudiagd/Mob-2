@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Unity.VisualScripting;
 
 public class Player : StatEntity, IDamageable
 {
@@ -71,6 +72,11 @@ public class Player : StatEntity, IDamageable
     [Header("Event Emitters")]
     public PlayerEvent playerEvent;
 
+    //[Header("UI")]
+    //Variables to store HeartsVisual.cs and AmmoVisual.cs for UI
+    //HeartsVisual heartsVisualCS;
+    //AmmoVisual ammoVisualCS;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -85,6 +91,21 @@ public class Player : StatEntity, IDamageable
 
         EquipSword(Resources.Load<SwordData>("Sword Stats/Ice Sword")); // Grabs sword from filepath and instantiates its related object
         EquipGun(Resources.Load<GunData>("Gun Stats/Base Gun")); // Grabs gun from filepath and instantiates its related object
+
+        //This is for the UI, and while .Find seems to sometimes pose problems, it should work OK if put in Start()Add commentMore actions
+        //GameObject heartsVisualObject = GameObject.Find("HeartsVisual");
+        //GameObject ammoVisualObject = GameObject.Find("AmmoVisual");
+
+        //if (heartsVisualObject != null)
+        //{
+        //    Add commentMore actions
+        //    heartsVisualCS = heartsVisualObject.GetComponent<HeartsVisual>(); //now we can reference HeartsVisual.cs
+        //}
+
+        //if (ammoVisualObject != null)
+        //{
+        //    ammoVisualCS = ammoVisualObject.GetComponent<AmmoVisual>(); //now we can reference AmmoVisual.cs
+        //}
 
         Debug.Log(mySwordData.swordName);
     }
@@ -230,6 +251,12 @@ public class Player : StatEntity, IDamageable
         isAttacking = true;
         moveTimer = moveDelayAttack;
 
+        //Shows ammo change in UI
+        //if (ammoVisualCS != null)
+        //{
+        //    ammoVisualCS.UpdateAmmo(ammoCount);
+        //}
+
         myGunObject.transform.position = transform.position + transform.up;
         myGunObject.transform.rotation = transform.rotation;
         myGunObject.gameObject.SetActive(true);
@@ -307,6 +334,12 @@ public class Player : StatEntity, IDamageable
         healthCurrent -= amount * globalDamageMod;
         Debug.Log($"Player took {amount * globalDamageMod} direct damage.");
 
+        //Show health loss in UIAdd commentMore actions
+        //if (heartsVisualCS != null)
+        //{
+        //    heartsVisualCS.UpdateHearts(myHealth);
+        //}
+
         if (healthCurrent <= 0)
         {
             // Do player death
@@ -326,6 +359,12 @@ public class Player : StatEntity, IDamageable
     {
         healthCurrent -= amount;
         Debug.Log($"Player took {amount} passive damage.");
+
+        //Show health loss in UIAdd commentMore actions
+        //if (heartsVisualCS != null)
+        //{
+        //    heartsVisualCS.UpdateHearts(myHealth);
+        //}
 
         if (healthCurrent <= 0)
         {
@@ -361,6 +400,12 @@ public class Player : StatEntity, IDamageable
             ammoCount++;
             Debug.Log("Made a full ammo!");
         }
+
+        //Shows ammo change in UI
+        //if (ammoVisualCS != null)
+        //{
+        //    ammoVisualCS.UpdateAmmo(ammoCount);
+        //}
     }
 
     // Runs when recieving a signal upon an enemy dying
