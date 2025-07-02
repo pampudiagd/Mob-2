@@ -99,7 +99,7 @@ public class Enemy_Behavior_Erratic : Enemy_Base
     // Returns the sum of moveSpeed and a random float between +- speedMod
     private float ChangeSpeed()
     {
-        return base.stats.moveSpeed + UnityEngine.Random.Range(lowerSpeedMod, upperSpeedMod);
+        return base.myBaseStats.baseSpeed + UnityEngine.Random.Range(lowerSpeedMod, upperSpeedMod);
     }
 
 

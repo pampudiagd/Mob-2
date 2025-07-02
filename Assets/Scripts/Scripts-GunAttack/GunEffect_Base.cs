@@ -8,6 +8,7 @@ public class GunEffect_Base : MonoBehaviour
     public GameObject myBullet;
     private GameObject tempBullet;
     private GunData myGunData;
+    protected Player player;
 
     // Start is called before the first frame update
     void Start()
@@ -21,11 +22,14 @@ public class GunEffect_Base : MonoBehaviour
         
     }
     
-    public virtual void Initialize(GunData data)
+    public virtual void Initialize(GunData data, Player playerScript)
     {
         myGunData = data;
+        player = playerScript;
         damage = data.damage;
     }
+
+    private float CalculateDamage() => player.globalDamageMod * (player.attack + damage);
 
     private void OnEnable()
     {
@@ -39,7 +43,7 @@ public class GunEffect_Base : MonoBehaviour
         tempBullet = Instantiate(myBullet, transform.position + transform.up, transform.rotation);
         Bullet_Base bullet = tempBullet.GetComponent<Bullet_Base>();
         if (bullet != null)
-            bullet.Initialize(myGunData);
+            bullet.Initialize(myGunData, CalculateDamage());
         Debug.Log("Bullet fired");
     }
 

@@ -7,7 +7,7 @@ public class GunData : ScriptableObject
 {
     public string gunName;
     public float damage;
-    public string damageType;
+    public DamageType damageType = DamageType.Normal;
     public Sprite gunSprite;
     public Sprite bulletSprite;
     public GameObject GunAttackPrefab;

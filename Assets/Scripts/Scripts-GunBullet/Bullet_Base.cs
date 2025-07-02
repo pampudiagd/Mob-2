@@ -6,6 +6,7 @@ public class Bullet_Base : MonoBehaviour
 {
     public float damage;
     public float speed = 9;
+    private GunData gunData;
     private Rigidbody2D rb;
 
     // Start is called before the first frame update
@@ -21,9 +22,10 @@ public class Bullet_Base : MonoBehaviour
         
     }
 
-    public virtual void Initialize(GunData data)
+    public virtual void Initialize(GunData data, float playerAttack)
     {
-        damage = data.damage;
+        gunData = data;
+        damage = playerAttack;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -38,7 +40,7 @@ public class Bullet_Base : MonoBehaviour
         Enemy_Base enemy = collision.GetComponent<Enemy_Base>();
         if (enemy != null)
         {
-            enemy.TakeDamage(damage, "gun", "Normal");
+            StartCoroutine(enemy.TakeDirectDamage(damage, "gun", gunData.damageType));
             Destroy(gameObject);
         }
     }

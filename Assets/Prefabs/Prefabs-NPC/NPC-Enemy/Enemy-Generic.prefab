@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6878331281568870900}
   - component: {fileID: 6227997267561384817}
   - component: {fileID: 1231505325884043173}
+  - component: {fileID: 4317352699836281119}
   - component: {fileID: 8446444103075056557}
   - component: {fileID: 7243418970839692265}
   m_Layer: 7
@@ -100,12 +101,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93a6a891c8c580748bc701c6a5e561b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  healthCurrent: 0
   enemyEvent: {fileID: 11400000, guid: 97fe82375b6951948b804939f6e4868e, type: 2}
-  statSheet: {fileID: 11400000, guid: 03258f5c74f81554da979dfafa378515, type: 2}
-  currentHealth: 5
+  baseStats: {fileID: 11400000, guid: 03258f5c74f81554da979dfafa378515, type: 2}
   mortal: 1
   direction: 5
   target: {fileID: 517106086533870053, guid: 8606681f522bb864e9852b1ce7065ada, type: 3}
+--- !u!114 &4317352699836281119
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 769906685948770051}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7a6b725ba99c4e45832c493a6dbaa88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectEvent: {fileID: 11400000, guid: 4ae10aedabd31c34795c176124afcf4e, type: 2}
+  TestEffect: {fileID: 0}
+  TestPerk: {fileID: 0}
 --- !u!50 &8446444103075056557
 Rigidbody2D:
   serializedVersion: 4

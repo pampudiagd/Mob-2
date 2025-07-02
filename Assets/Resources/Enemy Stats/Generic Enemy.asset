@@ -12,9 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c10a6aa2017be97498abe0673687a208, type: 3}
   m_Name: Generic Enemy
   m_EditorClassIdentifier: 
-  maxHealth: 5
-  moveSpeed: 2
+  baseMaxHealth: 3
+  basePower: 1
+  baseSpeed: 2
   contactDamage: 1
   attackDamage: 2
+  damageSource: Sword
+  damageType: Normal
   mortal: 1
   deathEffect: {fileID: 0}
+  hitEffect: {fileID: 0}

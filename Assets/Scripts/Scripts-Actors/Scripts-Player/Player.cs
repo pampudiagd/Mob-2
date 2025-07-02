@@ -1,26 +1,43 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
-public class Player : MonoBehaviour
+public class Player : StatEntity, IDamageable
 {
-    [Header("Stats")]
-    public float myHealth = 100;
-    //private float myMaxHealth = 100;
-    //public float myXP = 0;
+    [Header("Base Stats")]
+    public PlayerData myBaseStats;
 
+    [Header("Current Stats")]
     public int ammoCount = 4;
     public int ammoCharge = 0;
     private int ammoChargeMax = 4;
 
-    public float moveSpeed = 10;
+    //public override float moveSpeed { get; set; } = 10;
     public float rollMod = 5;
-    public float rollSpeed = 10f;
-    public float rollInvulWindow = 0.15f;
+    public float rollSpeed = 40f;
+    public float rollInvulWindow = 0.07f;
     private float invulTimer;
 
+    public float energy = 0;
+    public int lives = 0;
+
+    public float globalDamageMod = 1; // Modifier for incoming/outgoing damage
+
+    private List<StatModifier> healthMods = new List<StatModifier>();
+    private List<StatModifier> energyMods = new List<StatModifier>();
+    private List<StatModifier> attackMods = new List<StatModifier>();
+    private List<StatModifier> ammoMods = new List<StatModifier>();
+    private List<StatModifier> speedMods = new List<StatModifier>();
+
+    public override float attack => CalculateStat(myBaseStats.basePower, attackMods);
+    public override float healthMax => CalculateStat(myBaseStats.baseMaxHealth, healthMods);
+    public float energyMax => CalculateStat(myBaseStats.baseMaxEnergy, energyMods);
+    public float ammoMax => CalculateStat(myBaseStats.baseMaxAmmo, ammoMods);
+    public override float moveSpeed => CalculateStat(myBaseStats.baseSpeed, speedMods);
+
+
     [Header("Bools")]
-    public bool canMove = true;
     public bool isAttacking = false;
     public bool isRolling = false;
     public bool isInvulnerable = false;
@@ -51,20 +68,28 @@ public class Player : MonoBehaviour
     [Header("Event Listeners")]
     public EnemyEvent enemyEvent;
 
+    [Header("Event Emitters")]
+    public PlayerEvent playerEvent;
+
     // Start is called before the first frame update
     void Start()
     {
+        healthCurrent = myBaseStats.baseMaxHealth;
+        moveSpeed = myBaseStats.baseSpeed;
+        rollSpeed = myBaseStats.BaseRollSpeed;
+        rollInvulWindow = myBaseStats.baseRollInvulWindow;
+
         mySprite = GetComponent<SpriteRenderer>();
         hurtBox = GetComponent<CircleCollider2D>();
         rb = GetComponent<Rigidbody2D>();
 
-        EquipSword(Resources.Load<SwordData>("SwordData/Ice Sword")); // Grabs sword from filepath and instantiates its related object
-        EquipGun(Resources.Load<GunData>("GunData/Base Gun")); // Grabs gun from filepath and instantiates its related object
+        EquipSword(Resources.Load<SwordData>("Sword Stats/Ice Sword")); // Grabs sword from filepath and instantiates its related object
+        EquipGun(Resources.Load<GunData>("Gun Stats/Base Gun")); // Grabs gun from filepath and instantiates its related object
 
         Debug.Log(mySwordData.swordName);
     }
 
-    private void OnEnable()
+    void OnEnable()
     {
         enemyEvent.onEnemyDeath.AddListener(OnEnemyDeath);
         enemyEvent.onEnemyHit.AddListener(OnEnemyHit);
@@ -73,7 +98,7 @@ public class Player : MonoBehaviour
     void OnDisable()
     {
         enemyEvent.onEnemyDeath.RemoveListener(OnEnemyDeath);
-        enemyEvent.onEnemyHit.AddListener(OnEnemyHit);
+        enemyEvent.onEnemyHit.RemoveListener(OnEnemyHit);
     }
 
     void Update()
@@ -123,21 +148,9 @@ public class Player : MonoBehaviour
         // Ends execution if standing still
         if (input == Vector2.zero) return;
 
-        // Rotates towards cardinal directions
-        if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
-        {
-            if (input.x > 0)
-                transform.rotation = Quaternion.Euler(0, 0, 270);   // Right
-            else
-                transform.rotation = Quaternion.Euler(0, 0, 90);    // Left
-        }
-        else
-        {
-            if (input.y > 0)
-                transform.rotation = Quaternion.Euler(0, 0, 0);     // Up
-            else
-                transform.rotation = Quaternion.Euler(0, 0, 180);   // Down
-        }
+        // Rotates towards 8 directions
+        float angle = Mathf.Atan2(input.y, input.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0, 0, angle - 90);
 
         // Prevents the movement step from running during an attack, allowing the player to only rotate like in GB Zelda
         if (moveTimer > 0) return;
@@ -192,7 +205,6 @@ public class Player : MonoBehaviour
     IEnumerator SwordAttackCoroutine()
     {
         isAttacking = true;
-        //canMove = false;
         moveTimer = moveDelayAttack;
 
         mySwordObject.transform.position = transform.position + transform.up;
@@ -216,7 +228,6 @@ public class Player : MonoBehaviour
         ammoCount--;
         Debug.Log($"New ammo count is {ammoCount}.");
         isAttacking = true;
-        //canMove = false;
         moveTimer = moveDelayAttack;
 
         myGunObject.transform.position = transform.position + transform.up;
@@ -236,9 +247,6 @@ public class Player : MonoBehaviour
     void StallTimer(ref float timer)
     {
         timer -= Time.deltaTime;
-        
-        //if (moveTimer <= 0)
-        //    canMove = true;
     }
 
     // Instantiate and prepare sword
@@ -255,7 +263,7 @@ public class Player : MonoBehaviour
         // Grabs the sword prefab's script and passes along SwordData
         SwordEffect_Base sword = mySwordObject.GetComponent<SwordEffect_Base>();
         if (sword != null)
-            sword.Initialize(mySwordData);
+            sword.Initialize(mySwordData, this);
 
         mySwordObject.gameObject.SetActive(false);
     }
@@ -273,7 +281,7 @@ public class Player : MonoBehaviour
         // Grabs the gun prefab's script and passes along GunData
         GunEffect_Base gun = myGunObject.GetComponent<GunEffect_Base>();
         if (gun != null)
-            gun.Initialize(myGunData);
+            gun.Initialize(myGunData, this);
 
         myGunObject.gameObject.SetActive(false);
     }
@@ -286,7 +294,9 @@ public class Player : MonoBehaviour
         }
     }
 
-    public IEnumerator TakeDamage(float amount)
+    // Called for direct sources of damage. (Enemy attacks/contact and harmful terrain)
+    // Will not apply during roll's invulnerable frames and grants temporary intangibility after applying
+    public override IEnumerator TakeDirectDamage(float amount, string damageSource, DamageType damageType)
     {
         if (isInvulnerable)
         {
@@ -294,18 +304,32 @@ public class Player : MonoBehaviour
             yield break;
         }
 
-        myHealth -= amount;
-        Debug.Log("Player took damage.");
+        healthCurrent -= amount * globalDamageMod;
+        Debug.Log($"Player took {amount * globalDamageMod} direct damage.");
 
-        if (myHealth <= 0)
+        if (healthCurrent <= 0)
         {
             // Do player death
         }
         else
         {
+            playerEvent.RaisePlayerDamaged();
             hurtBox.enabled = false;
             yield return StartCoroutine(BlinkSprite());
             hurtBox.enabled = true;
+        }
+    }
+
+    // Called for indirect sources of damage (Status effects)
+    // Will apply regardless of rolling and does not grant intangibility after applying
+    public override void TakePassiveDamage(float amount, DamageType damageType)
+    {
+        healthCurrent -= amount;
+        Debug.Log($"Player took {amount} passive damage.");
+
+        if (healthCurrent <= 0)
+        {
+            // Do player death
         }
     }
 
@@ -324,6 +348,9 @@ public class Player : MonoBehaviour
     // Adds 1 to AmmoCharge
     public void GainAmmoCharge()
     {
+        if (ammoCount >= ammoMax)
+            return;
+
         ammoCharge++;
 
         Debug.Log($"Current ammo charge is {ammoCharge} / {ammoChargeMax}.");
@@ -347,5 +374,35 @@ public class Player : MonoBehaviour
     private void OnEnemyHit()
     {
         GainAmmoCharge();
+    }
+
+    // Calculates the given stat with any modifier perks on the player. Sums additive modifiers, then applies them. Sums multiplicative modifiers, then applies them.
+    private float CalculateStat(float baseValue, List<StatModifier> modifiers)
+    {
+        float result = baseValue;
+
+        // Apply Additive Modifiers
+        float additiveSum = modifiers
+            .Where(mod => mod.type == ModifierType.Additive) // Finds list elements with matching type
+            .Sum(mod => mod.value); // Sums any matching elements it finds
+        result += additiveSum;
+
+        // Apply Multiplicative Modifiers
+        float multiplicativeSum = modifiers
+            .Where(mod => mod.type == ModifierType.Multiplicative)
+            .Sum(mod => mod.value);
+        result *= (1 + multiplicativeSum);
+
+        return result;
+    }
+
+    public void AddAttackModifier(StatModifier modifier)
+    {
+        attackMods.Add(modifier);
+    }
+
+    public void RemoveAttackModifier(StatModifier modifier)
+    {
+        attackMods.Remove(modifier);
     }
 }

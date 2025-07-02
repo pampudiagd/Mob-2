@@ -2,15 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy_Base : MonoBehaviour
+public class Enemy_Base : StatEntity, IDamageable
 {
     public EnemyEvent enemyEvent;
 
     [Header("Enemy Stats")]
-    public EnemyData statSheet;
-    protected EnemyData stats; // Clone of statSheet to allow editing of individual enemies' stats
-
-    public float currentHealth = 5;
+    public EnemyData baseStats;
+    protected EnemyData myBaseStats; // Clone of statSheet to allow modifying individual enemies' stats without affecting every single instance of an enemy
+    
     public bool mortal = true;
     
     protected Rigidbody2D rb;
@@ -36,21 +35,21 @@ public class Enemy_Base : MonoBehaviour
     // Awake() = class used for initialization, before the game starts
     protected virtual void Awake()
     {
-        if (statSheet == null)
+        if (baseStats == null)
         {
             Debug.LogError($"{gameObject.name} has no stats assigned!");
             return;
         }
 
-        stats = Instantiate(statSheet);
-        currentHealth = stats.maxHealth;
+        myBaseStats = Instantiate(baseStats);
+        healthCurrent = myBaseStats.baseMaxHealth;
 
     }
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        //rb.AddRelativeForce(GetDirectionVector(direction) * stats.moveSpeed, ForceMode2D.Impulse);
+        //rb.AddRelativeForce(GetDirectionVector(direction) * myBaseStats.moveSpeed, ForceMode2D.Impulse);
     }
 
     // Update is called once per frame
@@ -88,14 +87,27 @@ public class Enemy_Base : MonoBehaviour
     }
 
     // Called by sword/bullet scripts
-    public virtual void TakeDamage(float amount, string damageSource, string damageType)
+    public override IEnumerator TakeDirectDamage(float amount, string damageSource, DamageType damageType)
     {
-        currentHealth -= amount;
+        healthCurrent -= amount;
         if (damageSource == "sword")
             enemyEvent.RaiseEnemyHit();
         Debug.Log($"{gameObject.name} took {amount} damage!");
 
-        if (currentHealth <= 0 && mortal == true)
+        if (healthCurrent <= 0 && mortal == true)
+        {
+            Die();
+        }
+        yield return null;
+    }
+
+    public override void TakePassiveDamage(float amount, DamageType damageType)
+    {
+        healthCurrent -= amount;
+
+        Debug.Log($"{gameObject.name} took {amount} {damageType} damage!");
+
+        if (healthCurrent <= 0 && mortal == true)
         {
             Die();
         }
@@ -103,8 +115,8 @@ public class Enemy_Base : MonoBehaviour
 
     protected virtual void Die()
     {
-        if (stats.deathEffect != null)
-            Instantiate(stats.deathEffect, transform.position, Quaternion.identity);
+        if (myBaseStats.deathEffect != null)
+            Instantiate(myBaseStats.deathEffect, transform.position, Quaternion.identity);
 
         enemyEvent.RaiseEnemyDeath();
         Destroy(gameObject);
@@ -125,7 +137,7 @@ public class Enemy_Base : MonoBehaviour
     {
         Player playerScript = player.GetComponent<Player>();
 
-        StartCoroutine(playerScript.TakeDamage(stats.contactDamage));
+        StartCoroutine(playerScript.TakeDirectDamage(myBaseStats.contactDamage, myBaseStats.damageSource, myBaseStats.damageType));
     }
 
 }

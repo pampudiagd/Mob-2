@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "NewEnemyStats", menuName = "Enemy/Stats")]
-public class EnemyData : ScriptableObject
+public class EnemyData : CharacterData
 {
-    public float maxHealth = 3f;
-    public float moveSpeed = 2f;
-
     public float contactDamage = 1f;
     public float attackDamage = 2f;
+
+    public string damageSource;
+    public DamageType damageType = DamageType.Normal;
 
     //Boolean added to determine IMMORTALITY
     public bool mortal = true;

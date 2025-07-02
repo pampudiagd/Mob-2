@@ -260,7 +260,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.13207549, g: 0.13207549, b: 0.13207549, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -393,6 +393,14 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 139883885}
+    - target: {fileID: 1231505325884043173, guid: de6408e3817a292448961d90a40aad1a, type: 3}
+      propertyPath: baseStats
+      value: 
+      objectReference: {fileID: 11400000, guid: 03258f5c74f81554da979dfafa378515, type: 2}
+    - target: {fileID: 4317352699836281119, guid: de6408e3817a292448961d90a40aad1a, type: 3}
+      propertyPath: TestEffect
+      value: 
+      objectReference: {fileID: 5002214749359290420, guid: 7a6fddc5e6d884f42b6b0e79868f7a00, type: 3}
     - target: {fileID: 6878331281568870900, guid: de6408e3817a292448961d90a40aad1a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 3.7
@@ -459,6 +467,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 139883885}
     - target: {fileID: 1231505325884043173, guid: de6408e3817a292448961d90a40aad1a, type: 3}
+      propertyPath: baseStats
+      value: 
+      objectReference: {fileID: 11400000, guid: 03258f5c74f81554da979dfafa378515, type: 2}
+    - target: {fileID: 1231505325884043173, guid: de6408e3817a292448961d90a40aad1a, type: 3}
       propertyPath: direction
       value: 1
       objectReference: {fileID: 0}
@@ -478,6 +490,10 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4317352699836281119, guid: de6408e3817a292448961d90a40aad1a, type: 3}
+      propertyPath: TestEffect
+      value: 
+      objectReference: {fileID: 5002214749359290420, guid: 7a6fddc5e6d884f42b6b0e79868f7a00, type: 3}
     - target: {fileID: 6853997611824567153, guid: de6408e3817a292448961d90a40aad1a, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.1
@@ -668,7 +684,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.13207549, g: 0.13207549, b: 0.13207549, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -705,6 +721,10 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 139883885}
+    - target: {fileID: 1654006914059968246, guid: 77fda29e8b0ea33429230a8b2d0c8245, type: 3}
+      propertyPath: baseStats
+      value: 
+      objectReference: {fileID: 11400000, guid: 187cb453d6cabcc41a2029dbf7da548f, type: 2}
     - target: {fileID: 3891584345715148725, guid: 77fda29e8b0ea33429230a8b2d0c8245, type: 3}
       propertyPath: m_Name
       value: Enemy-Bat
@@ -749,6 +769,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7304616312266620603, guid: 77fda29e8b0ea33429230a8b2d0c8245, type: 3}
+      propertyPath: TestEffect
+      value: 
+      objectReference: {fileID: 5777595775344465653, guid: e533bb363f108684e9de4f832f25bccd, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -806,11 +830,57 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6815881028792540169, guid: 8606681f522bb864e9852b1ce7065ada, type: 3}
+      propertyPath: baseStats
+      value: 
+      objectReference: {fileID: 11400000, guid: f1fe829eb322a7e47a920b3d38aa7852, type: 2}
+    - target: {fileID: 6815881028792540169, guid: 8606681f522bb864e9852b1ce7065ada, type: 3}
+      propertyPath: myBaseStats
+      value: 
+      objectReference: {fileID: 11400000, guid: f1fe829eb322a7e47a920b3d38aa7852, type: 2}
+    - target: {fileID: 6815881028792540169, guid: 8606681f522bb864e9852b1ce7065ada, type: 3}
+      propertyPath: mySwordData
+      value: 
+      objectReference: {fileID: 11400000, guid: 0f68da07366eff54b99edf5a83d7bc7a, type: 2}
+    - target: {fileID: 6815881028792540169, guid: 8606681f522bb864e9852b1ce7065ada, type: 3}
+      propertyPath: playerEvent
+      value: 
+      objectReference: {fileID: 11400000, guid: 9fe7ea1c1f498db4691db4d4b56c41b0, type: 2}
+    - target: {fileID: 9152185199405663726, guid: 8606681f522bb864e9852b1ce7065ada, type: 3}
+      propertyPath: m_Color.b
+      value: 0.5377358
+      objectReference: {fileID: 0}
+    - target: {fileID: 9152185199405663726, guid: 8606681f522bb864e9852b1ce7065ada, type: 3}
+      propertyPath: m_Color.g
+      value: 0.16498268
+      objectReference: {fileID: 0}
+    - target: {fileID: 9152185199405663726, guid: 8606681f522bb864e9852b1ce7065ada, type: 3}
+      propertyPath: m_Color.r
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 517106086533870053, guid: 8606681f522bb864e9852b1ce7065ada, type: 3}
+      insertIndex: 3
+      addedObject: {fileID: 8723730494751498440}
   m_SourcePrefab: {fileID: 100100000, guid: 8606681f522bb864e9852b1ce7065ada, type: 3}
+--- !u!114 &8723730494751498440
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 139883885}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7a6b725ba99c4e45832c493a6dbaa88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectEvent: {fileID: 11400000, guid: 4ae10aedabd31c34795c176124afcf4e, type: 2}
+  TestEffect: {fileID: 5777595775344465653, guid: e533bb363f108684e9de4f832f25bccd, type: 3}
+  TestPerk: {fileID: 1613832542203076259, guid: 5111c48713fd1a147a46279a092dab06, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

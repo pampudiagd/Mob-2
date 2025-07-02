@@ -5,6 +5,8 @@ using UnityEngine;
 public class SwordEffect_Base : MonoBehaviour
 {
     public float damage;
+    protected SwordData myData;
+    protected Player player;
 
     // Start is called before the first frame update
     void Start()
@@ -19,10 +21,14 @@ public class SwordEffect_Base : MonoBehaviour
     }
 
     // Sets attributes to given values in data
-    public virtual void Initialize(SwordData data)
+    public virtual void Initialize(SwordData data, Player playerScript)
     {
+        myData = data;
+        player = playerScript;
         damage = data.damage;
     }
+
+    private float CalculateDamage() => player.globalDamageMod * (player.attack + damage);
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -32,7 +38,7 @@ public class SwordEffect_Base : MonoBehaviour
         Enemy_Base enemy = collision.GetComponent<Enemy_Base>();
         if (enemy != null)
         {
-            enemy.TakeDamage(damage, "sword", "Normal");
+            StartCoroutine(enemy.TakeDirectDamage(CalculateDamage(), "sword", myData.damageType));
         }
     }
 }
