@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using Unity.VisualScripting;
+using System;
 
 public class Player : StatEntity, IDamageable
 {
@@ -14,16 +15,23 @@ public class Player : StatEntity, IDamageable
     public int ammoCharge = 0;
     private int ammoChargeMax = 4;
 
-    //public override float moveSpeed { get; set; } = 10;
     public float rollMod = 5;
     public float rollSpeed = 40f;
-    public float rollInvulWindow = 0.07f;
-    private float invulTimer;
-
-    public float energy = 0;
+    
     public int lives = 0;
 
     public float globalDamageMod = 1; // Modifier for incoming/outgoing damage
+
+    [Header("Micro-Progression")]
+    public int energyCurrentBarValue = 0; // Number of segments for the current bar. (if lvl 1 -> energyTotal) (if lvl 2 -> energyTotal - energyBarMax) (if lvl 3 -> special display)
+    public int energyTotal = 0; // Total segments of energy the player CURRENTLY has. Will be <= 40
+    public int energyLevel = 1; // Current level of player's energy. (energyTotal / energyBarMax) Will be 1 - 3 ([1]: energyTotal <= 19, [2]: 20 <= energyTotal <= 39, [3]: energyTotal == 40)
+    public int comboCount = 0;
+
+    [Header("Macro-Progression")]
+    public int scoreCurrent = 0;
+    public int scoreTotal = 0;
+    public int level = 1;
 
     private List<StatModifier> healthMods = new List<StatModifier>();
     private List<StatModifier> energyMods = new List<StatModifier>();
@@ -33,25 +41,27 @@ public class Player : StatEntity, IDamageable
 
     public override float attack => CalculateStat(myBaseStats.basePower, attackMods);
     public override float healthMax => CalculateStat(myBaseStats.baseMaxHealth, healthMods);
-    public float energyMax => CalculateStat(myBaseStats.baseMaxEnergy, energyMods);
+    public int energyBarMax => (int)CalculateStat(myBaseStats.baseMaxEnergy, energyMods); // # of segments to fill single bar. Will be <= 20. Multiply by 2 to find max energy the player can hold
     public float ammoMax => CalculateStat(myBaseStats.baseMaxAmmo, ammoMods);
     public override float moveSpeed => CalculateStat(myBaseStats.baseSpeed, speedMods);
-
 
     [Header("Bools")]
     public bool isAttacking = false;
     public bool isRolling = false;
     public bool isInvulnerable = false;
 
+    [Header("Timer Starting Values")]
+    private float comboStart = 5; // Length of combo timer in seconds
     private float moveDelayAttack = 0.4f; // Seconds before player can move after an attack
     private float moveDelayRoll = 0.05f; // Seconds before player can move after a roll
-    private float moveTimer; // Timer that will be set to a moveDelay variable
-
     private float rollCooldown = 0.5f;
-    private float rollTimer;
+    private float rollInvulWindow; // Window of invulnerability during roll
 
-    //public float comboStart = 5;
-    //public float comboTimer = 0;
+    [Header("Timers")]
+    [SerializeField] private float comboTimer = 0;
+    [SerializeField] private float moveTimer; // Timer that will be set to a moveDelay variable
+    [SerializeField] private float rollTimer;
+    [SerializeField] private float invulTimer;
 
     [Header("Item Data")]
     public SwordData mySwordData; // Determines and holds the data of the current sword
@@ -61,8 +71,10 @@ public class Player : StatEntity, IDamageable
     private GameObject myGunObject; // Current gun object for handling gun's unique effects/bullets, informed by GunData
 
     private SpriteRenderer mySprite;
+    public GameObject mySpriteChild;
     private CircleCollider2D hurtBox; // Component that detects collisions with damage-sources
     private Rigidbody2D rb; // Component that allows player to be stopped by walls
+    private Animator myAnimator; // Component that handles animations
     private Vector2 input;
     private Vector2 rollInput;
 
@@ -85,7 +97,9 @@ public class Player : StatEntity, IDamageable
         rollSpeed = myBaseStats.BaseRollSpeed;
         rollInvulWindow = myBaseStats.baseRollInvulWindow;
 
-        mySprite = GetComponent<SpriteRenderer>();
+        mySprite = mySpriteChild.GetComponent<SpriteRenderer>();
+        myAnimator = mySprite.GetComponent<Animator>();
+
         hurtBox = GetComponent<CircleCollider2D>();
         rb = GetComponent<Rigidbody2D>();
 
@@ -133,6 +147,8 @@ public class Player : StatEntity, IDamageable
             StallTimer(ref moveTimer);
         if (rollTimer > 0)
             StallTimer(ref rollTimer);
+        if (comboTimer > 0)
+            CheckComboStatus();
     }
 
     // Occurs every 0.2 seconds (50 per second) (Independent of framerate)
@@ -141,6 +157,11 @@ public class Player : StatEntity, IDamageable
         MoveAndRotate();
         if (isInvulnerable)
             InvulTimer();
+    }
+
+    private void LateUpdate()
+    {
+        mySpriteChild.transform.rotation = Quaternion.identity;
     }
 
     // Takes the player's input and calls methods/stores it
@@ -168,6 +189,10 @@ public class Player : StatEntity, IDamageable
         // Ends execution if standing still
         if (input == Vector2.zero) return;
 
+        // Sets direction parameters for Sprite Animator
+        myAnimator.SetFloat("moveX", input.x);
+        myAnimator.SetFloat("moveY", input.y);
+
         // Rotates towards 8 directions
         float angle = Mathf.Atan2(input.y, input.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0, 0, angle - 90);
@@ -179,7 +204,7 @@ public class Player : StatEntity, IDamageable
         // Clamp to 8 directions only
         if (moveInput.x != 0 && moveInput.y != 0)
             moveInput *= 0.7071f; // Normalize diagonal movement (1/sqrt(2))
-
+        print(moveInput);
         Vector2 newPos = rb.position + moveInput * moveSpeed * Time.fixedDeltaTime;
         rb.MovePosition(newPos);
     }
@@ -407,11 +432,50 @@ public class Player : StatEntity, IDamageable
         }
     }
 
-    // Runs when recieving a signal upon an enemy dying
-    private void OnEnemyDeath()
+    private void CheckComboStatus() 
     {
-        
+        StallTimer(ref comboTimer);
+        if (comboTimer <= 0)
+            comboCount = 0;
+    }
 
+    // Determines the current Energy Level and number of segments to fill in the HUD
+    private void CheckEnergy()
+    {
+        print((int)(energyTotal / energyBarMax) + 1);
+
+        switch ((int)(energyTotal / energyBarMax) + 1)
+        {
+            case 1:
+                print("Energy Level 1");
+                energyLevel = 1;
+                energyCurrentBarValue = energyTotal;
+                break;
+            case 2:
+                print("Energy Level 2");
+                energyLevel = 2;
+                energyCurrentBarValue = energyTotal - energyBarMax;
+                break;
+            case 3:
+                print("Energy Level 3");
+                energyLevel = 3;
+                energyCurrentBarValue = energyBarMax;
+                break;
+        }
+    }
+
+    // Runs when recieving a signal upon an enemy dying
+    private void OnEnemyDeath(int scoreValue)
+    {
+        comboCount++;
+        int combo = comboCount;
+
+        energyTotal += combo + (combo == 0 ? 1 : 0); // If the current combo length is 0 or 1, only adds a single segment, otherwise adds the current combo length
+        CheckEnergy();
+
+        scoreCurrent += scoreValue * (combo > 0 ? combo : 1); // Ternary operator (condition ? valueIfTrue : valueIfFalse)
+
+        comboTimer = comboStart;
     }
 
     // Runs when recieving a signal upon an enemy taking damage
@@ -425,11 +489,23 @@ public class Player : StatEntity, IDamageable
     {
         float result = baseValue;
 
+        // Apply Divisive Modifiers
+        float divisiveSum = modifiers
+            .Where(mod => mod.type == ModifierType.Divisive) // Finds list elements with matching type
+            .Sum(mod => mod.value); // Sums any matching elements it finds
+        result /= (divisiveSum == 0f ? 1f : divisiveSum);
+
         // Apply Additive Modifiers
         float additiveSum = modifiers
             .Where(mod => mod.type == ModifierType.Additive) // Finds list elements with matching type
             .Sum(mod => mod.value); // Sums any matching elements it finds
         result += additiveSum;
+
+        // Apply Subtractive Modifiers
+        float subtractiveSum = modifiers
+            .Where(mod => mod.type == ModifierType.Subtractive) // Finds list elements with matching type
+            .Sum(mod => mod.value); // Sums any matching elements it finds
+        result -= subtractiveSum;
 
         // Apply Multiplicative Modifiers
         float multiplicativeSum = modifiers

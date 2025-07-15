@@ -5,7 +5,9 @@ using UnityEngine;
 public enum ModifierType
 {
     Additive,
-    Multiplicative
+    Multiplicative,
+    Subtractive,
+    Divisive
 }
 
 public class StatModifier : MonoBehaviour

@@ -11,6 +11,6 @@ public class PlayerData : CharacterData
     public float BaseRollSpeed = 40f;
     public float baseRollInvulWindow = 0.07f;
 
-    public float baseMaxEnergy = 20;
+    public int baseMaxEnergy = 20;
     public int baseLives = 0;
 }

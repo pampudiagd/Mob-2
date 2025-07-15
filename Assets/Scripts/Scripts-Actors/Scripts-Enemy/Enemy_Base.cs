@@ -118,7 +118,7 @@ public class Enemy_Base : StatEntity, IDamageable
         if (myBaseStats.deathEffect != null)
             Instantiate(myBaseStats.deathEffect, transform.position, Quaternion.identity);
 
-        enemyEvent.RaiseEnemyDeath();
+        enemyEvent.RaiseEnemyDeath(myBaseStats.pointValue);
         Destroy(gameObject);
     }
 

@@ -8,6 +8,8 @@ public class EnemyData : CharacterData
     public float contactDamage = 1f;
     public float attackDamage = 2f;
 
+    public int pointValue = 10;
+
     public string damageSource;
     public DamageType damageType = DamageType.Normal;
 
