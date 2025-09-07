@@ -70,9 +70,10 @@ public class Player : StatEntity, IDamageable
     public GunData myGunData; // Determines and holds the data of the current gun
     private GameObject myGunObject; // Current gun object for handling gun's unique effects/bullets, informed by GunData
 
+    public Grid testGrid;
     private SpriteRenderer mySprite;
     public GameObject mySpriteChild;
-    private CircleCollider2D hurtBox; // Component that detects collisions with damage-sources
+    public CircleCollider2D hurtBox; // Component that detects collisions with damage-sources
     private Rigidbody2D rb; // Component that allows player to be stopped by walls
     private Animator myAnimator; // Component that handles animations
     private Vector2 input;
@@ -100,7 +101,7 @@ public class Player : StatEntity, IDamageable
         mySprite = mySpriteChild.GetComponent<SpriteRenderer>();
         myAnimator = mySprite.GetComponent<Animator>();
 
-        hurtBox = GetComponent<CircleCollider2D>();
+        //hurtBox = GetComponent<CircleCollider2D>();
         rb = GetComponent<Rigidbody2D>();
 
         EquipSword(Resources.Load<SwordData>("Sword Stats/Ice Sword")); // Grabs sword from filepath and instantiates its related object
@@ -149,6 +150,7 @@ public class Player : StatEntity, IDamageable
             StallTimer(ref rollTimer);
         if (comboTimer > 0)
             CheckComboStatus();
+        
     }
 
     // Occurs every 0.2 seconds (50 per second) (Independent of framerate)
@@ -162,6 +164,7 @@ public class Player : StatEntity, IDamageable
     private void LateUpdate()
     {
         mySpriteChild.transform.rotation = Quaternion.identity;
+        //("Player grid position is: " + testGrid.WorldToCell(transform.position));
     }
 
     // Takes the player's input and calls methods/stores it
@@ -204,7 +207,7 @@ public class Player : StatEntity, IDamageable
         // Clamp to 8 directions only
         if (moveInput.x != 0 && moveInput.y != 0)
             moveInput *= 0.7071f; // Normalize diagonal movement (1/sqrt(2))
-        print(moveInput);
+        //print(moveInput);
         Vector2 newPos = rb.position + moveInput * moveSpeed * Time.fixedDeltaTime;
         rb.MovePosition(newPos);
     }
@@ -343,11 +346,13 @@ public class Player : StatEntity, IDamageable
         {
             Debug.Log("Player collided with enemy!");
         }
+        //else if (collision.CompareTag("Wall"))
+        //    Debug.Log("TOUCHED TILEMAP");
     }
 
     // Called for direct sources of damage. (Enemy attacks/contact and harmful terrain)
     // Will not apply during roll's invulnerable frames and grants temporary intangibility after applying
-    public override IEnumerator TakeDirectDamage(float amount, string damageSource, DamageType damageType)
+    public override IEnumerator TakeDirectDamage(float amount, string damageSource, DamageType damageType, Vector2 sourcePos)
     {
         if (isInvulnerable)
         {
@@ -371,10 +376,15 @@ public class Player : StatEntity, IDamageable
         else
         {
             playerEvent.RaisePlayerDamaged();
-            hurtBox.enabled = false;
+            isInvulnerable = true;
             yield return StartCoroutine(BlinkSprite());
-            hurtBox.enabled = true;
+            isInvulnerable = false;
         }
+    }
+
+    public override void ReceiveKnockback(Vector2 sourcePos)
+    {
+
     }
 
     // Called for indirect sources of damage (Status effects)
@@ -470,8 +480,9 @@ public class Player : StatEntity, IDamageable
         comboCount++;
         int combo = comboCount;
 
-        energyTotal += combo + (combo == 0 ? 1 : 0); // If the current combo length is 0 or 1, only adds a single segment, otherwise adds the current combo length
-        CheckEnergy();
+        if (energyTotal < energyBarMax * 2)
+            energyTotal += combo + (combo == 0 ? 1 : 0); // If the current combo length is 0 or 1, only adds a single segment, otherwise adds the current combo length
+            CheckEnergy();
 
         scoreCurrent += scoreValue * (combo > 0 ? combo : 1); // Ternary operator (condition ? valueIfTrue : valueIfFalse)
 
@@ -484,7 +495,7 @@ public class Player : StatEntity, IDamageable
         GainAmmoCharge();
     }
 
-    // Calculates the given stat with any modifier perks on the player. Sums additive modifiers, then applies them. Sums multiplicative modifiers, then applies them.
+    // Calculates the given stat with any modifier perks on the player. Sums modifiers, then applies them. Divide => Add => Subtract => Multiply
     private float CalculateStat(float baseValue, List<StatModifier> modifiers)
     {
         float result = baseValue;

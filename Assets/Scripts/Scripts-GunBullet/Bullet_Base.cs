@@ -40,7 +40,7 @@ public class Bullet_Base : MonoBehaviour
         Enemy_Base enemy = collision.GetComponent<Enemy_Base>();
         if (enemy != null)
         {
-            StartCoroutine(enemy.TakeDirectDamage(damage, "gun", gunData.damageType));
+            StartCoroutine(enemy.TakeDirectDamage(damage, "gun", gunData.damageType, this.gameObject.GetComponent<Rigidbody2D>().position));
             Destroy(gameObject);
         }
     }

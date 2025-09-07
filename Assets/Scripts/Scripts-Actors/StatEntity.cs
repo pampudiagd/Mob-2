@@ -16,13 +16,9 @@ public abstract class StatEntity : MonoBehaviour, IDamageable
         
     }
 
-    public abstract IEnumerator TakeDirectDamage(float amount, string damageSource, DamageType damageType);
+    public abstract IEnumerator TakeDirectDamage(float amount, string damageSource, DamageType damageType, Vector2 sourcePos);
 
     public abstract void TakePassiveDamage(float amount, DamageType damageType);
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public abstract void ReceiveKnockback(Vector2 sourcePos);
 }

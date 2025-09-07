@@ -1,0 +1,92 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+
+public static class Helper_Directional
+{
+    public static Vector2 DirectionToVector(Direction dir)
+    {
+        return dir switch
+        {
+            Direction.Up => Vector2.up,
+            Direction.Down => Vector2.down,
+            Direction.Left => Vector2.left,
+            Direction.Right => Vector2.right,
+            Direction.UpRight => Vector2.up + Vector2.right,
+            Direction.UpLeft => Vector2.up + Vector2.left,
+            Direction.DownRight => Vector2.down + Vector2.right,
+            Direction.DownLeft => Vector2.down + Vector2.left,
+            _ => Vector2.zero
+        };
+    }
+
+    public static Direction RandomCardinalDirection()
+    {
+        return UnityEngine.Random.Range(0, 4) switch
+        {
+            0 => Direction.Up,
+            1 => Direction.Down,
+            2 => Direction.Left,
+            3 => Direction.Right,
+            _ => Direction.Up
+        };
+    }
+
+    public static Vector2 RandomCardinalVector()
+    {
+        return DirectionToVector(UnityEngine.Random.Range(0, 4) switch
+        {
+            0 => Direction.Up,
+            1 => Direction.Down,
+            2 => Direction.Left,
+            3 => Direction.Right,
+            _ => Direction.Up
+        });
+    }
+
+    // Returns a random normalized direction vector, biased towards vectors that are closer to the vector to the target
+    public static Vector2 BiasedDirection(Vector2 selfPosition, Vector2 targetPosition, float baseWeight = 0.5f, float biasStrength = 1.5f)
+    {
+        float alignment;
+        Dictionary<Direction, float> directionWeights = new Dictionary<Direction, float>();
+
+        // Get normalized vector between self and player
+        Vector2 toTarget = (targetPosition - selfPosition).normalized;
+
+        foreach (Direction dir in Enum.GetValues(typeof(Direction)))
+        {
+            // Calculate the dot product of all 8 directions and the vector to the player
+            alignment = Vector2.Dot(DirectionToVector(dir), toTarget);
+
+            // Convert each dot product to a weight (add a base to each weight) and bias it, storing it in a dictionary of <Direction enum, float weight>
+            float weight = baseWeight + Mathf.Max(0, alignment);
+            weight = Mathf.Pow(weight, biasStrength);
+            directionWeights.Add(dir, weight);
+            //print(dir + " " + weight);
+        }
+
+        // Sum the weights
+        float totalWeight = directionWeights.Values.Sum();
+
+        // Pick a random float between 0 and the total weight
+        float randomNum = UnityEngine.Random.Range(0, totalWeight);
+        //Debug.Log("Random num is "  + randomNum);
+
+        // Loop the dictionary, adding weights until the random float is met or exceeded
+        float cumulative = 0f;
+
+        foreach (var pair in directionWeights)
+        {
+            cumulative += pair.Value;
+
+            // Return the direction associated with the weight
+            if (randomNum <= cumulative)
+                return DirectionToVector(pair.Key);
+        }
+
+        // Fallback
+        return Vector2.right;
+    }
+}

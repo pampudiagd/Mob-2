@@ -7,6 +7,7 @@ public class EnemyData : CharacterData
 {
     public float contactDamage = 1f;
     public float attackDamage = 2f;
+    public int moveSpeed = 1;
 
     public int pointValue = 10;
 
@@ -15,6 +16,7 @@ public class EnemyData : CharacterData
 
     //Boolean added to determine IMMORTALITY
     public bool mortal = true;
+    public bool canFly = false;
 
     public GameObject deathEffect;
     public GameObject hitEffect;

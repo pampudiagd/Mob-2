@@ -8,6 +8,9 @@ TagManager:
   - Enemy
   - Sword
   - Bullet
+  - Gun
+  - Floor
+  - Enemy Detection
   layers:
   - Default
   - TransparentFX
