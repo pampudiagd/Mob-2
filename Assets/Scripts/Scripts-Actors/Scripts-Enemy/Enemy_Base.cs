@@ -10,13 +10,16 @@ public class Enemy_Base : StatEntity, IDamageable
     [Header("Enemy Stats")]
     public EnemyData baseStats;
     protected EnemyData myBaseStats; // Clone of statSheet to allow modifying individual enemies' stats without affecting every single instance of an enemy
-    
+
     public bool mortal = true;
     [SerializeField] protected BehaviorState myBehaviorState = BehaviorState.Idle;
-    
+
     protected Rigidbody2D rb;
     protected GridScanner gridScanner;
     protected bool interrupted;
+    public bool isAttacking = false;
+    public bool isTargetInAtkRng = false;
+    public bool isTargetSeen = false;
     [SerializeField] protected EnemyState myState = EnemyState.Default;
     public float knockbackSpeed = 14f;
     public float knockDistance = 4f;
@@ -35,7 +38,8 @@ public class Enemy_Base : StatEntity, IDamageable
     protected enum BehaviorState
     {
         Idle,
-        Targeting
+        Targeting,
+        Attacking
     }
 
     // protected = accessed by this class and subclasses
@@ -59,42 +63,41 @@ public class Enemy_Base : StatEntity, IDamageable
     {
         gridScanner = FindObjectOfType<Grid>().GetComponent<GridScanner>();
         rb = GetComponent<Rigidbody2D>();
-        
-        //rb.AddRelativeForce(GetDirectionVector(direction) * myBaseStats.moveSpeed, ForceMode2D.Impulse);
     }
 
     // Update is called once per frame
     protected virtual void Update()
     {
-        // ADD OTHER TIMERS HERE LATER
 
-        //if (myState == EnemyState.Knockback)
-        //{
-        //    knockBackTimer -= Time.deltaTime;
-        //    if (knockBackTimer <= 0f)
-        //    {
-        //        myState = EnemyState.Default;
-        //        velocity = Vector2.zero;
-        //    }
-        //}
     }
 
     // Override in Enemy_Behavior scripts
     // Should be the enemy's default behavior upon entering a room
-    protected virtual void Behavior_0(){}
+    protected virtual void Behavior_0() { }
 
-    protected virtual void Behavior_1(){}
+    protected virtual void Behavior_1() { }
+
+    protected virtual IEnumerator Behavior_Attack()
+    {
+        yield return null;
+    }
 
     public void AssignTarget(GameObject gameObject)
     {
         target = gameObject;
     }
 
-    // Takes a Vector2 and rotates to face that direction
+    // Takes a Direction enum and rotates to face that direction
     protected void FaceDirection(Direction direction)
     {
         Vector2 dir = Helper_Directional.DirectionToVector(direction);
         float angle = (Mathf.Atan2(dir.y, dir.x)) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0f, 0f, angle - 90);
+    }
+
+    protected void FaceDirection(Vector2 direction)
+    {
+        float angle = (Mathf.Atan2(direction.y, direction.x)) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0f, 0f, angle - 90);
     }
 
@@ -147,14 +150,6 @@ public class Enemy_Base : StatEntity, IDamageable
             Debug.Log($"{gameObject.name} touched the player!");
         }
 
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        //if (myState == EnemyState.Knockback && collision.gameObject.CompareTag("Wall"))
-        //{
-        //    cancelKnockback = true;
-        //}
     }
 
     public override void ReceiveKnockback(Vector2 sourcePos)
@@ -212,7 +207,6 @@ public class Enemy_Base : StatEntity, IDamageable
                 rb.MovePosition(rb.position + knockDirection * step);
                 remainingDistance -= step;
             }
-
             yield return new WaitForFixedUpdate();
         }
 
@@ -225,7 +219,6 @@ public class Enemy_Base : StatEntity, IDamageable
             activeKnockbacks = 0;
             myState = EnemyState.Default;
         }
-
     }
 
     protected void Interrupt()
@@ -250,14 +243,28 @@ public class Enemy_Base : StatEntity, IDamageable
 
     public virtual void OnPlayerDetected()
     {
-        Debug.Log("ENTERED DETECTION ZONE");
         myBehaviorState = BehaviorState.Targeting;
+        Debug.Log("Begin Targetting Behavior");
     }
 
     public virtual void OnPlayerLost()
     {
         Debug.Log("LEFT DETECTION ZONE");
         myBehaviorState = BehaviorState.Idle;
+    }
+
+    public virtual void OnAttackTriggered()
+    {
+        Debug.Log(gameObject.name + " triggered attack.");
+        myBehaviorState = BehaviorState.Attacking;
+        isTargetInAtkRng = true;
+        isAttacking = true;
+    }
+
+    public virtual void OnPlayerOutRange()
+    {
+        Debug.Log("Player left attack zone.");
+        isTargetInAtkRng = false;
     }
 
     protected virtual void TouchedPlayer(GameObject player)

@@ -16,6 +16,7 @@ public class Enemy_Test_Dummy : Enemy_Base
     private Vector3Int forwardTile;
     private Coroutine moveRoutine;
     private int moveAttempts = 0;
+    private Vector3 targetTilePos => gridScanner.levelTilemap.WorldToCell(target.transform.position);
 
     public bool isActing = false;
 
@@ -77,7 +78,7 @@ public class Enemy_Test_Dummy : Enemy_Base
 
     protected override void Behavior_0()
     {
-        if (myState != EnemyState.Default || moveRoutine != null)
+        if (myState != EnemyState.Default || moveRoutine != null || myBehaviorState != BehaviorState.Idle)
             return;
 
         SetMovementDirection(); // Sets movementVector to a random direction and faces this object toward that Vector.
@@ -172,45 +173,173 @@ public class Enemy_Test_Dummy : Enemy_Base
     //        rotationTimer = TimerCount(rotationTimer);
     //}
 
+    private IEnumerator MoveToTileTargetting(Vector3 target)
+    {
+        interrupted = false;
+
+        while ((base.rb.position - (Vector2)target).sqrMagnitude > 0.001f)
+        {
+            if (interrupted || moveAttempts >= 50 || myBehaviorState != BehaviorState.Targeting)
+            {
+                moveRoutine = null;
+                moveAttempts = 0;
+                yield break; // stop movement early
+            }
+
+            Vector2 newPos = Vector2.MoveTowards(base.rb.position, target, moveSpeed * Time.fixedDeltaTime);
+            rb.MovePosition(newPos);
+
+            moveAttempts++;
+            yield return new WaitForFixedUpdate();
+        }
+
+        base.rb.MovePosition(target); // Snap to exact center
+
+        yield return null;
+
+        moveRoutine = null;
+    }
+
     protected override void Behavior_1()
     {
         if (myState != EnemyState.Default || moveRoutine != null)
             return;
 
-        while ((base.rb.position - (Vector2)target.transform.position).sqrMagnitude > 0.001f)
-        {
-            if (interrupted || gridScanner.levelTilemap.GetTile(forwardTile) == navigator.GetWallTile() || moveAttempts >= 50)
-            {
-                moveRoutine = null;
-                moveAttempts = 0;
-                break; // stop movement early
-            }
+        // Rounds the target's position to the Vector3Int used by the tilemap, then sums own tilemap position with the vector between the two positions.
+        // Then converts that to a Vector3Int, and finally gets the world coords of the center of that tile.
+        Vector3 targetTile = gridScanner.levelTilemap.GetCellCenterWorld(Vector3Int.RoundToInt(myGridPos + (Vector3)NormalVectorToTarget(targetTilePos)));
 
-            Vector2 newPos = Vector2.MoveTowards(base.rb.position, (Vector2)target.transform.position, moveSpeed * Time.fixedDeltaTime);
-            rb.MovePosition(newPos);
-            moveAttempts++;
-        }
+        Debug.Log("My pos: " + myGridPos);
+        Debug.Log("Target pos: " + gridScanner.levelTilemap.WorldToCell(target.transform.position));
+        Debug.Log("Normal vector: " + (Vector3)NormalVectorToTarget(targetTilePos));
 
 
+        moveRoutine = StartCoroutine(MoveToTileTargetting(targetTile));
     }
 
-    protected void Behavior_2()
+    // Returns the normal vector pointing to the targetPos
+    private Vector2 NormalVectorToTarget(Vector3 targetPos)
     {
-        if (myState != EnemyState.Default || !IsCenteredOnTile() || moveRoutine != null)
-            return;
+        // Convert targetPos to a Vector2
+        Vector2 targetGridPos = (Vector2)targetPos;
+        Vector2 normalVector = Vector2.zero;
 
-        Vector2Int start = (Vector2Int)myGridPos;
-        targetGridPos = (Vector2Int)gridScanner.levelTilemap.WorldToCell(target.transform.position); // Replace with player position
+        // Check x and y relations
+        // Switch statement
+        switch (myGridPos.x.CompareTo((int)targetGridPos.x))
+        {
+            case < 0:
+                normalVector = Vector2.right;
+                break;
+            case 0:
+                normalVector = Vector2.zero;
+                break;
+            case > 0:
+                normalVector = Vector2.left;
+                break;
+        }
 
-        List<Vector2Int> path = pathfinder.FindPath(start, targetGridPos);
-        if (path != null)
-            behaviorFollow.SetPath(path);
+        switch (myGridPos.y.CompareTo((int)targetGridPos.y))
+        {
+            case < 0:
+                normalVector += Vector2.up;
+                break;
+            case 0:
+                normalVector += Vector2.zero;
+                break;
+            case > 0:
+                normalVector += Vector2.down;
+                break;
+        }
+
+        return normalVector;
+    }
+
+    // Returns the normalized cardinal vector pointing to the targetPos
+    private Vector2 Cardinal_Vector_To_Target(Vector3 targetPos)
+    {
+        // Convert targetPos to a Vector2
+        Vector2 targetGridPos = (Vector2)targetPos;
+        Vector2 normalVector = Vector2.zero;
+
+        // Check x and y relations
+        // Switch statement
+        switch (myGridPos.x.CompareTo((int)targetGridPos.x))
+        {
+            case < 0:
+                normalVector = Vector2.right;
+                break;
+            case 0:
+                normalVector = Vector2.zero;
+                break;
+            case > 0:
+                normalVector = Vector2.left;
+                break;
+        }
+
+        // Only sets y-value if x 
+        if (normalVector.x == 0)
+        {
+            switch (myGridPos.y.CompareTo((int)targetGridPos.y))
+            {
+                case < 0:
+                    normalVector = Vector2.up;
+                    break;
+                case 0:
+                    normalVector = Vector2.zero;
+                    break;
+                case > 0:
+                    normalVector = Vector2.down;
+                    break;
+            }
+        }
+        return normalVector;
+    }
+
+    protected override IEnumerator Behavior_Attack()
+    {
+        while (isTargetInAtkRng)
+        {
+            direction = Helper_Directional.VectorToDirection(Cardinal_Vector_To_Target(targetTilePos));
+            FaceDirection(direction); // Rotates toward the direction var
+
+            for (int i = 0; i < 2; i++)
+            {
+                yield return new WaitForSeconds(0.5f);
+                Debug.Log("Simulating attack " + i);
+            }
+        }
+        isAttacking = false;
+
+        if (isTargetSeen)
+            myBehaviorState = BehaviorState.Targeting;
+        else
+            myBehaviorState = BehaviorState.Idle;
+    }
+
+    // AStar pathfinding
+    //protected void Behavior_2()
+    //{
+    //    if (myState != EnemyState.Default || !IsCenteredOnTile() || moveRoutine != null)
+    //        return;
+
+    //    Vector2Int start = (Vector2Int)myGridPos;
+    //    targetGridPos = (Vector2Int)gridScanner.levelTilemap.WorldToCell(target.transform.position); // Replace with player position
+
+    //    List<Vector2Int> path = pathfinder.FindPath(start, targetGridPos);
+    //    if (path != null)
+    //        behaviorFollow.SetPath(path);
+    //}
+
+    public override void OnAttackTriggered()
+    {
+        base.OnAttackTriggered();
+        StartCoroutine(Behavior_Attack());
     }
 
     public override void OnPlayerDetected()
     {
         base.OnPlayerDetected();
-
     }
 
     private bool IsCenteredOnTile()

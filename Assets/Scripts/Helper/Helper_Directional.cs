@@ -22,6 +22,23 @@ public static class Helper_Directional
         };
     }
 
+    public static Direction VectorToDirection(Vector2 dir)
+    {
+        return dir switch
+        {
+            { x: 0, y: 1 } => Direction.Up,
+            { x: 0, y: -1 } => Direction.Down,
+            { x: -1, y: 0 } => Direction.Left,
+            { x: 1, y: 0 } => Direction.Right,
+            { x: 1, y: 1 } => Direction.UpRight,
+            { x: -1, y: 1 } => Direction.UpLeft,
+            { x: 1, y: -1 } => Direction.DownRight,
+            { x: -1, y: -1 } => Direction.DownLeft,
+            _ => Direction.Up
+        };
+    }
+
+
     public static Direction RandomCardinalDirection()
     {
         return UnityEngine.Random.Range(0, 4) switch

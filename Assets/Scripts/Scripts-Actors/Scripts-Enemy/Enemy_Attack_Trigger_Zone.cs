@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy_Detection_Zone : MonoBehaviour
+public class Enemy_Attack_Trigger_Zone : MonoBehaviour
 {
     private Enemy_Base parentEnemy;
 
@@ -13,21 +13,19 @@ public class Enemy_Detection_Zone : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        Debug.Log("Inside attack trigger!");
+        if (other.CompareTag("Player") && !parentEnemy.isAttacking)
         {
-            parentEnemy.isTargetSeen = true;
-
-            if (!parentEnemy.isAttacking)
-                parentEnemy.OnPlayerDetected();
+            parentEnemy.OnAttackTriggered();
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
+        Debug.Log("Left attack trigger!");
         if (collision.CompareTag("Player"))
         {
-            parentEnemy.isTargetSeen = false;
-            parentEnemy.OnPlayerLost();
+            parentEnemy.OnPlayerOutRange();
         }
     }
 }
