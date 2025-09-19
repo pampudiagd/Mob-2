@@ -5,7 +5,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using System;
 
-public class Player : StatEntity, IDamageable
+public class Player : StatEntity, IDamageable, IKnockable
 {
     [Header("Base Stats")]
     public PlayerData myBaseStats;
@@ -17,7 +17,7 @@ public class Player : StatEntity, IDamageable
 
     public float rollMod = 5;
     public float rollSpeed = 40f;
-    
+
     public int lives = 0;
 
     public float globalDamageMod = 1; // Modifier for incoming/outgoing damage
@@ -49,6 +49,8 @@ public class Player : StatEntity, IDamageable
     public bool isAttacking = false;
     public bool isRolling = false;
     public bool isInvulnerable = false;
+    public bool wantsToRoll = false;
+    public bool allowInput = true;
 
     [Header("Timer Starting Values")]
     private float comboStart = 5; // Length of combo timer in seconds
@@ -76,6 +78,7 @@ public class Player : StatEntity, IDamageable
     public CircleCollider2D hurtBox; // Component that detects collisions with damage-sources
     private Rigidbody2D rb; // Component that allows player to be stopped by walls
     private Animator myAnimator; // Component that handles animations
+    private KnockHandler knockHandler;
     private Vector2 input;
     private Vector2 rollInput;
 
@@ -90,9 +93,19 @@ public class Player : StatEntity, IDamageable
     HeartsVisual heartsVisualCS;
     AmmoVisual ammoVisualCS;
 
+
+    private void Awake()
+    {
+        knockHandler = gameObject.GetComponent<KnockHandler>();
+        knockHandler.OnKnockbackStarted += HandleKnockStart;
+        knockHandler.OnKnockbackEnded += HandleKnockEnd;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
+        rollInput = new Vector2(1,0);
+
         healthCurrent = myBaseStats.baseMaxHealth;
         moveSpeed = myBaseStats.baseSpeed;
         rollSpeed = myBaseStats.BaseRollSpeed;
@@ -122,6 +135,7 @@ public class Player : StatEntity, IDamageable
         }
 
         Debug.Log(mySwordData.swordName);
+        StartCoroutine(Roll());
     }
 
     void OnEnable()
@@ -134,6 +148,8 @@ public class Player : StatEntity, IDamageable
     {
         enemyEvent.onEnemyDeath.RemoveListener(OnEnemyDeath);
         enemyEvent.onEnemyHit.RemoveListener(OnEnemyHit);
+        knockHandler.OnKnockbackStarted -= HandleKnockStart;
+        knockHandler.OnKnockbackEnded -= HandleKnockEnd;
     }
 
     void Update()
@@ -150,13 +166,24 @@ public class Player : StatEntity, IDamageable
             StallTimer(ref rollTimer);
         if (comboTimer > 0)
             CheckComboStatus();
-        
+
     }
 
     // Occurs every 0.2 seconds (50 per second) (Independent of framerate)
     private void FixedUpdate()
     {
-        MoveAndRotate();
+        if (!allowInput) 
+            return;
+
+        if (wantsToRoll)
+        {
+            StartCoroutine(Roll());
+            wantsToRoll = false;
+        }
+
+        if (!isRolling)
+            MoveAndRotate();
+
         if (isInvulnerable)
             InvulTimer();
     }
@@ -170,12 +197,18 @@ public class Player : StatEntity, IDamageable
     // Takes the player's input and calls methods/stores it
     private void ReadInput()
     {
+        if (!allowInput)
+        {
+            input = Vector2.zero;
+            return;
+        }
+
         // Get raw input (no smoothing, instant start/stop)
         input.x = Input.GetAxisRaw("Horizontal");
         input.y = Input.GetAxisRaw("Vertical");
 
         if (Input.GetKeyDown(KeyCode.LeftControl) && !isAttacking && rollTimer <= 0)
-            StartCoroutine(Roll());
+            wantsToRoll = true;
         if (Input.GetKeyDown(KeyCode.Space) && !isAttacking)
             StartCoroutine(SwordAttackCoroutine());
         else if (Input.GetKeyDown(KeyCode.LeftShift) && !isAttacking && ammoCount > 0)
@@ -185,12 +218,11 @@ public class Player : StatEntity, IDamageable
     // Moves the player based on current inputs
     private void MoveAndRotate()
     {
-        // Saves the last non-stationary movement vector to allow rolling from a stand-still
-        if (input != Vector2.zero)
-            rollInput = input;
-
         // Ends execution if standing still
-        if (input == Vector2.zero) return;
+        if (input == Vector2.zero) 
+            return;
+
+        rollInput = input;  // Saves the last non-stationary movement vector to allow rolling from a stand-still
 
         // Sets direction parameters for Sprite Animator
         myAnimator.SetFloat("moveX", input.x);
@@ -218,6 +250,7 @@ public class Player : StatEntity, IDamageable
         isRolling = true;
         rollTimer = rollCooldown;
         isInvulnerable = true;
+        mySprite.color = Color.magenta;
 
         float elapsed = 0f;
         float duration = rollMod / rollSpeed; // Total roll duration
@@ -242,11 +275,14 @@ public class Player : StatEntity, IDamageable
     }
 
     // Timer used to end invulnerability from rolling
-    private void InvulTimer() 
+    private void InvulTimer()
     {
         invulTimer -= Time.fixedDeltaTime;
         if (invulTimer <= 0f)
+        {
             isInvulnerable = false;
+            mySprite.color = Color.white;
+        }
     }
 
     // Positions and enables sword, calls its attack, then disables
@@ -352,7 +388,7 @@ public class Player : StatEntity, IDamageable
 
     // Called for direct sources of damage. (Enemy attacks/contact and harmful terrain)
     // Will not apply during roll's invulnerable frames and grants temporary intangibility after applying
-    public override IEnumerator TakeDirectDamage(float amount, string damageSource, DamageType damageType, Vector2 sourcePos)
+    public override IEnumerator TakeDirectDamage(float amount, string damageSource, DamageType damageType)
     {
         if (isInvulnerable)
         {
@@ -382,9 +418,10 @@ public class Player : StatEntity, IDamageable
         }
     }
 
-    public override void ReceiveKnockback(Vector2 sourcePos)
+    public void ReceiveKnockback(Vector2 sourcePos)
     {
-
+        Debug.Log("Attempting player knockback");
+        knockHandler.StartKnockback(sourcePos);
     }
 
     // Called for indirect sources of damage (Status effects)
@@ -442,7 +479,7 @@ public class Player : StatEntity, IDamageable
         }
     }
 
-    private void CheckComboStatus() 
+    private void CheckComboStatus()
     {
         StallTimer(ref comboTimer);
         if (comboTimer <= 0)
@@ -482,7 +519,7 @@ public class Player : StatEntity, IDamageable
 
         if (energyTotal < energyBarMax * 2)
             energyTotal += combo + (combo == 0 ? 1 : 0); // If the current combo length is 0 or 1, only adds a single segment, otherwise adds the current combo length
-            CheckEnergy();
+        CheckEnergy();
 
         scoreCurrent += scoreValue * (combo > 0 ? combo : 1); // Ternary operator (condition ? valueIfTrue : valueIfFalse)
 
@@ -535,5 +572,16 @@ public class Player : StatEntity, IDamageable
     public void RemoveAttackModifier(StatModifier modifier)
     {
         attackMods.Remove(modifier);
+    }
+
+    private void HandleKnockStart()
+    {
+        Debug.Log("Lockign input");
+        allowInput = false;
+    }
+
+    private void HandleKnockEnd()
+    {
+        allowInput = true;
     }
 }

@@ -38,6 +38,9 @@ public class Enemy_Behavior_Erratic : Enemy_Base
 
     protected override void Behavior_0()
     {
+        if (myState != EnemyState.Default || myBehaviorState != BehaviorState.Idle)
+            return;
+
         if (counter > 30)
         {
             // Pick a number between 0 and 7 to set direction, biasing toward the player => call BiasedDirection

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Enemy_Base : StatEntity, IDamageable
+public class Enemy_Base : StatEntity, IDamageable, IKnockable
 {
     public EnemyEvent enemyEvent;
 
@@ -21,13 +21,15 @@ public class Enemy_Base : StatEntity, IDamageable
     public bool isTargetInAtkRng = false;
     public bool isTargetSeen = false;
     [SerializeField] protected EnemyState myState = EnemyState.Default;
-    public float knockbackSpeed = 14f;
-    public float knockDistance = 4f;
-    private int activeKnockbacks = 0;
+    //private float knockbackSpeed = GlobalConstants.knockbackSpeed;
+    //private float knockDistance = GlobalConstants.knockMagnitudeModifier;
+    //private int activeKnockbacks = 0;
 
     [Header("Behavior")]
     public Direction direction = Direction.Up;
     public GameObject target;
+
+    private KnockHandler knockHandler;
 
     public override float moveSpeed => baseStats.moveSpeed;
 
@@ -53,6 +55,7 @@ public class Enemy_Base : StatEntity, IDamageable
             return;
         }
 
+        knockHandler = GetComponent<KnockHandler>();
         environmentLayer = LayerMask.GetMask("Environment-Solid");
         myBaseStats = Instantiate(baseStats);
         healthCurrent = myBaseStats.baseMaxHealth;
@@ -102,7 +105,7 @@ public class Enemy_Base : StatEntity, IDamageable
     }
 
     // Called by sword/bullet scripts
-    public override IEnumerator TakeDirectDamage(float amount, string damageSource, DamageType damageType, Vector2 sourcePos)
+    public override IEnumerator TakeDirectDamage(float amount, string damageSource, DamageType damageType)
     {
         healthCurrent -= amount;
         if (damageSource == "sword")
@@ -111,7 +114,7 @@ public class Enemy_Base : StatEntity, IDamageable
             interrupted = true;
         }
         Debug.Log($"{gameObject.name} took {amount} damage!");
-        ReceiveKnockback(sourcePos);
+        //ReceiveKnockback(sourcePos);
 
         if (healthCurrent <= 0 && mortal == true)
         {
@@ -144,81 +147,22 @@ public class Enemy_Base : StatEntity, IDamageable
     protected virtual void OnTriggerEnter2D(Collider2D other)
     {
         Debug.Log(" TOUCHING" + other.tag);
+        Debug.Log(other.name + "   " + target.name);
         if (other.CompareTag("Player"))
         {
             TouchedPlayer(other.gameObject);
             Debug.Log($"{gameObject.name} touched the player!");
+
+            IKnockable knockable = other.GetComponent<IKnockable>();
+            if (knockable != null)
+                knockable.ReceiveKnockback(this.gameObject.GetComponent<Rigidbody2D>().position);
         }
 
     }
 
-    public override void ReceiveKnockback(Vector2 sourcePos)
+    public void ReceiveKnockback(Vector2 sourcePos)
     {
-        StartCoroutine(KnockbackCoroutine(sourcePos));
-    }
-
-    private IEnumerator KnockbackCoroutine(Vector2 sourcePos)
-    {
-        activeKnockbacks++;
-        myState = EnemyState.Knockback;
-        Debug.Log("Knocking back!");
-        Vector2 knockDirection = (rb.position - sourcePos).normalized;
-        float remainingDistance = knockDistance;
-
-        while (remainingDistance > 0.01f)
-        {
-            // Step size per frame
-            float step = knockbackSpeed * Time.fixedDeltaTime;
-            if (step > remainingDistance)
-                step = remainingDistance;
-
-            // Look just ahead of the step
-            RaycastHit2D hit = Physics2D.Raycast(rb.position, knockDirection, step, LayerMask.GetMask("Environment-Solid"));
-            Debug.DrawRay(rb.position, knockDirection * step, Color.green, 0.1f);
-
-            if (hit.collider != null)
-            {
-                // Found a wall
-                Vector2 wallNormal = hit.normal;
-                float angle = Vector2.Angle(knockDirection, -wallNormal);
-
-                if (angle <= 60f) // pretty head-on
-                {
-                    // Stop dead
-                    rb.position = hit.point;
-                    break;
-                }
-                else
-                {
-                    // Slide along wall tangent
-                    knockDirection = Vector2.Perpendicular(wallNormal);
-
-                    // Pick the tangent that matches original motion
-                    if (Vector2.Dot(knockDirection, rb.position - sourcePos) < 0)
-                        knockDirection = -knockDirection;
-
-                    // Move to just before the wall contact
-                    rb.position = hit.point - knockDirection * 0.01f;
-                }
-            }
-            else
-            {
-                // Free move
-                rb.MovePosition(rb.position + knockDirection * step);
-                remainingDistance -= step;
-            }
-            yield return new WaitForFixedUpdate();
-        }
-
-        activeKnockbacks--;
-
-        yield return new WaitForSeconds(1f);
-
-        if (activeKnockbacks <= 0)
-        {
-            activeKnockbacks = 0;
-            myState = EnemyState.Default;
-        }
+        knockHandler.StartKnockback(sourcePos);
     }
 
     protected void Interrupt()
@@ -271,7 +215,9 @@ public class Enemy_Base : StatEntity, IDamageable
     {
         Player playerScript = player.GetComponent<Player>();
 
-        playerScript.StartCoroutine(playerScript.TakeDirectDamage(myBaseStats.contactDamage, myBaseStats.damageSource, myBaseStats.damageType, this.gameObject.GetComponent<Rigidbody2D>().position));
+        playerScript.StartCoroutine(playerScript.TakeDirectDamage(myBaseStats.contactDamage, myBaseStats.damageSource, myBaseStats.damageType));
     }
+
+    public void SetState(EnemyState state) => myState = state;
 
 }

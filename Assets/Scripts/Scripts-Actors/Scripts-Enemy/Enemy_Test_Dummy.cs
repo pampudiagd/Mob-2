@@ -18,8 +18,6 @@ public class Enemy_Test_Dummy : Enemy_Base
     private int moveAttempts = 0;
     private Vector3 targetTilePos => gridScanner.levelTilemap.WorldToCell(target.transform.position);
 
-    public bool isActing = false;
-
     // Start is called before the first frame update
     protected override void Start()
     {

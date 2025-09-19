@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7304616312266620603}
   - component: {fileID: 3308836308457497530}
   - component: {fileID: 5075955945764765468}
+  - component: {fileID: 5001179608751985733}
   m_Layer: 7
   m_Name: Enemy-Bat
   m_TagString: Enemy
@@ -105,8 +106,13 @@ MonoBehaviour:
   enemyEvent: {fileID: 11400000, guid: 97fe82375b6951948b804939f6e4868e, type: 2}
   baseStats: {fileID: 11400000, guid: 187cb453d6cabcc41a2029dbf7da548f, type: 2}
   mortal: 1
+  myBehaviorState: 0
+  isAttacking: 0
+  isTargetInAtkRng: 0
+  isTargetSeen: 0
+  myState: 0
   direction: 0
-  target: {fileID: 517106086533870053, guid: 8606681f522bb864e9852b1ce7065ada, type: 3}
+  target: {fileID: 0}
 --- !u!114 &7304616312266620603
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -114,13 +120,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3891584345715148725}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c7a6b725ba99c4e45832c493a6dbaa88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   effectEvent: {fileID: 11400000, guid: 4ae10aedabd31c34795c176124afcf4e, type: 2}
-  TestEffect: {fileID: 5002214749359290420, guid: 7a6fddc5e6d884f42b6b0e79868f7a00, type: 3}
+  TestEffect: {fileID: 0}
   TestPerk: {fileID: 0}
 --- !u!50 &3308836308457497530
 Rigidbody2D:
@@ -184,6 +190,18 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
+--- !u!114 &5001179608751985733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3891584345715148725}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76e9e901fb40be04aa16c2ee527d99de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8431861862774639449
 GameObject:
   m_ObjectHideFlags: 0
