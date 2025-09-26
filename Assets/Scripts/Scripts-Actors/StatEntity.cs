@@ -10,13 +10,16 @@ public abstract class StatEntity : MonoBehaviour, IDamageable
     
     public float healthCurrent;
 
+    public bool damageInvulnerable;
+    public virtual bool IsInvulnerable => damageInvulnerable;
+
     // Start is called before the first frame update
     void Start()
     {
         
     }
 
-    public abstract IEnumerator TakeDirectDamage(float amount, string damageSource, DamageType damageType);
+    public abstract IEnumerator TakeDirectDamage(float amount, string damageSource, DamageType damageType, Vector2 sourcePos);
 
     public abstract void TakePassiveDamage(float amount, DamageType damageType);
 

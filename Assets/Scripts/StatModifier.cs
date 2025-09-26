@@ -10,14 +10,25 @@ public enum ModifierType
     Divisive
 }
 
-public class StatModifier : MonoBehaviour
+public enum StatType
+{
+    Health,
+    Energy,
+    Attack,
+    Ammo,
+    Speed
+}
+
+public class StatModifier
 {
     public float value;
     public ModifierType type;
+    public StatType targetStat;
 
-    public StatModifier(float value, ModifierType type)
+    public StatModifier(float value, ModifierType type, StatType targetStat)
     {
         this.value = value;
         this.type = type;
+        this.targetStat = targetStat;
     }
 }

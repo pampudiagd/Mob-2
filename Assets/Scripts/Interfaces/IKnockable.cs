@@ -4,5 +4,7 @@ using UnityEngine;
 
 public interface IKnockable
 {
-    void ReceiveKnockback(Vector2 sourcePos);
+    //void ReceiveKnockback(Vector2 sourcePos);
+
+    //public bool GetInvulnerable();
 }

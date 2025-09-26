@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class IS_Freeze : InstanceStatus
 {
-    public override void Apply(IDamageable targetScript)
+    public override void Apply(StatEntity targetScript)
     {
         Debug.Log(targetScript);
     }

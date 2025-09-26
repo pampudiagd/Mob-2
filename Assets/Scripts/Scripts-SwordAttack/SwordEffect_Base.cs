@@ -38,10 +38,11 @@ public class SwordEffect_Base : MonoBehaviour
         Enemy_Base enemy = collision.GetComponent<Enemy_Base>();
         if (enemy != null)
         {
-            StartCoroutine(enemy.TakeDirectDamage(CalculateDamage(), "sword", myData.damageType));
-            IKnockable knockable = collision.GetComponent<IKnockable>();
-            if (knockable != null)
-                knockable.ReceiveKnockback(transform.parent.gameObject.GetComponent<Rigidbody2D>().position);
+            Debug.Log("Attempting to start coroutine");
+            enemy.StartCoroutine(enemy.TakeDirectDamage(CalculateDamage(), "sword", myData.damageType, transform.parent.gameObject.GetComponent<Rigidbody2D>().position));
+            //IKnockable knockable = collision.GetComponent<IKnockable>();
+            //if (knockable != null)
+            //    knockable.ReceiveKnockback(transform.parent.gameObject.GetComponent<Rigidbody2D>().position);
 
 
         }

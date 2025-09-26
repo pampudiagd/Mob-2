@@ -13,7 +13,7 @@ public class Enemy_Attack_Trigger_Zone : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("Inside attack trigger!");
+        //Debug.Log("Inside attack trigger!");
         if (other.CompareTag("Player") && !parentEnemy.isAttacking)
         {
             parentEnemy.OnAttackTriggered();
@@ -22,7 +22,7 @@ public class Enemy_Attack_Trigger_Zone : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        Debug.Log("Left attack trigger!");
+        //Debug.Log("Left attack trigger!");
         if (collision.CompareTag("Player"))
         {
             parentEnemy.OnPlayerOutRange();

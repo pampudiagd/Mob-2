@@ -20,9 +20,9 @@ public class KnockHandler : MonoBehaviour
         enemy = GetComponent<Enemy_Base>();
     }
 
-    public void StartKnockback(Vector2 sourcePos)
+    public IEnumerator StartKnockback(Vector2 sourcePos)
     {
-        StartCoroutine(KnockbackCoroutine(sourcePos));
+        yield return StartCoroutine(KnockbackCoroutine(sourcePos));
     }
 
     private IEnumerator KnockbackCoroutine(Vector2 sourcePos)
@@ -34,7 +34,7 @@ public class KnockHandler : MonoBehaviour
         Debug.Log("Knocking back!");
         Vector2 knockDirection = (rb.position - sourcePos).normalized;
         float remainingDistance = knockDistance;
-        int knockCount = 0;
+        //int knockCount = 0;
 
         while (remainingDistance > 0.01f)
         {
@@ -78,8 +78,8 @@ public class KnockHandler : MonoBehaviour
                 rb.MovePosition(rb.position + knockDirection * step);
                 remainingDistance -= step;
             }
-            knockCount++;
-            Debug.Log("knockback loops: " + knockCount);
+            //knockCount++;
+            //Debug.Log("knockback loops: " + knockCount);
             yield return new WaitForFixedUpdate();
         }
 
@@ -90,6 +90,7 @@ public class KnockHandler : MonoBehaviour
             enemy.SetState(EnemyState.Default);
         }
 
+        Debug.Log("Knockback Ended");
         OnKnockbackEnded?.Invoke();
 
     }

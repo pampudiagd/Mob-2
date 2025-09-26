@@ -9,7 +9,7 @@ public class CS_Poison : ContinuousStatus
     protected override void EffectTick()
     {
         print("Ticking");
-        statEntityScript.TakePassiveDamage(myDamage, DamageType.Poison);
+        modScript.TakePassiveDamage(myDamage, DamageType.Poison);
     }
 
     public override void RevertChanges()

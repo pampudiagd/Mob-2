@@ -203,13 +203,13 @@ public class Enemy_Test_Dummy : Enemy_Base
         if (myState != EnemyState.Default || moveRoutine != null)
             return;
 
-        // Rounds the target's position to the Vector3Int used by the tilemap, then sums own tilemap position with the vector between the two positions.
+        // Rounds the target's position to the Vector3Int used by the tilemap, then sums own tilemap position with the normalized vector between the two positions.
         // Then converts that to a Vector3Int, and finally gets the world coords of the center of that tile.
         Vector3 targetTile = gridScanner.levelTilemap.GetCellCenterWorld(Vector3Int.RoundToInt(myGridPos + (Vector3)NormalVectorToTarget(targetTilePos)));
 
-        Debug.Log("My pos: " + myGridPos);
-        Debug.Log("Target pos: " + gridScanner.levelTilemap.WorldToCell(target.transform.position));
-        Debug.Log("Normal vector: " + (Vector3)NormalVectorToTarget(targetTilePos));
+        //Debug.Log("My pos: " + myGridPos);
+        //Debug.Log("Target pos: " + gridScanner.levelTilemap.WorldToCell(target.transform.position));
+        //Debug.Log("Normal vector: " + (Vector3)NormalVectorToTarget(targetTilePos));
 
 
         moveRoutine = StartCoroutine(MoveToTileTargetting(targetTile));
@@ -304,7 +304,7 @@ public class Enemy_Test_Dummy : Enemy_Base
             for (int i = 0; i < 2; i++)
             {
                 yield return new WaitForSeconds(0.5f);
-                Debug.Log("Simulating attack " + i);
+                //Debug.Log("Simulating attack " + i);
             }
         }
         isAttacking = false;

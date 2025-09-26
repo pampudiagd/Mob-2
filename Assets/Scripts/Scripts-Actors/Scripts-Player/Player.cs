@@ -33,24 +33,37 @@ public class Player : StatEntity, IDamageable, IKnockable
     public int scoreTotal = 0;
     public int level = 1;
 
-    private List<StatModifier> healthMods = new List<StatModifier>();
-    private List<StatModifier> energyMods = new List<StatModifier>();
-    private List<StatModifier> attackMods = new List<StatModifier>();
-    private List<StatModifier> ammoMods = new List<StatModifier>();
-    private List<StatModifier> speedMods = new List<StatModifier>();
+    //private List<StatModifier> healthMods = new List<StatModifier>();
+    //private List<StatModifier> energyMods = new List<StatModifier>();
+    //private List<StatModifier> attackMods = new List<StatModifier>();
+    //private List<StatModifier> ammoMods = new List<StatModifier>();
+    //private List<StatModifier> speedMods = new List<StatModifier>();
 
-    public override float attack => CalculateStat(myBaseStats.basePower, attackMods);
-    public override float healthMax => CalculateStat(myBaseStats.baseMaxHealth, healthMods);
-    public int energyBarMax => (int)CalculateStat(myBaseStats.baseMaxEnergy, energyMods); // # of segments to fill single bar. Will be <= 20. Multiply by 2 to find max energy the player can hold
-    public float ammoMax => CalculateStat(myBaseStats.baseMaxAmmo, ammoMods);
-    public override float moveSpeed => CalculateStat(myBaseStats.baseSpeed, speedMods);
+    private Dictionary<StatType, List<StatModifier>> modifiers
+        = new()
+        {
+            { StatType.Health, new List<StatModifier>() },
+            { StatType.Energy, new List<StatModifier>() },
+            { StatType.Attack, new List<StatModifier>() },
+            { StatType.Ammo, new List<StatModifier>() },
+            { StatType.Speed, new List<StatModifier>() }
+        };
+
+
+    public override float attack => CalculateStat(myBaseStats.basePower, modifiers[StatType.Attack]);
+    public override float healthMax => CalculateStat(myBaseStats.baseMaxHealth, modifiers[StatType.Health]);
+    public int energyBarMax => (int)CalculateStat(myBaseStats.baseMaxEnergy, modifiers[StatType.Energy]); // # of segments to fill single bar. Will be <= 20. Multiply by 2 to find max energy the player can hold
+    public float ammoMax => CalculateStat(myBaseStats.baseMaxAmmo, modifiers[StatType.Ammo]);
+    public override float moveSpeed => CalculateStat(myBaseStats.baseSpeed, modifiers[StatType.Speed]);
 
     [Header("Bools")]
     public bool isAttacking = false;
     public bool isRolling = false;
-    public bool isInvulnerable = false;
+    public bool rollInvulnerable = false;
     public bool wantsToRoll = false;
     public bool allowInput = true;
+    public override bool IsInvulnerable => damageInvulnerable || rollInvulnerable;
+
 
     [Header("Timer Starting Values")]
     private float comboStart = 5; // Length of combo timer in seconds
@@ -104,7 +117,7 @@ public class Player : StatEntity, IDamageable, IKnockable
     // Start is called before the first frame update
     void Start()
     {
-        rollInput = new Vector2(1,0);
+        //rollInput = new Vector2(1,0);
 
         healthCurrent = myBaseStats.baseMaxHealth;
         moveSpeed = myBaseStats.baseSpeed;
@@ -135,7 +148,7 @@ public class Player : StatEntity, IDamageable, IKnockable
         }
 
         Debug.Log(mySwordData.swordName);
-        StartCoroutine(Roll());
+        //StartCoroutine(Roll());
     }
 
     void OnEnable()
@@ -172,7 +185,7 @@ public class Player : StatEntity, IDamageable, IKnockable
     // Occurs every 0.2 seconds (50 per second) (Independent of framerate)
     private void FixedUpdate()
     {
-        if (!allowInput) 
+        if (!allowInput)
             return;
 
         if (wantsToRoll)
@@ -184,7 +197,7 @@ public class Player : StatEntity, IDamageable, IKnockable
         if (!isRolling)
             MoveAndRotate();
 
-        if (isInvulnerable)
+        if (rollInvulnerable)
             InvulTimer();
     }
 
@@ -219,7 +232,7 @@ public class Player : StatEntity, IDamageable, IKnockable
     private void MoveAndRotate()
     {
         // Ends execution if standing still
-        if (input == Vector2.zero) 
+        if (input == Vector2.zero)
             return;
 
         rollInput = input;  // Saves the last non-stationary movement vector to allow rolling from a stand-still
@@ -249,7 +262,7 @@ public class Player : StatEntity, IDamageable, IKnockable
     {
         isRolling = true;
         rollTimer = rollCooldown;
-        isInvulnerable = true;
+        rollInvulnerable = true;
         mySprite.color = Color.magenta;
 
         float elapsed = 0f;
@@ -278,9 +291,9 @@ public class Player : StatEntity, IDamageable, IKnockable
     private void InvulTimer()
     {
         invulTimer -= Time.fixedDeltaTime;
-        if (invulTimer <= 0f)
+        if (invulTimer <= 0f && isRolling)
         {
-            isInvulnerable = false;
+            rollInvulnerable = false;
             mySprite.color = Color.white;
         }
     }
@@ -388,11 +401,12 @@ public class Player : StatEntity, IDamageable, IKnockable
 
     // Called for direct sources of damage. (Enemy attacks/contact and harmful terrain)
     // Will not apply during roll's invulnerable frames and grants temporary intangibility after applying
-    public override IEnumerator TakeDirectDamage(float amount, string damageSource, DamageType damageType)
+    public override IEnumerator TakeDirectDamage(float amount, string damageSource, DamageType damageType, Vector2 sourcePos)
     {
-        if (isInvulnerable)
+        Debug.Log("Am i invulnerable? " + IsInvulnerable);
+        if (IsInvulnerable)
         {
-            Debug.Log("Immune");
+            Debug.Log("Immune-------------------------------------------------");
             yield break;
         }
 
@@ -412,17 +426,24 @@ public class Player : StatEntity, IDamageable, IKnockable
         else
         {
             playerEvent.RaisePlayerDamaged();
-            isInvulnerable = true;
+            damageInvulnerable = true;
+
+            StartCoroutine(knockHandler.StartKnockback(sourcePos));
+
             yield return StartCoroutine(BlinkSprite());
-            isInvulnerable = false;
+            Debug.Log("AFTER BLINK SPTIRE %%%%%%%%%%%%%____________%%%%%%%");
+            damageInvulnerable = false;
         }
     }
 
-    public void ReceiveKnockback(Vector2 sourcePos)
-    {
-        Debug.Log("Attempting player knockback");
-        knockHandler.StartKnockback(sourcePos);
-    }
+    //public void ReceiveKnockback(Vector2 sourcePos)
+    //{
+    //    //if (isInvulnerable)
+    //    //    return;
+
+    //    Debug.Log("Attempting player knockback");
+    //    knockHandler.StartKnockback(sourcePos);
+    //}
 
     // Called for indirect sources of damage (Status effects)
     // Will apply regardless of rolling and does not grant intangibility after applying
@@ -448,6 +469,7 @@ public class Player : StatEntity, IDamageable, IKnockable
     {
         for (int i = 0; i < 5; i++)
         {
+            Debug.Log("PLAYER INVULNERABLEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
             mySprite.enabled = false;
             yield return new WaitForSeconds(0.2f);
             mySprite.enabled = true;
@@ -564,14 +586,17 @@ public class Player : StatEntity, IDamageable, IKnockable
         return result;
     }
 
-    public void AddAttackModifier(StatModifier modifier)
+    public void AddModifier(StatModifier modifier)
     {
-        attackMods.Add(modifier);
+        if (modifiers.ContainsKey(modifier.targetStat))
+            modifiers[modifier.targetStat].Add(modifier);
     }
 
-    public void RemoveAttackModifier(StatModifier modifier)
+    //     NEED TO RETHINK LATER (How do you know what StatModifier to remove???)
+    public void RemoveModifier(StatModifier modifier)
     {
-        attackMods.Remove(modifier);
+        if (modifiers.ContainsKey(modifier.targetStat))
+            modifiers[modifier.targetStat].Remove(modifier);
     }
 
     private void HandleKnockStart()

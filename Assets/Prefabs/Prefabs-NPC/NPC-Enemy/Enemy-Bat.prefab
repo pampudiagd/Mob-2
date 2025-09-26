@@ -103,6 +103,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthCurrent: 0
+  damageInvulnerable: 0
   enemyEvent: {fileID: 11400000, guid: 97fe82375b6951948b804939f6e4868e, type: 2}
   baseStats: {fileID: 11400000, guid: 187cb453d6cabcc41a2029dbf7da548f, type: 2}
   mortal: 1
@@ -113,6 +114,7 @@ MonoBehaviour:
   myState: 0
   direction: 0
   target: {fileID: 0}
+  mySpriteChild: {fileID: 8431861862774639449}
 --- !u!114 &7304616312266620603
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -202,6 +204,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76e9e901fb40be04aa16c2ee527d99de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  knockbackSpeed: 14
+  knockDistance: 4
 --- !u!1 &8431861862774639449
 GameObject:
   m_ObjectHideFlags: 0

@@ -11356,6 +11356,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4104552692134668358, guid: e4d54545be1178247ae9198ec3fc8a33, type: 3}
   m_PrefabInstance: {fileID: 664600270}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &502461201 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8372073395271153346, guid: de6408e3817a292448961d90a40aad1a, type: 3}
+  m_PrefabInstance: {fileID: 685414162}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -21207,6 +21212,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1231505325884043173, guid: de6408e3817a292448961d90a40aad1a, type: 3}
+      propertyPath: mySpriteChild
+      value: 
+      objectReference: {fileID: 502461201}
     - target: {fileID: 4317352699836281119, guid: de6408e3817a292448961d90a40aad1a, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -22089,6 +22098,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy-Bat
       objectReference: {fileID: 0}
+    - target: {fileID: 3891584345715148725, guid: 77fda29e8b0ea33429230a8b2d0c8245, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6468787755491487003, guid: 77fda29e8b0ea33429230a8b2d0c8245, type: 3}
       propertyPath: m_LocalPosition.x
       value: 7.93
@@ -22248,6 +22261,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5751435414539484030, guid: 8606681f522bb864e9852b1ce7065ada, type: 3}
+      propertyPath: TestPerk
+      value: 
+      objectReference: {fileID: 1920998330874568343, guid: d31c617eb4d69a24da8ef50f45a2e3e9, type: 3}
+    - target: {fileID: 5751435414539484030, guid: 8606681f522bb864e9852b1ce7065ada, type: 3}
       propertyPath: TestEffect
       value: 
       objectReference: {fileID: 0}
@@ -22258,6 +22275,10 @@ PrefabInstance:
     - target: {fileID: 6815881028792540169, guid: 8606681f522bb864e9852b1ce7065ada, type: 3}
       propertyPath: rollSpeed
       value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 6815881028792540169, guid: 8606681f522bb864e9852b1ce7065ada, type: 3}
+      propertyPath: isInvulnerable
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7447800864036624540, guid: 8606681f522bb864e9852b1ce7065ada, type: 3}
       propertyPath: m_CollisionDetection

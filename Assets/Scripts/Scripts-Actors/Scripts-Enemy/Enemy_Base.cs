@@ -37,6 +37,9 @@ public class Enemy_Base : StatEntity, IDamageable, IKnockable
 
     protected LayerMask environmentLayer;
 
+    private SpriteRenderer mySprite;
+    public GameObject mySpriteChild;
+
     protected enum BehaviorState
     {
         Idle,
@@ -66,6 +69,7 @@ public class Enemy_Base : StatEntity, IDamageable, IKnockable
     {
         gridScanner = FindObjectOfType<Grid>().GetComponent<GridScanner>();
         rb = GetComponent<Rigidbody2D>();
+        mySprite = mySpriteChild.GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
@@ -105,22 +109,43 @@ public class Enemy_Base : StatEntity, IDamageable, IKnockable
     }
 
     // Called by sword/bullet scripts
-    public override IEnumerator TakeDirectDamage(float amount, string damageSource, DamageType damageType)
+    public override IEnumerator TakeDirectDamage(float amount, string damageSource, DamageType damageType, Vector2 sourcePos)
     {
-        healthCurrent -= amount;
-        if (damageSource == "sword")
+        Debug.Log("Coroutine started");
+        try
         {
-            enemyEvent.RaiseEnemyHit();
-            interrupted = true;
-        }
-        Debug.Log($"{gameObject.name} took {amount} damage!");
-        //ReceiveKnockback(sourcePos);
+            if (IsInvulnerable)
+            {
+                Debug.Log("Am invulnerable");
+                yield break;
+            }
 
-        if (healthCurrent <= 0 && mortal == true)
-        {
-            Die();
+            damageInvulnerable = true;
+            StartCoroutine(BlinkSprite());
+            healthCurrent -= amount;
+            if (damageSource == "sword")
+            {
+                enemyEvent.RaiseEnemyHit();
+                interrupted = true;
+            }
+            Debug.Log($"{gameObject.name} took {amount} damage!");
+
+            if (knockHandler != null)
+                yield return StartCoroutine(knockHandler.StartKnockback(sourcePos));
+
+
+            if (healthCurrent <= 0 && mortal == true)
+            {
+                Die();
+            }
+
+            Debug.Log("After yield");
+            damageInvulnerable = false;
         }
-        yield return null;
+        finally
+        {
+            Debug.Log("Coroutine stopped early");
+        }
     }
 
     public override void TakePassiveDamage(float amount, DamageType damageType)
@@ -146,23 +171,20 @@ public class Enemy_Base : StatEntity, IDamageable, IKnockable
 
     protected virtual void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log(" TOUCHING" + other.tag);
-        Debug.Log(other.name + "   " + target.name);
+
+
+        // Rewrite for collisions with enemies as well!
+
+
+
+        //Debug.Log(" TOUCHING" + other.tag);
+        //Debug.Log(other.name + "   " + target.name);
         if (other.CompareTag("Player"))
         {
             TouchedPlayer(other.gameObject);
             Debug.Log($"{gameObject.name} touched the player!");
-
-            IKnockable knockable = other.GetComponent<IKnockable>();
-            if (knockable != null)
-                knockable.ReceiveKnockback(this.gameObject.GetComponent<Rigidbody2D>().position);
         }
 
-    }
-
-    public void ReceiveKnockback(Vector2 sourcePos)
-    {
-        knockHandler.StartKnockback(sourcePos);
     }
 
     protected void Interrupt()
@@ -170,30 +192,15 @@ public class Enemy_Base : StatEntity, IDamageable, IKnockable
         interrupted = true;
     }
 
-    //OLD Tile-based knockback
-    //public override void ReceiveKnockback(GameObject attacker)
-    //{
-    //    Debug.Log("Knocking back!");
-    //    Vector3 knockDirection = (transform.position - attacker.transform.position).normalized;
-    //    float knockForce = 20f;
-    //    Vector3 targetTile = transform.position + knockDirection * knockForce;
-    //    while ((transform.position - targetTile).sqrMagnitude > 0.001f)
-    //    {
-    //        transform.position = Vector3.MoveTowards(transform.position, targetTile, 10 * Time.deltaTime);
-    //    }
-    //}
-
-    // Handles what happens when directly touching the player. Can be overridden in derived classes for additional effects
-
     public virtual void OnPlayerDetected()
     {
         myBehaviorState = BehaviorState.Targeting;
-        Debug.Log("Begin Targetting Behavior");
+        //Debug.Log("Begin Targetting Behavior");
     }
 
     public virtual void OnPlayerLost()
     {
-        Debug.Log("LEFT DETECTION ZONE");
+        //Debug.Log("LEFT DETECTION ZONE");
         myBehaviorState = BehaviorState.Idle;
     }
 
@@ -207,7 +214,7 @@ public class Enemy_Base : StatEntity, IDamageable, IKnockable
 
     public virtual void OnPlayerOutRange()
     {
-        Debug.Log("Player left attack zone.");
+        //Debug.Log("Player left attack zone.");
         isTargetInAtkRng = false;
     }
 
@@ -215,9 +222,22 @@ public class Enemy_Base : StatEntity, IDamageable, IKnockable
     {
         Player playerScript = player.GetComponent<Player>();
 
-        playerScript.StartCoroutine(playerScript.TakeDirectDamage(myBaseStats.contactDamage, myBaseStats.damageSource, myBaseStats.damageType));
+        playerScript.StartCoroutine(playerScript.TakeDirectDamage(myBaseStats.contactDamage, myBaseStats.damageSource, myBaseStats.damageType, this.gameObject.GetComponent<Rigidbody2D>().position));
     }
 
     public void SetState(EnemyState state) => myState = state;
+
+    // Quickly enables/disables enemy's sprite
+    private IEnumerator BlinkSprite()
+    {
+        Debug.Log("Enemy INVULNERABLE");
+        while (damageInvulnerable)
+        {
+            mySprite.enabled = false;
+            yield return new WaitForSeconds(0.1f);
+            mySprite.enabled = true;
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
 
 }

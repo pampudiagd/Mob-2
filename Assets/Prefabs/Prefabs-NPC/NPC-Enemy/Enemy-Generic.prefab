@@ -103,12 +103,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthCurrent: 0
+  damageInvulnerable: 0
   enemyEvent: {fileID: 11400000, guid: 97fe82375b6951948b804939f6e4868e, type: 2}
   baseStats: {fileID: 11400000, guid: 03258f5c74f81554da979dfafa378515, type: 2}
   mortal: 1
-  velocity: {x: 0, y: 0}
+  myBehaviorState: 0
+  isAttacking: 0
+  isTargetInAtkRng: 0
+  isTargetSeen: 0
+  myState: 0
   direction: 5
   target: {fileID: 517106086533870053, guid: 8606681f522bb864e9852b1ce7065ada, type: 3}
+  mySpriteChild: {fileID: 8372073395271153346}
 --- !u!114 &4317352699836281119
 MonoBehaviour:
   m_ObjectHideFlags: 0

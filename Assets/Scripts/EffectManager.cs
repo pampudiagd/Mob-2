@@ -37,7 +37,7 @@ public class EffectManager : MonoBehaviour
     {
         var status = Instantiate(statusPrefab, gameObject.transform).GetComponent<StatusEffect>();
 
-        status.Apply(GetComponent<IDamageable>());
+        status.Apply(GetComponent<StatEntity>());
 
         Debug.Log("Status: " + status);
         statusEffects.Add(status);
@@ -54,7 +54,7 @@ public class EffectManager : MonoBehaviour
     {
         var perk = Instantiate(perkPrefab, gameObject.transform).GetComponent<PerkEffect>();
 
-        perk.Apply(GetComponent<IDamageable>());
+        perk.Apply(GetComponent<StatEntity>());
 
         perkEffects.Add(perk);
     }

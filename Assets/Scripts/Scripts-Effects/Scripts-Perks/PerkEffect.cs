@@ -8,7 +8,7 @@ public abstract class PerkEffect : Effect
 
     protected Player playerScript;
 
-    public override void Apply(IDamageable targetScript)
+    public override void Apply(StatEntity targetScript)
     {
         base.Apply(targetScript);
         playerScript = modScript as Player; // This is done here instead of parent class since perks will only be applied to the player
