@@ -207,11 +207,6 @@ public class Enemy_Test_Dummy : Enemy_Base
         // Then converts that to a Vector3Int, and finally gets the world coords of the center of that tile.
         Vector3 targetTile = gridScanner.levelTilemap.GetCellCenterWorld(Vector3Int.RoundToInt(myGridPos + (Vector3)NormalVectorToTarget(targetTilePos)));
 
-        //Debug.Log("My pos: " + myGridPos);
-        //Debug.Log("Target pos: " + gridScanner.levelTilemap.WorldToCell(target.transform.position));
-        //Debug.Log("Normal vector: " + (Vector3)NormalVectorToTarget(targetTilePos));
-
-
         moveRoutine = StartCoroutine(MoveToTileTargetting(targetTile));
     }
 

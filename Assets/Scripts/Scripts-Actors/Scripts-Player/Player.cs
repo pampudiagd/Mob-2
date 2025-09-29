@@ -405,10 +405,7 @@ public class Player : StatEntity, IDamageable, IKnockable
     {
         Debug.Log("Am i invulnerable? " + IsInvulnerable);
         if (IsInvulnerable)
-        {
-            Debug.Log("Immune-------------------------------------------------");
             yield break;
-        }
 
         healthCurrent -= amount * globalDamageMod;
         Debug.Log($"Player took {amount * globalDamageMod} direct damage.");
@@ -431,19 +428,9 @@ public class Player : StatEntity, IDamageable, IKnockable
             StartCoroutine(knockHandler.StartKnockback(sourcePos));
 
             yield return StartCoroutine(BlinkSprite());
-            Debug.Log("AFTER BLINK SPTIRE %%%%%%%%%%%%%____________%%%%%%%");
             damageInvulnerable = false;
         }
     }
-
-    //public void ReceiveKnockback(Vector2 sourcePos)
-    //{
-    //    //if (isInvulnerable)
-    //    //    return;
-
-    //    Debug.Log("Attempting player knockback");
-    //    knockHandler.StartKnockback(sourcePos);
-    //}
 
     // Called for indirect sources of damage (Status effects)
     // Will apply regardless of rolling and does not grant intangibility after applying

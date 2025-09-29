@@ -22263,7 +22263,7 @@ PrefabInstance:
     - target: {fileID: 5751435414539484030, guid: 8606681f522bb864e9852b1ce7065ada, type: 3}
       propertyPath: TestPerk
       value: 
-      objectReference: {fileID: 1920998330874568343, guid: d31c617eb4d69a24da8ef50f45a2e3e9, type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 5751435414539484030, guid: 8606681f522bb864e9852b1ce7065ada, type: 3}
       propertyPath: TestEffect
       value: 

@@ -63,6 +63,8 @@ public class Enemy_Base : StatEntity, IDamageable, IKnockable
         myBaseStats = Instantiate(baseStats);
         healthCurrent = myBaseStats.baseMaxHealth;
 
+        allowTriggerCheck = true;
+
     }
 
     protected virtual void Start()
@@ -169,7 +171,7 @@ public class Enemy_Base : StatEntity, IDamageable, IKnockable
         Destroy(gameObject);
     }
 
-    protected virtual void OnTriggerEnter2D(Collider2D other)
+    protected virtual void OnTriggerStay2D(Collider2D other)
     {
 
 
@@ -181,7 +183,7 @@ public class Enemy_Base : StatEntity, IDamageable, IKnockable
         //Debug.Log(other.name + "   " + target.name);
         if (other.CompareTag("Player"))
         {
-            TouchedPlayer(other.gameObject);
+            StartCoroutine(TouchedPlayer(other.gameObject));
             Debug.Log($"{gameObject.name} touched the player!");
         }
 
@@ -218,11 +220,18 @@ public class Enemy_Base : StatEntity, IDamageable, IKnockable
         isTargetInAtkRng = false;
     }
 
-    protected virtual void TouchedPlayer(GameObject player)
+    protected virtual IEnumerator TouchedPlayer(GameObject player)
     {
+        if (!allowTriggerCheck)
+            yield break;
+
+        allowTriggerCheck = false;
         Player playerScript = player.GetComponent<Player>();
 
-        playerScript.StartCoroutine(playerScript.TakeDirectDamage(myBaseStats.contactDamage, myBaseStats.damageSource, myBaseStats.damageType, this.gameObject.GetComponent<Rigidbody2D>().position));
+        yield return playerScript.StartCoroutine(playerScript.TakeDirectDamage(myBaseStats.contactDamage, myBaseStats.damageSource, myBaseStats.damageType, this.gameObject.GetComponent<Rigidbody2D>().position));
+
+        // new WaitForSeconds(0.05f);
+        allowTriggerCheck = true;
     }
 
     public void SetState(EnemyState state) => myState = state;

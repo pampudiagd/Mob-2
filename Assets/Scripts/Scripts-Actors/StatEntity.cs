@@ -10,6 +10,8 @@ public abstract class StatEntity : MonoBehaviour, IDamageable
     
     public float healthCurrent;
 
+    protected bool allowTriggerCheck;
+
     public bool damageInvulnerable;
     public virtual bool IsInvulnerable => damageInvulnerable;
 
