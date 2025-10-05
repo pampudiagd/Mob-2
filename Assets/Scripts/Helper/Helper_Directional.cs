@@ -38,7 +38,6 @@ public static class Helper_Directional
         };
     }
 
-
     public static Direction RandomCardinalDirection()
     {
         return UnityEngine.Random.Range(0, 4) switch
@@ -105,5 +104,69 @@ public static class Helper_Directional
 
         // Fallback
         return Vector2.right;
+    }
+
+    // Returns the 8-directional normal vector pointing to the targetPos
+    public static Vector2 VectorToTargetOctilinear(Vector3 targetPos, Vector3 myGridPos)
+    {
+        // Convert targetPos to a Vector2
+        Vector2 targetGridPos = (Vector2)targetPos;
+        Vector2 normalVector = Vector2.zero;
+
+        // Check x and y relations
+        // Switch statement
+        switch (myGridPos.x.CompareTo((int)targetGridPos.x))
+        {
+            case < 0:
+                normalVector = Vector2.right;
+                break;
+            case 0:
+                normalVector = Vector2.zero;
+                break;
+            case > 0:
+                normalVector = Vector2.left;
+                break;
+        }
+
+        switch (myGridPos.y.CompareTo((int)targetGridPos.y))
+        {
+            case < 0:
+                normalVector += Vector2.up;
+                break;
+            case 0:
+                normalVector += Vector2.zero;
+                break;
+            case > 0:
+                normalVector += Vector2.down;
+                break;
+        }
+
+        return normalVector;
+    }
+
+    // Returns the 4-directional normal vector pointing to the targetPos
+    public static Vector2 VectorToTargetCardinal(Vector3 targetPos, Vector3 myGridPos, float threshold = 0.1f)
+    {
+        // Convert targetPos to a Vector2
+        Vector2 normalVector = Vector2.zero;
+        Vector2 delta = targetPos - myGridPos;
+
+        // Ignore tiny differences that cause flicker
+        if (Mathf.Abs(delta.x) > Mathf.Abs(delta.y))
+        {
+            if (delta.x > threshold)
+                normalVector = Vector2.right;
+            else if (delta.x < -threshold)
+                normalVector = Vector2.left;
+        }
+        else
+        {
+            if (delta.y > threshold)
+                normalVector = Vector2.up;
+            else if (delta.y < -threshold)
+                normalVector = Vector2.down;
+        }
+
+        return normalVector;
     }
 }

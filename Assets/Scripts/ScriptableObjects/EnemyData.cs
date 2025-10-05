@@ -5,10 +5,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "NewEnemyStats", menuName = "Enemy/Stats")]
 public class EnemyData : CharacterData
 {
-    public float contactDamage = 1f;
-    public float attackDamage = 2f;
-    public int moveSpeed = 1;
-
     public int pointValue = 10;
 
     public string damageSource;

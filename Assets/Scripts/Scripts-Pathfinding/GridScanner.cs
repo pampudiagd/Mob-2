@@ -5,21 +5,27 @@ using UnityEngine.Tilemaps;
 
 // Sourced from ChatGPT because I hate pathfinding algorithms
 public class GridScanner : MonoBehaviour
-{
-    [HideInInspector]
-    public Tilemap levelTilemap; // The tile layer
+{ 
+    [SerializeField] private Tilemap levelTilemap; // The tile layer
+    public Tilemap LevelTilemap => levelTilemap;
 
     [Tooltip("Insert ALL tiles that can be walked on!")]
     public List<TileBase> walkableTiles; // All tiles that can be walked on
 
-    private Dictionary<Vector2Int, Node> grid = new(); // Stores all the scanned tiles
+    private Dictionary<Vector2Int, Node> grid = new(); // Holds all the scanned tiles
 
     void Start()
     {
-        levelTilemap = GetComponentInChildren<Tilemap>();
+        if (levelTilemap == null)
+        {
+            Debug.LogError("LevelTilemap not assigned in GridScanner!");
+            return;
+        }
+
         ScanTilemap(); // Automatically run on scene start
     }
 
+    // Looks through the whole tilemap and stores each tile in the Dictionary grid
     void ScanTilemap()
     {
         BoundsInt bounds = levelTilemap.cellBounds; // The full rectangular area of the tilemap

@@ -6,7 +6,6 @@ using System;
 public class KnockHandler : MonoBehaviour
 {
     private Rigidbody2D rb;
-    private Enemy_Base enemy;
 
     [SerializeField] private float knockbackSpeed = GlobalConstants.knockbackSpeed;
     [SerializeField] private float knockDistance = GlobalConstants.knockMagnitudeModifier;
@@ -17,7 +16,6 @@ public class KnockHandler : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        enemy = GetComponent<Enemy_Base>();
     }
 
     public IEnumerator StartKnockback(Vector2 sourcePos)
@@ -29,9 +27,6 @@ public class KnockHandler : MonoBehaviour
     {
         OnKnockbackStarted?.Invoke();
 
-        if (enemy != null)
-           enemy.SetState(EnemyState.Knockback);
-        Debug.Log("Knocking back!");
         Vector2 knockDirection = (rb.position - sourcePos).normalized;
         float remainingDistance = knockDistance;
         //int knockCount = 0;
@@ -84,11 +79,6 @@ public class KnockHandler : MonoBehaviour
         }
 
         yield return new WaitForSeconds(0.2f);
-
-        if (enemy != null)
-        {
-            enemy.SetState(EnemyState.Default);
-        }
 
         Debug.Log("Knockback Ended");
         OnKnockbackEnded?.Invoke();

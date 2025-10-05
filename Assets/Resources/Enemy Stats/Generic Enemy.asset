@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: Generic Enemy
   m_EditorClassIdentifier: 
   baseMaxHealth: 3
-  basePower: 1
-  baseSpeed: 2
-  contactDamage: 1
-  attackDamage: 2
+  basePower: 2
+  baseSpeed: 1
+  pointValue: 10
   damageSource: Sword
-  damageType: Normal
+  damageType: 0
   mortal: 1
+  canFly: 0
   deathEffect: {fileID: 0}
   hitEffect: {fileID: 0}

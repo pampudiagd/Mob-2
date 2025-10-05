@@ -9,14 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21440f6c405b17141889ac43ee33cb74, type: 3}
-  m_Name: PlayerStats
+  m_Script: {fileID: 11500000, guid: c10a6aa2017be97498abe0673687a208, type: 3}
+  m_Name: Slime_Small
   m_EditorClassIdentifier: 
-  baseMaxHealth: 40
-  basePower: 5
-  baseSpeed: 7
-  baseMaxAmmo: 8
-  BaseRollSpeed: 40
-  baseRollInvulWindow: 0.085
-  baseMaxEnergy: 20
-  baseLives: 0
+  baseMaxHealth: 10
+  basePower: 2
+  baseSpeed: 1
+  pointValue: 10
+  damageSource: 
+  damageType: 0
+  mortal: 1
+  canFly: 0
+  deathEffect: {fileID: 0}
+  hitEffect: {fileID: 0}

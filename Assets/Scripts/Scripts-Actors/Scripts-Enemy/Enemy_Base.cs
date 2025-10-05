@@ -15,15 +15,11 @@ public class Enemy_Base : StatEntity, IDamageable, IKnockable
     [SerializeField] protected BehaviorState myBehaviorState = BehaviorState.Idle;
 
     protected Rigidbody2D rb;
-    protected GridScanner gridScanner;
-    protected bool interrupted;
+    protected bool interrupted = false;
     public bool isAttacking = false;
     public bool isTargetInAtkRng = false;
     public bool isTargetSeen = false;
     [SerializeField] protected EnemyState myState = EnemyState.Default;
-    //private float knockbackSpeed = GlobalConstants.knockbackSpeed;
-    //private float knockDistance = GlobalConstants.knockMagnitudeModifier;
-    //private int activeKnockbacks = 0;
 
     [Header("Behavior")]
     public Direction direction = Direction.Up;
@@ -31,9 +27,9 @@ public class Enemy_Base : StatEntity, IDamageable, IKnockable
 
     private KnockHandler knockHandler;
 
-    public override float moveSpeed => baseStats.moveSpeed;
+    public override float moveSpeed => baseStats.baseSpeed;
 
-    protected Vector3Int myGridPos => gridScanner.levelTilemap.WorldToCell(transform.position);
+    protected Vector3Int myGridPos => LevelManager.Instance.GridScanner.LevelTilemap.WorldToCell(transform.position);
 
     protected LayerMask environmentLayer;
 
@@ -65,11 +61,12 @@ public class Enemy_Base : StatEntity, IDamageable, IKnockable
 
         allowTriggerCheck = true;
 
+        knockHandler.OnKnockbackStarted += LockAction;
+        knockHandler.OnKnockbackEnded += UnlockAction;
     }
 
     protected virtual void Start()
     {
-        gridScanner = FindObjectOfType<Grid>().GetComponent<GridScanner>();
         rb = GetComponent<Rigidbody2D>();
         mySprite = mySpriteChild.GetComponent<SpriteRenderer>();
     }
@@ -78,6 +75,12 @@ public class Enemy_Base : StatEntity, IDamageable, IKnockable
     protected virtual void Update()
     {
 
+    }
+
+    void OnDisable()
+    {
+        knockHandler.OnKnockbackStarted -= LockAction;
+        knockHandler.OnKnockbackEnded -= UnlockAction;
     }
 
     // Override in Enemy_Behavior scripts
@@ -113,42 +116,33 @@ public class Enemy_Base : StatEntity, IDamageable, IKnockable
     // Called by sword/bullet scripts
     public override IEnumerator TakeDirectDamage(float amount, string damageSource, DamageType damageType, Vector2 sourcePos)
     {
-        Debug.Log("Coroutine started");
-        try
+        if (IsInvulnerable)
+            yield break;
+
+        damageInvulnerable = true;
+        StartCoroutine(BlinkSprite());
+        healthCurrent -= amount;
+        if (damageSource == "sword")
+            enemyEvent.RaiseEnemyHit();
+
+        Debug.Log($"{gameObject.name} took {amount} damage!");
+
+        if (knockHandler != null)
         {
-            if (IsInvulnerable)
-            {
-                Debug.Log("Am invulnerable");
-                yield break;
-            }
-
-            damageInvulnerable = true;
-            StartCoroutine(BlinkSprite());
-            healthCurrent -= amount;
-            if (damageSource == "sword")
-            {
-                enemyEvent.RaiseEnemyHit();
-                interrupted = true;
-            }
-            Debug.Log($"{gameObject.name} took {amount} damage!");
-
-            if (knockHandler != null)
-                yield return StartCoroutine(knockHandler.StartKnockback(sourcePos));
-
-
-            if (healthCurrent <= 0 && mortal == true)
-            {
-                Die();
-            }
-
-            Debug.Log("After yield");
-            damageInvulnerable = false;
+            SetState(EnemyState.Knockback);
+            yield return StartCoroutine(knockHandler.StartKnockback(sourcePos));
         }
-        finally
+
+        SetState(EnemyState.Default);
+
+        if (healthCurrent <= 0 && mortal == true)
         {
-            Debug.Log("Coroutine stopped early");
+            Die();
         }
+
+        damageInvulnerable = false;
     }
+
 
     public override void TakePassiveDamage(float amount, DamageType damageType)
     {
@@ -179,8 +173,6 @@ public class Enemy_Base : StatEntity, IDamageable, IKnockable
 
 
 
-        //Debug.Log(" TOUCHING" + other.tag);
-        //Debug.Log(other.name + "   " + target.name);
         if (other.CompareTag("Player"))
         {
             StartCoroutine(TouchedPlayer(other.gameObject));
@@ -189,20 +181,17 @@ public class Enemy_Base : StatEntity, IDamageable, IKnockable
 
     }
 
-    protected void Interrupt()
-    {
-        interrupted = true;
-    }
+    protected void LockAction() => interrupted = true;
+
+    protected void UnlockAction() => interrupted = false;
 
     public virtual void OnPlayerDetected()
     {
         myBehaviorState = BehaviorState.Targeting;
-        //Debug.Log("Begin Targetting Behavior");
     }
 
     public virtual void OnPlayerLost()
     {
-        //Debug.Log("LEFT DETECTION ZONE");
         myBehaviorState = BehaviorState.Idle;
     }
 
@@ -216,7 +205,6 @@ public class Enemy_Base : StatEntity, IDamageable, IKnockable
 
     public virtual void OnPlayerOutRange()
     {
-        //Debug.Log("Player left attack zone.");
         isTargetInAtkRng = false;
     }
 
@@ -228,9 +216,8 @@ public class Enemy_Base : StatEntity, IDamageable, IKnockable
         allowTriggerCheck = false;
         Player playerScript = player.GetComponent<Player>();
 
-        yield return playerScript.StartCoroutine(playerScript.TakeDirectDamage(myBaseStats.contactDamage, myBaseStats.damageSource, myBaseStats.damageType, this.gameObject.GetComponent<Rigidbody2D>().position));
+        yield return playerScript.StartCoroutine(playerScript.TakeDirectDamage(myBaseStats.basePower / 2, myBaseStats.damageSource, myBaseStats.damageType, this.gameObject.GetComponent<Rigidbody2D>().position));
 
-        // new WaitForSeconds(0.05f);
         allowTriggerCheck = true;
     }
 
@@ -239,7 +226,6 @@ public class Enemy_Base : StatEntity, IDamageable, IKnockable
     // Quickly enables/disables enemy's sprite
     private IEnumerator BlinkSprite()
     {
-        Debug.Log("Enemy INVULNERABLE");
         while (damageInvulnerable)
         {
             mySprite.enabled = false;

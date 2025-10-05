@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 7447800864036624540}
   - component: {fileID: 3241985309537415565}
   - component: {fileID: 7941778293752796823}
+  - component: {fileID: 6443362674170554522}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -104,11 +105,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthCurrent: 0
+  damageInvulnerable: 0
   myBaseStats: {fileID: 11400000, guid: f1fe829eb322a7e47a920b3d38aa7852, type: 2}
   ammoCount: 4
   ammoCharge: 0
   rollMod: 5
-  rollSpeed: 40
+  rollSpeed: 30
   lives: 0
   globalDamageMod: 1
   energyCurrentBarValue: 0
@@ -120,7 +122,9 @@ MonoBehaviour:
   level: 1
   isAttacking: 0
   isRolling: 0
-  isInvulnerable: 0
+  rollInvulnerable: 0
+  wantsToRoll: 0
+  allowInput: 1
   comboTimer: 0
   moveTimer: 0
   rollTimer: 0
@@ -145,8 +149,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   effectEvent: {fileID: 11400000, guid: 4ae10aedabd31c34795c176124afcf4e, type: 2}
-  TestEffect: {fileID: 5002214749359290420, guid: 7a6fddc5e6d884f42b6b0e79868f7a00, type: 3}
-  TestPerk: {fileID: 1613832542203076259, guid: 5111c48713fd1a147a46279a092dab06, type: 3}
+  TestEffect: {fileID: 0}
+  TestPerk: {fileID: 0}
 --- !u!50 &7447800864036624540
 Rigidbody2D:
   serializedVersion: 4
@@ -243,7 +247,21 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.45
+--- !u!114 &6443362674170554522
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 517106086533870053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76e9e901fb40be04aa16c2ee527d99de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  knockbackSpeed: 14
+  knockDistance: 4
 --- !u!1 &6490405226265362052
 GameObject:
   m_ObjectHideFlags: 0

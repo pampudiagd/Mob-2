@@ -13,11 +13,8 @@ MonoBehaviour:
   m_Name: Test Dummy
   m_EditorClassIdentifier: 
   baseMaxHealth: 100
-  basePower: 2
-  baseSpeed: 2
-  contactDamage: 2
-  attackDamage: 2
-  moveSpeed: 4
+  basePower: 4
+  baseSpeed: 4
   pointValue: 2
   damageSource: Sword
   damageType: 0

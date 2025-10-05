@@ -5,18 +5,29 @@ using UnityEngine.Tilemaps;
 
 public class LevelManager : MonoBehaviour
 {
-    public Tilemap tileMap;
     public IGridNav gridNav;
+
+    public static LevelManager Instance { get; private set; }
+    public GridScanner GridScanner { get; private set; }
 
     // Start is called before the first frame update
     void Awake()
     {
-        IGridNav gridNav = gameObject.AddComponent<TilemapNav>();
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        GridScanner = GetComponentInChildren<GridScanner>();
+
+
+        gridNav = gameObject.AddComponent<TilemapNav>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

@@ -14,10 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseMaxHealth: 60
   basePower: 2
-  baseSpeed: 2
-  contactDamage: 1
-  attackDamage: 2
-  moveSpeed: 1
+  baseSpeed: 1
   pointValue: 10
   damageSource: Sword
   damageType: 0

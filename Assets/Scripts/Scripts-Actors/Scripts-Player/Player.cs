@@ -33,12 +33,6 @@ public class Player : StatEntity, IDamageable, IKnockable
     public int scoreTotal = 0;
     public int level = 1;
 
-    //private List<StatModifier> healthMods = new List<StatModifier>();
-    //private List<StatModifier> energyMods = new List<StatModifier>();
-    //private List<StatModifier> attackMods = new List<StatModifier>();
-    //private List<StatModifier> ammoMods = new List<StatModifier>();
-    //private List<StatModifier> speedMods = new List<StatModifier>();
-
     private Dictionary<StatType, List<StatModifier>> modifiers
         = new()
         {
@@ -85,7 +79,6 @@ public class Player : StatEntity, IDamageable, IKnockable
     public GunData myGunData; // Determines and holds the data of the current gun
     private GameObject myGunObject; // Current gun object for handling gun's unique effects/bullets, informed by GunData
 
-    public Grid testGrid;
     private SpriteRenderer mySprite;
     public GameObject mySpriteChild;
     public CircleCollider2D hurtBox; // Component that detects collisions with damage-sources
@@ -106,7 +99,6 @@ public class Player : StatEntity, IDamageable, IKnockable
     HeartsVisual heartsVisualCS;
     AmmoVisual ammoVisualCS;
 
-
     private void Awake()
     {
         knockHandler = gameObject.GetComponent<KnockHandler>();
@@ -117,8 +109,6 @@ public class Player : StatEntity, IDamageable, IKnockable
     // Start is called before the first frame update
     void Start()
     {
-        //rollInput = new Vector2(1,0);
-
         healthCurrent = myBaseStats.baseMaxHealth;
         moveSpeed = myBaseStats.baseSpeed;
         rollSpeed = myBaseStats.BaseRollSpeed;
@@ -127,7 +117,6 @@ public class Player : StatEntity, IDamageable, IKnockable
         mySprite = mySpriteChild.GetComponent<SpriteRenderer>();
         myAnimator = mySprite.GetComponent<Animator>();
 
-        //hurtBox = GetComponent<CircleCollider2D>();
         rb = GetComponent<Rigidbody2D>();
 
         EquipSword(Resources.Load<SwordData>("Sword Stats/Ice Sword")); // Grabs sword from filepath and instantiates its related object
@@ -146,9 +135,6 @@ public class Player : StatEntity, IDamageable, IKnockable
         {
             ammoVisualCS = ammoVisualObject.GetComponent<AmmoVisual>(); //now we can reference AmmoVisual.cs
         }
-
-        Debug.Log(mySwordData.swordName);
-        //StartCoroutine(Roll());
     }
 
     void OnEnable()
@@ -204,7 +190,6 @@ public class Player : StatEntity, IDamageable, IKnockable
     private void LateUpdate()
     {
         mySpriteChild.transform.rotation = Quaternion.identity;
-        //("Player grid position is: " + testGrid.WorldToCell(transform.position));
     }
 
     // Takes the player's input and calls methods/stores it
@@ -306,14 +291,14 @@ public class Player : StatEntity, IDamageable, IKnockable
 
         mySwordObject.transform.position = transform.position + transform.up;
         mySwordObject.transform.rotation = transform.rotation;
-        mySwordObject.gameObject.SetActive(true);
+        mySwordObject.SetActive(true);
         mySwordObject.GetComponent<BoxCollider2D>().enabled = true;
 
         // Call sword effects here
 
         yield return new WaitForSeconds(0.2f);
 
-        mySwordObject.gameObject.SetActive(false);
+        mySwordObject.SetActive(false);
         mySwordObject.GetComponent<BoxCollider2D>().enabled = false;
 
         isAttacking = false;
@@ -335,13 +320,13 @@ public class Player : StatEntity, IDamageable, IKnockable
 
         myGunObject.transform.position = transform.position + transform.up;
         myGunObject.transform.rotation = transform.rotation;
-        myGunObject.gameObject.SetActive(true);
+        myGunObject.SetActive(true);
 
         // Call gun effects here
 
         yield return new WaitForSeconds(0.2f);
 
-        myGunObject.gameObject.SetActive(false);
+        myGunObject.SetActive(false);
 
         isAttacking = false;
     }
@@ -368,7 +353,7 @@ public class Player : StatEntity, IDamageable, IKnockable
         if (sword != null)
             sword.Initialize(mySwordData, this);
 
-        mySwordObject.gameObject.SetActive(false);
+        mySwordObject.SetActive(false);
     }
 
     // Instantiate and prepare gun
@@ -386,7 +371,7 @@ public class Player : StatEntity, IDamageable, IKnockable
         if (gun != null)
             gun.Initialize(myGunData, this);
 
-        myGunObject.gameObject.SetActive(false);
+        myGunObject.SetActive(false);
     }
 
     public void OnTriggerEnter2D(Collider2D collision)
@@ -395,15 +380,12 @@ public class Player : StatEntity, IDamageable, IKnockable
         {
             Debug.Log("Player collided with enemy!");
         }
-        //else if (collision.CompareTag("Wall"))
-        //    Debug.Log("TOUCHED TILEMAP");
     }
 
     // Called for direct sources of damage. (Enemy attacks/contact and harmful terrain)
     // Will not apply during roll's invulnerable frames and grants temporary intangibility after applying
     public override IEnumerator TakeDirectDamage(float amount, string damageSource, DamageType damageType, Vector2 sourcePos)
     {
-        Debug.Log("Am i invulnerable? " + IsInvulnerable);
         if (IsInvulnerable)
             yield break;
 
@@ -456,7 +438,6 @@ public class Player : StatEntity, IDamageable, IKnockable
     {
         for (int i = 0; i < 5; i++)
         {
-            Debug.Log("PLAYER INVULNERABLEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
             mySprite.enabled = false;
             yield return new WaitForSeconds(0.2f);
             mySprite.enabled = true;
@@ -588,7 +569,6 @@ public class Player : StatEntity, IDamageable, IKnockable
 
     private void HandleKnockStart()
     {
-        Debug.Log("Lockign input");
         allowInput = false;
     }
 
