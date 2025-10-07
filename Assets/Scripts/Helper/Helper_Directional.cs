@@ -144,6 +144,9 @@ public static class Helper_Directional
         return normalVector;
     }
 
+    public static Vector2 VectorInverseTargetOctilinear(Vector3 targetPos, Vector3 myGridPos) => -VectorToTargetOctilinear(targetPos, myGridPos);
+
+
     // Returns the 4-directional normal vector pointing to the targetPos
     public static Vector2 VectorToTargetCardinal(Vector3 targetPos, Vector3 myGridPos, float threshold = 0.1f)
     {

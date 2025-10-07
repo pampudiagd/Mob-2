@@ -9,10 +9,6 @@ using UnityEngine.UIElements;
 public class Enemy_Test_Dummy : Enemy_Base
 {
     private IGridNav navigator;
-    //private AStarPathfinder pathfinder;
-    //private Vector2Int targetGridPos;
-    //private Behavior_Pathfind_To behaviorFollow;
-    //private Behavior_Idle_Move behavior_Idle;
     private Behavior_Idle_Wander mover;
     private Behavior_Pursuit_Simple pursuer;
     private Vector2 movementVector;
@@ -24,21 +20,17 @@ public class Enemy_Test_Dummy : Enemy_Base
     {
         base.Start();
 
-        //pathfinder = new AStarPathfinder(gridScanner);
-        //behaviorFollow = GetComponent<Behavior_Pathfind_To>();
         navigator = FindObjectOfType<LevelManager>().GetComponent<TilemapNav>();
         mover = GetComponent<Behavior_Idle_Wander>();
         pursuer = GetComponent<Behavior_Pursuit_Simple>();
 
-        //behavior_Idle = new Behavior_Idle_Move(navigator);
         SetMovementDirection();
     }
 
     // Update is called once per frame
     protected override void Update()
     {
-        //base.Update();
-        //if (Input.GetKeyDown(KeyCode.P))
+
     }
 
     private void FixedUpdate()
