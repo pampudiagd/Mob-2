@@ -6,6 +6,15 @@ public class Enemy_Detection_Zone : MonoBehaviour
 {
     private Enemy_Base parentEnemy;
 
+    private enum ZoneType
+    {
+        Inner,
+        Outer,
+        Both
+    }
+
+    [SerializeField] private ZoneType type;
+
     private void Awake()
     {
         parentEnemy = GetComponentInParent<Enemy_Base>();
@@ -13,7 +22,7 @@ public class Enemy_Detection_Zone : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && type != ZoneType.Outer)
         {
             parentEnemy.isTargetSeen = true;
 
@@ -24,7 +33,7 @@ public class Enemy_Detection_Zone : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
+        if (collision.CompareTag("Player") && type != ZoneType.Inner)
         {
             parentEnemy.isTargetSeen = false;
             parentEnemy.OnPlayerLost();

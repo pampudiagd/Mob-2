@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseMaxHealth: 10
   basePower: 2
-  baseSpeed: 1
+  baseSpeed: 6
   pointValue: 10
   damageSource: 
   damageType: 0

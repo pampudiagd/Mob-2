@@ -6,7 +6,7 @@ using UnityEngine;
 public class Enemy_Base : StatEntity, IDamageable, IKnockable
 {
     public EnemyEvent enemyEvent;
-
+    public Vector3Int GridCoord;
     [Header("Enemy Stats")]
     public EnemyData baseStats;
     protected EnemyData myBaseStats; // Clone of statSheet to allow modifying individual enemies' stats without affecting every single instance of an enemy
@@ -23,6 +23,8 @@ public class Enemy_Base : StatEntity, IDamageable, IKnockable
 
     [Header("Behavior")]
     public Direction direction = Direction.Up;
+    protected Vector2 movementVector; // Vector2D used by enemies who move in steps
+    //protected Vector3Int forwardTile;
     public GameObject target;
 
     private KnockHandler knockHandler;
@@ -60,13 +62,16 @@ public class Enemy_Base : StatEntity, IDamageable, IKnockable
         healthCurrent = myBaseStats.baseMaxHealth;
 
         allowTriggerCheck = true;
-
-        knockHandler.OnKnockbackStarted += LockAction;
-        knockHandler.OnKnockbackEnded += UnlockAction;
+        if (knockHandler != null)
+        {
+            knockHandler.OnKnockbackStarted += LockAction;
+            knockHandler.OnKnockbackEnded += UnlockAction;
+        }
     }
 
     protected virtual void Start()
     {
+        FaceDirection(direction);
         rb = GetComponent<Rigidbody2D>();
         mySprite = mySpriteChild.GetComponent<SpriteRenderer>();
     }
@@ -74,13 +79,16 @@ public class Enemy_Base : StatEntity, IDamageable, IKnockable
     // Update is called once per frame
     protected virtual void Update()
     {
-
+        GridCoord = LevelManager.Instance.GridScanner.LevelTilemap.WorldToCell(transform.position);
     }
 
     void OnDisable()
     {
-        knockHandler.OnKnockbackStarted -= LockAction;
-        knockHandler.OnKnockbackEnded -= UnlockAction;
+        if (knockHandler != null)
+        {
+            knockHandler.OnKnockbackStarted -= LockAction;
+            knockHandler.OnKnockbackEnded -= UnlockAction;
+        }
     }
 
     // Override in Enemy_Behavior scripts
@@ -102,15 +110,16 @@ public class Enemy_Base : StatEntity, IDamageable, IKnockable
     // Takes a Direction enum and rotates to face that direction
     protected void FaceDirection(Direction direction)
     {
-        Vector2 dir = Helper_Directional.DirectionToVector(direction);
-        float angle = (Mathf.Atan2(dir.y, dir.x)) * Mathf.Rad2Deg;
+        Vector2 movementVector = Helper_Directional.DirectionToVector(direction);
+        float angle = (Mathf.Atan2(movementVector.y, movementVector.x)) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0f, 0f, angle - 90);
     }
 
-    protected void FaceDirection(Vector2 direction)
+    protected void FaceDirection(Vector2 dirVector)
     {
-        float angle = (Mathf.Atan2(direction.y, direction.x)) * Mathf.Rad2Deg;
+        float angle = (Mathf.Atan2(dirVector.y, dirVector.x)) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0f, 0f, angle - 90);
+        direction = Helper_Directional.VectorToDirection(dirVector);
     }
 
     // Called by sword/bullet scripts
@@ -180,6 +189,10 @@ public class Enemy_Base : StatEntity, IDamageable, IKnockable
         }
 
     }
+    // Sets movementVector to a random vector.
+    protected void SetRandomCardinalVector() => movementVector = Helper_Directional.RandomCardinalVector();
+
+    protected void SetRandomOctilinearVector() => movementVector = Helper_Directional.RandomOctilinearVector();
 
     protected void LockAction() => interrupted = true;
 

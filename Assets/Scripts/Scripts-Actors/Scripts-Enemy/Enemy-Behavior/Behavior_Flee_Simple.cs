@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Behavior_Pursuit_Simple : MonoBehaviour
+public class Behavior_Flee_Simple : MonoBehaviour
 {
     private Rigidbody2D rb;
 
@@ -13,8 +13,10 @@ public class Behavior_Pursuit_Simple : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    public IEnumerator MoveToTileTargeting(Vector3 target, System.Func<bool> interruptCondition = null, float moveSpeed = 1f)
+    public IEnumerator MoveToTileTargeting(Vector3 target, System.Func<bool> interruptCondition = null, float moveSpeed = 1f, float minPause = 0f, float maxPause = 0f)
     {
+        yield return new WaitForSeconds(0.5f);
+
         int moveAttempts = 0;
         while ((rb.position - (Vector2)target).sqrMagnitude > 0.001f)
         {
@@ -33,7 +35,7 @@ public class Behavior_Pursuit_Simple : MonoBehaviour
 
         rb.MovePosition(target); // Snap to exact center
 
-        yield return null;
+        yield return new WaitForSeconds(UnityEngine.Random.Range(minPause, maxPause));
 
         moveRoutine = null;
     }

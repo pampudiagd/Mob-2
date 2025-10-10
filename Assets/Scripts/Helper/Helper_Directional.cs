@@ -62,6 +62,22 @@ public static class Helper_Directional
         });
     }
 
+    public static Vector2 RandomOctilinearVector()
+    {
+        return DirectionToVector(UnityEngine.Random.Range(0, 8) switch
+        {
+            0 => Direction.Up,
+            1 => Direction.Down,
+            2 => Direction.Left,
+            3 => Direction.Right,
+            4 => Direction.UpRight,
+            5 => Direction.UpLeft,
+            6 => Direction.DownRight,
+            7 => Direction.DownLeft,
+            _ => Direction.Up
+        });
+    }
+
     // Returns a random normalized direction vector, biased towards vectors that are closer to the vector to the target
     public static Vector2 BiasedDirection(Vector2 selfPosition, Vector2 targetPosition, float baseWeight = 0.5f, float biasStrength = 1.5f)
     {

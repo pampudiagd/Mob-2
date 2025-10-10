@@ -14,7 +14,6 @@ public class Enemy_Behavior_Erratic : Enemy_Base
     private float lowerSpeedMod;
     private float upperSpeedMod;
     private int counter = 0;
-    Vector2 currentDirection;
 
     // Start is called before the first frame update
     protected override void Start()
@@ -44,7 +43,7 @@ public class Enemy_Behavior_Erratic : Enemy_Base
         if (counter > 30)
         {
             // Pick a number between 0 and 7 to set direction, biasing toward the player => call BiasedDirection
-            currentDirection = Helper_Directional.BiasedDirection(
+            movementVector = Helper_Directional.BiasedDirection(
                 transform.position,
                 base.target.transform.position,
                 baseWeight,
@@ -58,7 +57,7 @@ public class Enemy_Behavior_Erratic : Enemy_Base
         }
 
         // Move in direction using effectiveSpeed
-        base.rb.MovePosition(rb.position + currentDirection * effectiveMoveSpeed * Time.fixedDeltaTime);
+        base.rb.MovePosition(rb.position + (effectiveMoveSpeed * Time.fixedDeltaTime * movementVector));
 
         counter++;
     }
