@@ -29,7 +29,7 @@ public class GunEffect_Base : MonoBehaviour
         damage = data.damage;
     }
 
-    private float CalculateDamage() => player.globalDamageMod * (player.attack + damage);
+    private float CalculateDamage() => GlobalConstants.globalDamageMod * (player.attack + damage);
 
     private void OnEnable()
     {
@@ -43,7 +43,7 @@ public class GunEffect_Base : MonoBehaviour
         tempBullet = Instantiate(myBullet, transform.position + transform.up, transform.rotation);
         Bullet_Base bullet = tempBullet.GetComponent<Bullet_Base>();
         if (bullet != null)
-            bullet.Initialize(myGunData, CalculateDamage());
+            bullet.Initialize(myGunData.damageType, CalculateDamage(), TargetTag.Enemy);
         Debug.Log("Bullet fired");
     }
 

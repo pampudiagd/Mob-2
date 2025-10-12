@@ -4,9 +4,12 @@ using UnityEngine;
 
 public class Bullet_Base : MonoBehaviour
 {
-    public float damage;
+    [SerializeField] private TargetTag hitTag;
+    [SerializeField] private float damage;
+    [SerializeField] private DamageType type;
+
     public float speed = 9;
-    private GunData gunData;
+    
     private Rigidbody2D rb;
 
     // Start is called before the first frame update
@@ -19,13 +22,14 @@ public class Bullet_Base : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
-    public virtual void Initialize(GunData data, float playerAttack)
+    public virtual void Initialize(DamageType damageType, float damageTotal, TargetTag tagType)
     {
-        gunData = data;
-        damage = playerAttack;
+        hitTag = tagType;
+        type = damageType;
+        damage = damageTotal;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -36,15 +40,18 @@ public class Bullet_Base : MonoBehaviour
             Destroy(gameObject);
         }
 
-        // Check if collision has Enemy_Base script attached, and damages if it does.    
-        Enemy_Base enemy = collision.GetComponent<Enemy_Base>();
-        if (enemy != null)
+        if (collision.gameObject.CompareTag(hitTag.ToString()))
         {
-            enemy.StartCoroutine(enemy.TakeDirectDamage(damage, "gun", gunData.damageType, this.gameObject.GetComponent<Rigidbody2D>().position));
-            //IKnockable knockable = collision.GetComponent<IKnockable>();
-            //if (knockable != null)
-            //    knockable.ReceiveKnockback(this.gameObject.GetComponent<Rigidbody2D>().position);
-            Destroy(gameObject);
+            print("MATCHED");
+            // Check if collision has Enemy_Base script attached, and damages if it does.    
+            IDamageable target = collision.GetComponent<IDamageable>();
+            if (target != null)
+            {
+                MonoBehaviour targetMB = target as MonoBehaviour;
+                if (targetMB != null)
+                    targetMB.StartCoroutine(target.TakeDirectDamage(damage, "gun", type, this.gameObject.GetComponent<Rigidbody2D>().position));
+                Destroy(gameObject);
+            }
         }
     }
 }

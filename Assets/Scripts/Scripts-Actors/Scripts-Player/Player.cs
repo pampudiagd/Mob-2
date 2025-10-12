@@ -5,7 +5,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using System;
 
-public class Player : StatEntity, IDamageable, IKnockable
+public class Player : StatEntity, IKnockable
 {
     [Header("Base Stats")]
     public PlayerData myBaseStats;
@@ -20,7 +20,7 @@ public class Player : StatEntity, IDamageable, IKnockable
 
     public int lives = 0;
 
-    public float globalDamageMod = 1; // Modifier for incoming/outgoing damage
+    //public float globalDamageMod = 1; // Modifier for incoming/outgoing damage
 
     [Header("Micro-Progression")]
     public int energyCurrentBarValue = 0; // Number of segments for the current bar. (if lvl 1 -> energyTotal) (if lvl 2 -> energyTotal - energyBarMax) (if lvl 3 -> special display)
@@ -389,8 +389,8 @@ public class Player : StatEntity, IDamageable, IKnockable
         if (IsInvulnerable)
             yield break;
 
-        healthCurrent -= amount * globalDamageMod;
-        Debug.Log($"Player took {amount * globalDamageMod} direct damage.");
+        healthCurrent -= amount * GlobalConstants.globalDamageMod;
+        Debug.Log($"Player took {amount * GlobalConstants.globalDamageMod} direct damage.");
 
         //Show health loss in UI
         if (heartsVisualCS != null)

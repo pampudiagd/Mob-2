@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SwordEffect_Base : MonoBehaviour
+public abstract class SwordEffect_Base : MonoBehaviour
 {
     public float damage;
     protected SwordData myData;
@@ -10,12 +10,6 @@ public class SwordEffect_Base : MonoBehaviour
 
     // Start is called before the first frame update
     void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
     {
         
     }
@@ -28,7 +22,7 @@ public class SwordEffect_Base : MonoBehaviour
         damage = data.damage;
     }
 
-    private float CalculateDamage() => player.globalDamageMod * (player.attack + damage);
+    private float CalculateDamage() => GlobalConstants.globalDamageMod * (player.attack + damage);
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -46,5 +40,21 @@ public class SwordEffect_Base : MonoBehaviour
 
 
         }
+    }
+
+    protected virtual void SwingEffect()
+    {
+
+    }
+
+    protected virtual void HitEffect()
+    {
+
+    }
+
+    // Callback function
+    protected virtual void KillEffect()
+    {
+
     }
 }

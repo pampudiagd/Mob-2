@@ -9,12 +9,12 @@ public class PP_DoubleDmg : PassivePerk
         // Casts the passed script into a MonoBehavior and also stores its GameObject
         base.Apply(targetScript);
 
-        playerScript.globalDamageMod = 2;
+        GlobalConstants.globalDamageMod = 2;
     }
 
     public override void RevertChanges()
     {
-        playerScript.globalDamageMod = 1;
+        GlobalConstants.globalDamageMod = 1;
 
         // Runs the overriden method, which broadcasts DeleteEffect
         base.RevertChanges();

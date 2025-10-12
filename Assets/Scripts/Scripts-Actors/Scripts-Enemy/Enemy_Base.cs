@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Enemy_Base : StatEntity, IDamageable, IKnockable
+public class Enemy_Base : StatEntity, IKnockable
 {
     public EnemyEvent enemyEvent;
     public Vector3Int GridCoord;
@@ -95,8 +95,10 @@ public class Enemy_Base : StatEntity, IDamageable, IKnockable
     // Should be the enemy's default behavior upon entering a room
     protected virtual void Behavior_0() { }
 
+    // Enemy's behavior upon player entering their detection zone (If they have one)
     protected virtual void Behavior_1() { }
 
+    // Enemy's behavior for directly attacking the player
     protected virtual IEnumerator Behavior_Attack()
     {
         yield return null;
