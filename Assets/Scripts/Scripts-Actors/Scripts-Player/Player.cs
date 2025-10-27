@@ -53,6 +53,7 @@ public class Player : StatEntity, IKnockable
     [Header("Bools")]
     public bool isAttacking = false;
     public bool isRolling = false;
+    public bool isFalling = false;
     public bool rollInvulnerable = false;
     public bool wantsToRoll = false;
     public bool allowInput = true;
@@ -87,6 +88,7 @@ public class Player : StatEntity, IKnockable
     private KnockHandler knockHandler;
     private Vector2 input;
     private Vector2 rollInput;
+    [SerializeField] private Vector3Int lastFloorTouched;
 
     [Header("Event Listeners")]
     public EnemyEvent enemyEvent;
@@ -102,8 +104,8 @@ public class Player : StatEntity, IKnockable
     private void Awake()
     {
         knockHandler = gameObject.GetComponent<KnockHandler>();
-        knockHandler.OnKnockbackStarted += HandleKnockStart;
-        knockHandler.OnKnockbackEnded += HandleKnockEnd;
+        knockHandler.OnKnockbackStarted += DisableInput;
+        knockHandler.OnKnockbackEnded += EnableInput;
     }
 
     // Start is called before the first frame update
@@ -147,12 +149,14 @@ public class Player : StatEntity, IKnockable
     {
         enemyEvent.onEnemyDeath.RemoveListener(OnEnemyDeath);
         enemyEvent.onEnemyHit.RemoveListener(OnEnemyHit);
-        knockHandler.OnKnockbackStarted -= HandleKnockStart;
-        knockHandler.OnKnockbackEnded -= HandleKnockEnd;
+        knockHandler.OnKnockbackStarted -= DisableInput;
+        knockHandler.OnKnockbackEnded -= EnableInput;
     }
 
     void Update()
     {
+        SetLatestFloorTouch();
+
         // Prevents movement/attacks during a roll's execution
         if (isRolling)
             return;
@@ -216,30 +220,33 @@ public class Player : StatEntity, IKnockable
     // Moves the player based on current inputs
     private void MoveAndRotate()
     {
-        // Ends execution if standing still
-        if (input == Vector2.zero)
-            return;
+        // Rotates the player if a directional input is pressed
+        if (input != Vector2.zero)
+        {
+            rollInput = input;  // Saves the last non-stationary movement vector to allow rolling from a stand-still
 
-        rollInput = input;  // Saves the last non-stationary movement vector to allow rolling from a stand-still
+            // Sets direction parameters for Sprite Animator
+            myAnimator.SetFloat("moveX", input.x);
+            myAnimator.SetFloat("moveY", input.y);
 
-        // Sets direction parameters for Sprite Animator
-        myAnimator.SetFloat("moveX", input.x);
-        myAnimator.SetFloat("moveY", input.y);
-
-        // Rotates towards 8 directions
-        float angle = Mathf.Atan2(input.y, input.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0, 0, angle - 90);
+            // Rotates towards 8 directions
+            float angle = Mathf.Atan2(input.y, input.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Euler(0, 0, angle - 90);
+        }
 
         // Prevents the movement step from running during an attack, allowing the player to only rotate like in GB Zelda
-        if (moveTimer > 0) return;
+        if (moveTimer > 0)
+            return;
 
         Vector2 moveInput = input;
         // Clamp to 8 directions only
         if (moveInput.x != 0 && moveInput.y != 0)
             moveInput *= 0.7071f; // Normalize diagonal movement (1/sqrt(2))
-        //print(moveInput);
-        Vector2 newPos = rb.position + moveInput * moveSpeed * Time.fixedDeltaTime;
-        rb.MovePosition(newPos);
+
+        Vector2 totalMove = (moveInput * moveSpeed + externalForce) * Time.fixedDeltaTime;
+        rb.MovePosition(rb.position + totalMove);
+
+        externalForce = Vector2.zero;
     }
 
     // Grants player a burst of speed while locking their movement and actions and granting a brief window of invulnerability
@@ -445,6 +452,42 @@ public class Player : StatEntity, IKnockable
         }
     }
 
+    // Sets lastFloorTouched to the current tile if IsWalkable returns true
+    private void SetLatestFloorTouch()
+    {
+        if (LevelManager.Instance.gridNav.IsWalkable(MyGridPos, false))
+            lastFloorTouched = LevelManager.Instance.LevelTilemap.WorldToCell(transform.position);
+    }
+
+    public override IEnumerator FallDown()
+    {
+        if (isFalling)
+            yield break;
+
+        isFalling = true;
+        print("START FAAAAAAAAAAAAAAAALLLLLLLLLLLLLLING");
+        // Trigger fall animation here!
+
+        DisableInput();
+        yield return StartCoroutine(PlaceholderFallAnimation());
+
+        print("RESPAWNED PLAYER");
+
+        transform.position = LevelManager.Instance.LevelTilemap.CellToWorld(lastFloorTouched) + new Vector3(0.5f,0.5f);
+        yield return new WaitForSeconds(2f);
+        isFalling = false;
+        EnableInput();
+    }
+
+    private IEnumerator PlaceholderFallAnimation()
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            transform.Rotate(0, 0, 50);
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
+
     // Adds 1 to AmmoCharge
     public void GainAmmoCharge()
     {
@@ -567,13 +610,13 @@ public class Player : StatEntity, IKnockable
             modifiers[modifier.targetStat].Remove(modifier);
     }
 
-    private void HandleKnockStart()
-    {
-        allowInput = false;
-    }
-
-    private void HandleKnockEnd()
+    private void EnableInput()
     {
         allowInput = true;
+    }
+
+    private void DisableInput()
+    {
+        allowInput = false;
     }
 }

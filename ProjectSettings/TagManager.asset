@@ -11,6 +11,7 @@ TagManager:
   - Gun
   - Floor
   - Enemy Detection
+  - FallBox
   layers:
   - Default
   - TransparentFX
@@ -22,8 +23,8 @@ TagManager:
   - Enemy
   - Environment-Solid
   - Attack-Player
-  - 
-  - 
+  - Environment-Interactable
+  - Enemy-Blocker
   - 
   - 
   - 

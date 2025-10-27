@@ -12,7 +12,6 @@ public class EnemyData : CharacterData
 
     //Boolean added to determine IMMORTALITY
     public bool mortal = true;
-    public bool canFly = false;
 
     public GameObject deathEffect;
     public GameObject hitEffect;

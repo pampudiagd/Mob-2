@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
-public class Behavior_Idle_Wander : MonoBehaviour
+public class Behavior_Idle_Wander : Behavior_Base
 {
     private Rigidbody2D rb;
     private IGridNav navigator;
@@ -49,43 +50,61 @@ public class Behavior_Idle_Wander : MonoBehaviour
         moveRoutine = null;
     }
 
+    // Returns the grid coord of the tile in a direction(movementVector) away from the position(enemyTransform) if there isn't a wall in the way
     public Vector3? GetNextTarget(Transform enemyTransform, Vector2 movementVector)
     {
         forwardTile = SetForwardTile(Vector3Int.FloorToInt(enemyTransform.position), movementVector);
         // If wall is in the way, cancel
-        if (!CheckTileOpen(movementVector, forwardTile))
+        if (!CheckTileOpen(forwardTile))
         {
             print("Tile not open!!!!!!!!!!");
             return null;
         }
+
+        //if (forwardTile.x == Mathf.FloorToInt(enemyTransform.position.x) && forwardTile.y == Mathf.FloorToInt(enemyTransform.position.y))
+        //{
+        //    print("Attempting diagonal move");
+        //    Vector3Int sideA = Vector3Int.FloorToInt(enemyTransform.position + new Vector3(movementVector.x, 0));
+        //    Vector3Int sideB = Vector3Int.FloorToInt(enemyTransform.position + new Vector3(0, movementVector.y));
+        //    if (CheckTileHole(sideA) || CheckTileHole(sideB))
+        //    {
+        //        print("Diagonal move blocked!!!!");
+        //        return null;
+        //    }
+        //}
         // Otherwise pick the next tile in the chosen direction
         return enemyTransform.position + (Vector3)movementVector;
     }
 
+    // Returns the grid coord of the tile a specified distance(tileDistance) in a direction(movementVector) away from the position(enemyTransform) if there isn't a wall in the way
     public Vector3? GetNextTarget(Transform enemyTransform, Vector2 movementVector, int tileDistance)
     {
+        Vector3Int currentTile = Vector3Int.FloorToInt(enemyTransform.position); 
         forwardTile = SetForwardTile(Vector3Int.FloorToInt(enemyTransform.position), movementVector);
 
-        for (int i = 1; i < tileDistance; i++)
+        for (int i = 0; i < tileDistance; i++)
         {
-            if (!CheckTileOpen(movementVector, forwardTile))
+            if (!CheckTileOpen(forwardTile))
             {
                 print("Tile not open");
                 return null;
             }
+            print("USING ME");
+            //if (forwardTile.x == currentTile.x && forwardTile.y == currentTile.y)
+            //{
+            //    print("Attempting diagonal move");
+            //    Vector3Int sideA = Vector3Int.FloorToInt(currentTile + new Vector3(movementVector.x, 0));
+            //    Vector3Int sideB = Vector3Int.FloorToInt(currentTile + new Vector3(0, movementVector.y));
+            //    if (CheckTileHole(sideA) || CheckTileHole(sideB))
+            //    {
+            //        print("Diagonal move blocked!!!!");
+            //        return null;
+            //    }
+            //}
+
             forwardTile = SetForwardTile(forwardTile, movementVector);
         }
 
         return enemyTransform.position + (Vector3)movementVector * tileDistance;
     }
-
-
-    public bool CheckTileOpen(Vector2 movementVector, Vector3Int forwardTile)
-    {
-        if (LevelManager.Instance.GridScanner.LevelTilemap.GetTile(forwardTile) == navigator.GetWallTile())
-            return false;
-        else 
-            return true;
-    }
-
 }

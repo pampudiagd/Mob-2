@@ -5,15 +5,14 @@ using UnityEngine.Tilemaps;
 
 public class TilemapNav : MonoBehaviour, IGridNav
 {
-    [SerializeField] private Tilemap tileMap;
+    private Tilemap LevelTilemap => LevelManager.Instance.LevelTilemap;
     [SerializeField] private TileBase wallTile;
     [SerializeField] private TileBase holeTile;
 
-    public bool IsWalkable(Vector3 worldPos, bool canFly)
+    public bool IsWalkable(Vector3Int gridPos, bool canFly)
     {
-        Vector3Int cellPos = tileMap.WorldToCell(worldPos);
-        TileBase tile = tileMap.GetTile(cellPos);
-
+        TileBase tile = LevelTilemap.GetTile(gridPos);
+        print("Is the tile at " + gridPos + " a hole? " + (tile == holeTile));
         if (tile == null) return false;
         if (tile == wallTile && !canFly) return false;
         if (tile == holeTile && !canFly) return false;
@@ -23,5 +22,11 @@ public class TilemapNav : MonoBehaviour, IGridNav
 
     public TileBase GetWallTile() => wallTile;
     public TileBase GetHoleTile() => holeTile;
+
+    public bool IsHoleTile(Vector3Int gridPos)
+    {
+        TileBase tile = LevelTilemap.GetTile(gridPos);
+        return tile == holeTile;
+    }
 
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -31,10 +32,10 @@ public class Enemy_Base : StatEntity, IKnockable
 
     public override float moveSpeed => baseStats.baseSpeed;
 
-    protected Vector3Int myGridPos => LevelManager.Instance.GridScanner.LevelTilemap.WorldToCell(transform.position);
-
     protected LayerMask environmentLayer;
 
+    private Collider2D[] holeColliders;
+    private Collider2D myCollider;
     private SpriteRenderer mySprite;
     public GameObject mySpriteChild;
 
@@ -74,12 +75,16 @@ public class Enemy_Base : StatEntity, IKnockable
         FaceDirection(direction);
         rb = GetComponent<Rigidbody2D>();
         mySprite = mySpriteChild.GetComponent<SpriteRenderer>();
+        myCollider = GetComponent<Collider2D>();
+        holeColliders = FindObjectsOfType<Collider2D>()
+            .Where(c => c.gameObject.layer == LayerMask.NameToLayer("Enemy-Blocker"))
+            .ToArray();
     }
 
     // Update is called once per frame
     protected virtual void Update()
     {
-        GridCoord = LevelManager.Instance.GridScanner.LevelTilemap.WorldToCell(transform.position);
+        GridCoord = LevelManager.Instance.LevelTilemap.WorldToCell(transform.position);
     }
 
     void OnDisable()
@@ -140,8 +145,10 @@ public class Enemy_Base : StatEntity, IKnockable
 
         if (knockHandler != null)
         {
+            DisableHoleCollision();
             SetState(EnemyState.Knockback);
             yield return StartCoroutine(knockHandler.StartKnockback(sourcePos));
+            EnableHoleCollision();
         }
 
         SetState(EnemyState.Default);
@@ -153,7 +160,6 @@ public class Enemy_Base : StatEntity, IKnockable
 
         damageInvulnerable = false;
     }
-
 
     public override void TakePassiveDamage(float amount, DamageType damageType)
     {
@@ -176,6 +182,13 @@ public class Enemy_Base : StatEntity, IKnockable
         Destroy(gameObject);
     }
 
+    public override IEnumerator FallDown()
+    {
+        print("Simulating fall");
+        Die();
+        yield return null;
+    }
+
     protected virtual void OnTriggerStay2D(Collider2D other)
     {
 
@@ -191,6 +204,7 @@ public class Enemy_Base : StatEntity, IKnockable
         }
 
     }
+
     // Sets movementVector to a random vector.
     protected void SetRandomCardinalVector() => movementVector = Helper_Directional.RandomCardinalVector();
 
@@ -199,6 +213,18 @@ public class Enemy_Base : StatEntity, IKnockable
     protected void LockAction() => interrupted = true;
 
     protected void UnlockAction() => interrupted = false;
+
+    private void DisableHoleCollision()
+    {
+        foreach (var hole in holeColliders)
+            Physics2D.IgnoreCollision(myCollider, hole, true);
+    }
+
+    private void EnableHoleCollision()
+    {
+        foreach (var hole in holeColliders)
+            Physics2D.IgnoreCollision(myCollider, hole, false);
+    }
 
     public virtual void OnPlayerDetected()
     {

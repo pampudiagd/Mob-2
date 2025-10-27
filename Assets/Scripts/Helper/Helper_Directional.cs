@@ -188,4 +188,6 @@ public static class Helper_Directional
 
         return normalVector;
     }
+
+    public static Quaternion VectorToQuaternion(Vector3 dirVector) => Quaternion.Euler(0f, 0f, (Mathf.Atan2(dirVector.y, dirVector.x) * Mathf.Rad2Deg) - 90);
 }

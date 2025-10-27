@@ -11,7 +11,7 @@ public class Enemy_Test_Dummy : Enemy_Base
     private IGridNav navigator;
     private Behavior_Idle_Wander mover;
     private Behavior_Pursuit_Simple pursuer;
-    private Vector3 targetTilePos => LevelManager.Instance.GridScanner.LevelTilemap.WorldToCell(target.transform.position);
+    private Vector3 targetTilePos => LevelManager.Instance.LevelTilemap.WorldToCell(target.transform.position);
 
     // Start is called before the first frame update
     protected override void Start()
@@ -67,9 +67,9 @@ public class Enemy_Test_Dummy : Enemy_Base
 
         // Finds the normalized vector between self and target's position, then sums own tilemap position with the normalized vector.
         // Then converts that to a Vector3Int, and finally gets the world coords of the center of that tile.
-        Vector3 targetTileStep = LevelManager.Instance.GridScanner.LevelTilemap.GetCellCenterWorld(Vector3Int.RoundToInt(myGridPos + (Vector3)Helper_Directional.VectorToTargetOctilinear(targetTilePos, myGridPos)));
+        Vector3 targetTileStep = LevelManager.Instance.LevelTilemap.GetCellCenterWorld(Vector3Int.RoundToInt(MyGridPos + (Vector3)Helper_Directional.VectorToTargetOctilinear(targetTilePos, MyGridPos)));
 
-        movementVector = Helper_Directional.VectorToTargetCardinal(targetTilePos, myGridPos, 1);
+        movementVector = Helper_Directional.VectorToTargetCardinal(targetTilePos, MyGridPos, 1);
         FaceDirection(movementVector); // Rotates toward the direction var
 
         pursuer.moveRoutine = StartCoroutine(pursuer.MoveToTileTargeting(targetTileStep, () => myBehaviorState != BehaviorState.Targeting || interrupted, moveSpeed));
@@ -79,7 +79,7 @@ public class Enemy_Test_Dummy : Enemy_Base
     {
         while (isTargetInAtkRng)
         {
-            movementVector = Helper_Directional.VectorToTargetCardinal(targetTilePos, myGridPos);
+            movementVector = Helper_Directional.VectorToTargetCardinal(targetTilePos, MyGridPos);
             FaceDirection(movementVector); // Rotates toward the direction var
 
             for (int i = 0; i < 2; i++)

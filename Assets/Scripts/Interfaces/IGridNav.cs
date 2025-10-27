@@ -5,7 +5,9 @@ using UnityEngine.Tilemaps;
 
 public interface IGridNav
 {
-    bool IsWalkable(Vector3 worldPos, bool canFly);
+    bool IsWalkable(Vector3Int gridPos, bool canFly);
+
+    bool IsHoleTile(Vector3Int gridPos);
 
     public TileBase GetWallTile();
     public TileBase GetHoleTile();

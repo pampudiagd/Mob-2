@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Behavior_Pursuit_Simple : MonoBehaviour
+public class Behavior_Pursuit_Simple : Behavior_Base
 {
     private Rigidbody2D rb;
 

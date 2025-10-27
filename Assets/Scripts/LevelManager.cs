@@ -5,6 +5,9 @@ using UnityEngine.Tilemaps;
 
 public class LevelManager : MonoBehaviour
 {
+    [SerializeField] private Tilemap levelTilemap; // The tile layer
+    public Tilemap LevelTilemap => levelTilemap;
+
     public IGridNav gridNav;
 
     public static LevelManager Instance { get; private set; }

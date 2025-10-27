@@ -10,7 +10,7 @@ public class Enemy_Behavior_Flee : Enemy_Base
     private Behavior_Flee_Simple runner;
     private IGridNav navigator;
 
-    private Vector3 targetTilePos => LevelManager.Instance.GridScanner.LevelTilemap.WorldToCell(target.transform.position);
+    private Vector3 targetTilePos => LevelManager.Instance.LevelTilemap.WorldToCell(target.transform.position);
 
     //Start is called before the first frame update
     protected override void Start()
@@ -61,7 +61,7 @@ public class Enemy_Behavior_Flee : Enemy_Base
         if (myState != EnemyState.Default || runner.moveRoutine != null || myBehaviorState != BehaviorState.Targeting)
             return;
 
-        Vector3 targetTileStep = LevelManager.Instance.GridScanner.LevelTilemap.GetCellCenterWorld(Vector3Int.RoundToInt(myGridPos + (Vector3)(gridMoveIncrements * (-Helper_Directional.VectorToTargetOctilinear(targetTilePos, myGridPos)))));
+        Vector3 targetTileStep = LevelManager.Instance.LevelTilemap.GetCellCenterWorld(Vector3Int.RoundToInt(MyGridPos + (Vector3)(gridMoveIncrements * (-Helper_Directional.VectorToTargetOctilinear(targetTilePos, MyGridPos)))));
 
         //movementVector = Helper_Directional.VectorToTargetCardinal(targetTilePos, myGridPos, 1);
         //FaceDirection(movementVector); // Rotates toward the direction var

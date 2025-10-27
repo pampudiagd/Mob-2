@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class Behavior_Pathfind_To : MonoBehaviour
+public class Behavior_Pathfind_To : Behavior_Base
 {
     public float moveSpeed = 2f; // Units per second
     private Tilemap levelTilemap;

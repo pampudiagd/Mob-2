@@ -6,8 +6,7 @@ using UnityEngine.Tilemaps;
 // Sourced from ChatGPT because I hate pathfinding algorithms
 public class GridScanner : MonoBehaviour
 { 
-    [SerializeField] private Tilemap levelTilemap; // The tile layer
-    public Tilemap LevelTilemap => levelTilemap;
+    private Tilemap LevelTilemap => LevelManager.Instance.LevelTilemap;
 
     [Tooltip("Insert ALL tiles that can be walked on!")]
     public List<TileBase> walkableTiles; // All tiles that can be walked on
@@ -16,9 +15,9 @@ public class GridScanner : MonoBehaviour
 
     void Start()
     {
-        if (levelTilemap == null)
+        if (LevelTilemap == null)
         {
-            Debug.LogError("LevelTilemap not assigned in GridScanner!");
+            Debug.LogError("LevelTilemap not assigned in LevelManager!");
             return;
         }
 
@@ -28,18 +27,18 @@ public class GridScanner : MonoBehaviour
     // Looks through the whole tilemap and stores each tile in the Dictionary grid
     void ScanTilemap()
     {
-        BoundsInt bounds = levelTilemap.cellBounds; // The full rectangular area of the tilemap
+        BoundsInt bounds = LevelTilemap.cellBounds; // The full rectangular area of the tilemap
 
         for (int x = bounds.xMin; x < bounds.xMax; x++)
         {
             for (int y = bounds.yMin; y < bounds.yMax; y++)
             {
                 Vector3Int tilePos = new Vector3Int(x, y, 0); // Unity uses 3D tile coordinates
-                TileBase tile = levelTilemap.GetTile(tilePos);
+                TileBase tile = LevelTilemap.GetTile(tilePos); // Stores the tile map tile at (x,y)
 
                 if (tile == null) continue; // Skip empty tiles
 
-                bool walkable = walkableTiles.Contains(tile); // Checks if the current tile is walkable
+                bool walkable = walkableTiles.Contains(tile); // Checks if the current tile map tile is in walkableTiles
                 if (!walkable)
                     print(tile + " is not walkable!");
                 Vector2Int gridPos = new Vector2Int(x, y); // Convert to 2D grid space

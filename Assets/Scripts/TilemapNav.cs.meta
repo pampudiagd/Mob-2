@@ -4,9 +4,8 @@ MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences:
-  - tileMap: {instanceID: 0}
   - wallTile: {fileID: 11400000, guid: 0b699b87d0fd5af4e9423f4dd418f9b0, type: 2}
-  - holeTile: {instanceID: 0}
+  - holeTile: {fileID: 11400000, guid: 8e2b733387141814283e0e77b4bf2a59, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

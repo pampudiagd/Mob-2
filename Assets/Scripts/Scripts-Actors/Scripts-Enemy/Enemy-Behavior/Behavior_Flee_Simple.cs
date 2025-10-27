@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Behavior_Flee_Simple : MonoBehaviour
+public class Behavior_Flee_Simple : Behavior_Base
 {
     private Rigidbody2D rb;
 
@@ -20,8 +20,9 @@ public class Behavior_Flee_Simple : MonoBehaviour
         int moveAttempts = 0;
         while ((rb.position - (Vector2)target).sqrMagnitude > 0.001f)
         {
-            if ((interruptCondition != null && interruptCondition()) || moveAttempts >= 50)
+            if ((interruptCondition != null && interruptCondition()) || moveAttempts >= 50 || !CheckTileOpen(Vector3Int.FloorToInt(target)))
             {
+                print("Movement step aborted!");
                 moveRoutine = null;
                 yield break; // stop movement early
             }

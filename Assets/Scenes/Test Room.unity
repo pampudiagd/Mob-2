@@ -196,6 +196,10 @@ PrefabInstance:
       propertyPath: levelTilemap
       value: 
       objectReference: {fileID: 830911359}
+    - target: {fileID: 3227259348411977485, guid: 364fad5f6c51c9e45a8294a4d3fa50ea, type: 3}
+      propertyPath: levelTilemap
+      value: 
+      objectReference: {fileID: 830911359}
     - target: {fileID: 4242622109028724663, guid: 364fad5f6c51c9e45a8294a4d3fa50ea, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
