@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+// NOT BEING USED ATM
+
+
 // Sourced from ChtGPT because I hate pathfinding algorithms
 public class Node
 {

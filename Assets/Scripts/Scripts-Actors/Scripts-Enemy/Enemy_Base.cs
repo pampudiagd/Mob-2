@@ -72,6 +72,8 @@ public class Enemy_Base : StatEntity, IKnockable
 
     protected virtual void Start()
     {
+        AssignTarget(LevelManager.Instance.playerInstance);
+        print("POST TARGET ASSIGNING: " + target);
         FaceDirection(direction);
         rb = GetComponent<Rigidbody2D>();
         mySprite = mySpriteChild.GetComponent<SpriteRenderer>();
@@ -151,7 +153,8 @@ public class Enemy_Base : StatEntity, IKnockable
             EnableHoleCollision();
         }
 
-        SetState(EnemyState.Default);
+        if (myState == EnemyState.Knockback)
+            SetState(EnemyState.Default);
 
         if (healthCurrent <= 0 && mortal == true)
         {
@@ -184,9 +187,27 @@ public class Enemy_Base : StatEntity, IKnockable
 
     public override IEnumerator FallDown()
     {
+        if (myState == EnemyState.Falling)
+            yield break;
+
+        SetState(EnemyState.Falling);
+
+        // Trigger fall animation here!
+
         print("Simulating fall");
+        yield return StartCoroutine(PlaceholderFallAnimation());
         Die();
-        yield return null;
+    }
+
+    private IEnumerator PlaceholderFallAnimation()
+    {
+        for (int i = 0; i < 20; i++)
+        {
+            transform.Rotate(0, 0, 50);
+            transform.localScale *= 0.9f;
+            yield return new WaitForSeconds(0.1f);
+        }
+        transform.localScale = new Vector3(1, 1, 1);
     }
 
     protected virtual void OnTriggerStay2D(Collider2D other)

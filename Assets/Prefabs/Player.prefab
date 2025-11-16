@@ -38,6 +38,7 @@ Transform:
   m_Children:
   - {fileID: 2710855154245973505}
   - {fileID: 4559963625371468701}
+  - {fileID: 1725773012937887726}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &9152185199405663726
@@ -80,7 +81,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: -2413806693520163455, guid: ebe73ca9363db456bacf42c025bb4847, type: 3}
   m_Color: {r: 0, g: 0.16498268, b: 0.5377358, a: 1}
   m_FlipX: 0
@@ -106,13 +107,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthCurrent: 0
   damageInvulnerable: 0
+  canFly: 0
   myBaseStats: {fileID: 11400000, guid: f1fe829eb322a7e47a920b3d38aa7852, type: 2}
   ammoCount: 4
   ammoCharge: 0
   rollMod: 5
   rollSpeed: 30
   lives: 0
-  globalDamageMod: 1
   energyCurrentBarValue: 0
   energyTotal: 0
   energyLevel: 1
@@ -122,18 +123,20 @@ MonoBehaviour:
   level: 1
   isAttacking: 0
   isRolling: 0
+  isFalling: 0
   rollInvulnerable: 0
   wantsToRoll: 0
   allowInput: 1
+  allowSpriteRotation: 0
   comboTimer: 0
   moveTimer: 0
   rollTimer: 0
   invulTimer: 0
-  mySwordData: {fileID: 11400000, guid: 0f68da07366eff54b99edf5a83d7bc7a, type: 2}
+  mySwordData: {fileID: 11400000, guid: 7fdb1f65ba6364345b6e77e4501d6bac, type: 2}
   myGunData: {fileID: 11400000, guid: 6d78b52cdbfc53641803f460446c48fc, type: 2}
-  testGrid: {fileID: 0}
   mySpriteChild: {fileID: 6600267676797320331}
   hurtBox: {fileID: 3241985309537415565}
+  lastFloorTouched: {x: 0, y: 0, z: 0}
   enemyEvent: {fileID: 11400000, guid: 97fe82375b6951948b804939f6e4868e, type: 2}
   playerEvent: {fileID: 11400000, guid: 9fe7ea1c1f498db4691db4d4b56c41b0, type: 2}
 --- !u!114 &5751435414539484030
@@ -334,7 +337,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_FlipX: 0
@@ -419,7 +422,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 2
   m_Sprite: {fileID: 1458480284, guid: 6614a3fa0a87c3947b5f625bb8422ad0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -452,3 +455,70 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!1 &7914524936982277663
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1725773012937887726}
+  - component: {fileID: 4199101429443840385}
+  m_Layer: 6
+  m_Name: Floor Contact
+  m_TagString: FallBox
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1725773012937887726
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7914524936982277663}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 698286726850404404}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!58 &4199101429443840385
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7914524936982277663}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.25

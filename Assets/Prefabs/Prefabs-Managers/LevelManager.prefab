@@ -45,6 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e05c6e41e6d2004ebc14d1dbcaf18fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelTilemap: {fileID: 0}
+  player: {fileID: 517106086533870053, guid: 8606681f522bb864e9852b1ce7065ada, type: 3}
 --- !u!1 &6757945727074280408
 GameObject:
   m_ObjectHideFlags: 0
@@ -89,6 +91,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 622d198da832f7a48bb38303a842ef58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelTilemap: {fileID: 0}
   walkableTiles:
   - {fileID: 11400000, guid: f4f87836979fe3a4d91fa13be596ee1a, type: 2}

@@ -57,6 +57,8 @@ public class Player : StatEntity, IKnockable
     public bool rollInvulnerable = false;
     public bool wantsToRoll = false;
     public bool allowInput = true;
+    public bool allowSpriteRotation = false;
+
     public override bool IsInvulnerable => damageInvulnerable || rollInvulnerable;
 
 
@@ -175,17 +177,18 @@ public class Player : StatEntity, IKnockable
     // Occurs every 0.2 seconds (50 per second) (Independent of framerate)
     private void FixedUpdate()
     {
-        if (!allowInput)
-            return;
-
-        if (wantsToRoll)
+        if (allowInput)
         {
-            StartCoroutine(Roll());
-            wantsToRoll = false;
-        }
 
-        if (!isRolling)
-            MoveAndRotate();
+            if (wantsToRoll)
+            {
+                StartCoroutine(Roll());
+                wantsToRoll = false;
+            }
+
+            if (!isRolling)
+                MoveAndRotate();
+        }
 
         if (rollInvulnerable)
             InvulTimer();
@@ -193,7 +196,8 @@ public class Player : StatEntity, IKnockable
 
     private void LateUpdate()
     {
-        mySpriteChild.transform.rotation = Quaternion.identity;
+        if (!allowSpriteRotation)
+            mySpriteChild.transform.rotation = Quaternion.identity;
     }
 
     // Takes the player's input and calls methods/stores it
@@ -261,10 +265,15 @@ public class Player : StatEntity, IKnockable
         float duration = rollMod / rollSpeed; // Total roll duration
         Vector2 start = rb.position;
         Vector2 target = start + rollInput.normalized * rollMod; // Distance of roll
+
+        // Starts related timers
         invulTimer = rollInvulWindow;
+        moveTimer = moveDelayRoll;
 
         while (elapsed < duration)
         {
+            if (isFalling)
+                yield break;
             elapsed += Time.fixedDeltaTime;
 
             float t = Mathf.Clamp01(elapsed / duration);
@@ -275,17 +284,18 @@ public class Player : StatEntity, IKnockable
 
         rb.MovePosition(target); // Ensure precise final position
 
-        isRolling = false;
-        moveTimer = moveDelayRoll;
+        
+        
     }
 
     // Timer used to end invulnerability from rolling
     private void InvulTimer()
     {
         invulTimer -= Time.fixedDeltaTime;
-        if (invulTimer <= 0f && isRolling)
+        if (invulTimer <= 0f)
         {
             rollInvulnerable = false;
+            isRolling = false;
             mySprite.color = Color.white;
         }
     }
@@ -461,6 +471,7 @@ public class Player : StatEntity, IKnockable
 
     public override IEnumerator FallDown()
     {
+        DisableInput();
         if (isFalling)
             yield break;
 
@@ -468,24 +479,31 @@ public class Player : StatEntity, IKnockable
         print("START FAAAAAAAAAAAAAAAALLLLLLLLLLLLLLING");
         // Trigger fall animation here!
 
-        DisableInput();
+        
+        allowSpriteRotation = true;
         yield return StartCoroutine(PlaceholderFallAnimation());
-
+        allowSpriteRotation = false;
         print("RESPAWNED PLAYER");
 
-        transform.position = LevelManager.Instance.LevelTilemap.CellToWorld(lastFloorTouched) + new Vector3(0.5f,0.5f);
-        yield return new WaitForSeconds(2f);
+        TakePassiveDamage(1, DamageType.Normal);
+        transform.position = LevelManager.Instance.LevelTilemap.CellToWorld(lastFloorTouched) + new Vector3(0.5f, 0.5f);
+        externalForce = Vector2.zero;
+        yield return StartCoroutine(BlinkSprite());
         isFalling = false;
         EnableInput();
     }
 
     private IEnumerator PlaceholderFallAnimation()
     {
-        for (int i = 0; i < 10; i++)
+        myAnimator.SetFloat("moveX", 0f);
+        myAnimator.SetFloat("moveY", -1f);
+        for (int i = 0; i < 20; i++)
         {
             transform.Rotate(0, 0, 50);
-            yield return new WaitForSeconds(0.5f);
+            transform.localScale *= 0.9f;
+            yield return new WaitForSeconds(0.1f);
         }
+        transform.localScale = new Vector3(1, 1, 1);
     }
 
     // Adds 1 to AmmoCharge

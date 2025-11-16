@@ -3,6 +3,9 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 
+// NOT BEING USED ATM
+
+
 // Sourced from ChatGPT because I hate pathfinding algorithms
 public class GridScanner : MonoBehaviour
 { 

@@ -8,7 +8,7 @@ using UnityEngine.UIElements;
 
 public class Enemy_Test_Dummy : Enemy_Base
 {
-    private IGridNav navigator;
+    //private IGridNav navigator;
     private Behavior_Idle_Wander mover;
     private Behavior_Pursuit_Simple pursuer;
     private Vector3 targetTilePos => LevelManager.Instance.LevelTilemap.WorldToCell(target.transform.position);
@@ -18,7 +18,7 @@ public class Enemy_Test_Dummy : Enemy_Base
     {
         base.Start();
 
-        navigator = FindObjectOfType<LevelManager>().GetComponent<TilemapNav>();
+        //navigator = FindObjectOfType<LevelManager>().GetComponent<TilemapNav>();
         mover = GetComponent<Behavior_Idle_Wander>();
         pursuer = GetComponent<Behavior_Pursuit_Simple>();
 

@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class Behavior_Idle_Wander : Behavior_Base
 {
     private Rigidbody2D rb;
-    private IGridNav navigator;
+    //private IGridNav navigator;
     public Vector3Int forwardTile;
     //public GridScanner gridScanner;
     //public TileBase wallTile;
@@ -18,7 +18,7 @@ public class Behavior_Idle_Wander : Behavior_Base
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        navigator = LevelManager.Instance.gridNav;
+        //navigator = LevelManager.Instance.gridNav;
     }
 
     protected Vector3Int SetForwardTile(Vector3Int myGridPos, Vector2 movementVector) => Vector3Int.FloorToInt(myGridPos + (Vector3)movementVector);

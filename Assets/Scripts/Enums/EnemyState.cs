@@ -8,5 +8,6 @@ public enum EnemyState
     Knockback,
     Stunned,
     Frozen,
-    Slowed
+    Slowed,
+    Falling
 }

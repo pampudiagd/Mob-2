@@ -8,7 +8,7 @@ public class Enemy_Behavior_Flee : Enemy_Base
     public int gridMoveIncrements;
     private Behavior_Idle_Wander mover;
     private Behavior_Flee_Simple runner;
-    private IGridNav navigator;
+    //private IGridNav navigator;
 
     private Vector3 targetTilePos => LevelManager.Instance.LevelTilemap.WorldToCell(target.transform.position);
 
@@ -17,7 +17,7 @@ public class Enemy_Behavior_Flee : Enemy_Base
     {
         base.Start();
 
-        navigator = FindObjectOfType<LevelManager>().GetComponent<TilemapNav>();
+        //navigator = FindObjectOfType<LevelManager>().GetComponent<TilemapNav>();
         mover = GetComponent<Behavior_Idle_Wander>();
         runner = GetComponent<Behavior_Flee_Simple>();
 
