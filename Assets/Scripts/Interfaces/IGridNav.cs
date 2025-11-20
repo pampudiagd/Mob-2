@@ -7,6 +7,8 @@ public interface IGridNav
 {
     bool IsWalkable(Vector3Int gridPos, bool canFly);
 
+    public bool IsRespawnSafe(Vector3Int gridPos);
+
     bool IsHoleTile(Vector3Int gridPos);
 
     public TileBase GetWallTile();

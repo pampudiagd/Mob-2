@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: aec0f3a4e6be4fa4a80abd16fd442a14
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - tileHole: {fileID: 11400000, guid: d4ca751e8a50c0744b0cfd9a8722de56, type: 2}
+  - holePrefab: {fileID: 1360006440756133193, guid: 8ded08ac1a3606546a6fa9a220875f54, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

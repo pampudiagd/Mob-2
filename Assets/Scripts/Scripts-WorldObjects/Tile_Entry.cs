@@ -6,7 +6,8 @@ public class Tile_Entry : MonoBehaviour
 {
     public bool floorStart = false;
 
-    public static Vector3 playerSpawnCoordinate;
+    public Vector3 playerWarpCoordinate; // Used for transition from prior room
+    public static Vector3 playerSpawnCoordinate; // Used for first tile in an area
     public EntryDirection playerSpawnDirection; // Inspector Variable to manually choose direction
 
     private Vector2 playerSpawnVector;
@@ -24,12 +25,14 @@ public class Tile_Entry : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        gridPos = (Vector2Int)LevelManager.Instance.LevelTilemap.WorldToCell(transform.position);
+        playerWarpCoordinate = LevelManager.Instance.LevelTilemap.GetCellCenterWorld(Vector3Int.FloorToInt((Vector3)(playerSpawnVector + gridPos)));
+
         if (floorStart)
         {
-            gridPos = (Vector2Int)LevelManager.Instance.LevelTilemap.WorldToCell(transform.position);
-            playerSpawnCoordinate = LevelManager.Instance.LevelTilemap.GetCellCenterWorld(Vector3Int.FloorToInt((Vector3)(playerSpawnVector + gridPos)));
+            
+            playerSpawnCoordinate = playerWarpCoordinate;
         }
-
     }
 
     private void OnValidate()
