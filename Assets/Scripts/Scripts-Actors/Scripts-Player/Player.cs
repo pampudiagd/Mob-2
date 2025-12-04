@@ -56,8 +56,13 @@ public class Player : StatEntity, IKnockable
     public bool isFalling = false;
     public bool rollInvulnerable = false;
     public bool wantsToRoll = false;
-    public bool allowInput = true;
     public bool allowSpriteRotation = false;
+
+    public int inputLockTokens = 0;
+    public bool allowInput => inputLockTokens == 0;
+
+    public int invulTokens = 0;
+    public override bool damageInvulnerable => invulTokens > 0;
 
     public override bool IsInvulnerable => damageInvulnerable || rollInvulnerable;
 
@@ -106,8 +111,8 @@ public class Player : StatEntity, IKnockable
     private void Awake()
     {
         knockHandler = gameObject.GetComponent<KnockHandler>();
-        knockHandler.OnKnockbackStarted += DisableInput;
-        knockHandler.OnKnockbackEnded += EnableInput;
+        knockHandler.OnKnockbackStarted += AddInputToken;
+        knockHandler.OnKnockbackEnded += RemoveInputToken;
     }
 
     // Start is called before the first frame update
@@ -151,8 +156,8 @@ public class Player : StatEntity, IKnockable
     {
         enemyEvent.onEnemyDeath.RemoveListener(OnEnemyDeath);
         enemyEvent.onEnemyHit.RemoveListener(OnEnemyHit);
-        knockHandler.OnKnockbackStarted -= DisableInput;
-        knockHandler.OnKnockbackEnded -= EnableInput;
+        knockHandler.OnKnockbackStarted -= AddInputToken;
+        knockHandler.OnKnockbackEnded -= RemoveInputToken;
     }
 
     void Update()
@@ -284,8 +289,8 @@ public class Player : StatEntity, IKnockable
 
         rb.MovePosition(target); // Ensure precise final position
 
-        
-        
+
+
     }
 
     // Timer used to end invulnerability from rolling
@@ -422,12 +427,15 @@ public class Player : StatEntity, IKnockable
         else
         {
             playerEvent.RaisePlayerDamaged();
-            damageInvulnerable = true;
+            //damageInvulnerable = true;
+            invulTokens++;
 
             StartCoroutine(knockHandler.StartKnockback(sourcePos));
 
-            yield return StartCoroutine(BlinkSprite());
-            damageInvulnerable = false;
+            yield return StartCoroutine(BlinkSprite(5));
+            print("Finished damage invulnerability");
+            //damageInvulnerable = false;
+            invulTokens--;
         }
     }
 
@@ -451,9 +459,9 @@ public class Player : StatEntity, IKnockable
     }
 
     // Quickly enables/disables player's sprite
-    private IEnumerator BlinkSprite()
+    private IEnumerator BlinkSprite(int blinkCount)
     {
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < blinkCount; i++)
         {
             mySprite.enabled = false;
             yield return new WaitForSeconds(0.2f);
@@ -471,26 +479,30 @@ public class Player : StatEntity, IKnockable
 
     public override IEnumerator FallDown()
     {
-        DisableInput();
         if (isFalling)
             yield break;
 
+        AddInputToken();
+        invulTokens++;
+        externalForce = Vector2.zero;
         isFalling = true;
         print("START FAAAAAAAAAAAAAAAALLLLLLLLLLLLLLING");
         // Trigger fall animation here!
 
-        
+
         allowSpriteRotation = true;
         yield return StartCoroutine(PlaceholderFallAnimation());
         allowSpriteRotation = false;
-        print("RESPAWNED PLAYER");
+
 
         TakePassiveDamage(1, DamageType.Normal);
         transform.position = LevelManager.Instance.LevelTilemap.CellToWorld(lastFloorTouched) + new Vector3(0.5f, 0.5f);
-        externalForce = Vector2.zero;
-        yield return StartCoroutine(BlinkSprite());
+        print("RESPAWNED PLAYER");
+        yield return StartCoroutine(BlinkSprite(2));
         isFalling = false;
-        EnableInput();
+        RemoveInputToken();
+        yield return StartCoroutine(BlinkSprite(5));
+        invulTokens--;
     }
 
     private IEnumerator PlaceholderFallAnimation()
@@ -628,13 +640,13 @@ public class Player : StatEntity, IKnockable
             modifiers[modifier.targetStat].Remove(modifier);
     }
 
-    private void EnableInput()
+    private void AddInputToken()
     {
-        allowInput = true;
+        inputLockTokens++;
     }
 
-    private void DisableInput()
+    private void RemoveInputToken()
     {
-        allowInput = false;
+        inputLockTokens--;
     }
 }

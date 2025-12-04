@@ -108,6 +108,7 @@ MonoBehaviour:
   healthCurrent: 0
   damageInvulnerable: 0
   canFly: 0
+  allowForcedMovement: 1
   myBaseStats: {fileID: 11400000, guid: f1fe829eb322a7e47a920b3d38aa7852, type: 2}
   ammoCount: 4
   ammoCharge: 0

@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 99cb652724d343b4f836ea1939896915, type: 3}
-  m_Name: Tiles-Floor2
+  m_Name: Tiles-Hole
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 21300000, guid: ff55433cda97ebf46a8047665b7867e9, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 04dd21b38aec3d0449973f8a71b2555a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
@@ -31,9 +31,9 @@ MonoBehaviour:
     e31: 0
     e32: 0
     e33: 1
-  m_InstancedGameObject: {fileID: 0}
+  m_InstancedGameObject: {fileID: 1360006440756133193, guid: 8ded08ac1a3606546a6fa9a220875f54, type: 3}
   m_Flags: 1
   m_ColliderType: 0
-  isWalkable: 1
+  isWalkable: 0
   allowFlyOver: 1
-  allowRespawn: 1
+  allowRespawn: 0

@@ -41,7 +41,7 @@ public class TilemapNav : MonoBehaviour, IGridNav
     {
         TileBase tb = LevelTilemap.GetTile(gridPos);
 
-        Debug.Log(tb == null ? "Tile is null" : "Tile type is: " + tb.GetType());
+        //Debug.Log(tb == null ? "Tile is null" : "Tile type is: " + tb.GetType());
 
 
         CustomTile tile = (CustomTile)LevelTilemap.GetTile(gridPos);

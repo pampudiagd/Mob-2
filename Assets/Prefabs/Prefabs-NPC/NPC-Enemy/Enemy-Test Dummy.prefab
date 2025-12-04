@@ -1,5 +1,72 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &114294282294295163
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6062902883883758634}
+  - component: {fileID: 7837001970829287812}
+  m_Layer: 7
+  m_Name: Floor Contact
+  m_TagString: FallBox
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6062902883883758634
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 114294282294295163}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4807143242867387969}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!58 &7837001970829287812
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 114294282294295163}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.2
 --- !u!1 &551635672454222417
 GameObject:
   m_ObjectHideFlags: 0
@@ -41,6 +108,7 @@ Transform:
   - {fileID: 6705107118715154172}
   - {fileID: 8667689158664454168}
   - {fileID: 4568337323163443653}
+  - {fileID: 6062902883883758634}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &7382633459607615297
@@ -109,6 +177,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthCurrent: 0
   damageInvulnerable: 0
+  canFly: 0
   enemyEvent: {fileID: 11400000, guid: 97fe82375b6951948b804939f6e4868e, type: 2}
   GridCoord: {x: 0, y: 0, z: 0}
   baseStats: {fileID: 11400000, guid: 0dd28b012cb7f11458ac778c9411aad2, type: 2}
@@ -341,7 +410,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 18401281136436333, guid: cc3e2ce878354c647ad7a7072bb3e9d1, type: 3}
       propertyPath: m_Name
-      value: Detection Zone (Outer)
+      value: Detection Zone Outer
       objectReference: {fileID: 0}
     - target: {fileID: 9137393563113761493, guid: cc3e2ce878354c647ad7a7072bb3e9d1, type: 3}
       propertyPath: m_LocalPosition.x
@@ -465,7 +534,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1726563175147089211, guid: b7d54209ef3adc14d8715fa515514b6f, type: 3}
       propertyPath: m_Name
-      value: Detection Zone (Inner)
+      value: Detection Zone Inner
+      objectReference: {fileID: 0}
+    - target: {fileID: 3785956130034262161, guid: b7d54209ef3adc14d8715fa515514b6f, type: 3}
+      propertyPath: m_Radius
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7600432237358818179, guid: b7d54209ef3adc14d8715fa515514b6f, type: 3}
       propertyPath: m_LocalPosition.x

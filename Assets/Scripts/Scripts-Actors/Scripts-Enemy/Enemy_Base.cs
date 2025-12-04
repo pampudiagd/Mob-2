@@ -191,6 +191,7 @@ public class Enemy_Base : StatEntity, IKnockable
             yield break;
 
         SetState(EnemyState.Falling);
+        //allowForcedMovement = false;
 
         // Trigger fall animation here!
 

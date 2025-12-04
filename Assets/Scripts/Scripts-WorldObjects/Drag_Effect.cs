@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+// Causes unwanted movement when falling into a hole; REWORK
+
+
 public class Drag_Effect : MonoBehaviour
 {
     public static Dictionary<GameObject, Drag_Effect> ActiveHoles = new();

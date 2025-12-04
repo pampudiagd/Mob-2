@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
+  m_Script: {fileID: 11500000, guid: 99cb652724d343b4f836ea1939896915, type: 3}
   m_Name: Tiles-Wall
   m_EditorClassIdentifier: 
   m_Sprite: {fileID: 21300000, guid: 97fe61372d5241e45b0c30bdf06cf461, type: 3}
@@ -34,3 +34,6 @@ MonoBehaviour:
   m_InstancedGameObject: {fileID: 0}
   m_Flags: 1
   m_ColliderType: 2
+  isWalkable: 0
+  allowFlyOver: 0
+  allowRespawn: 0

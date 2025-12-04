@@ -13,9 +13,11 @@ public abstract class StatEntity : MonoBehaviour, IDamageable, IMovable
 
     protected bool allowTriggerCheck;
 
-    public bool damageInvulnerable;
+    public virtual bool damageInvulnerable { get; set; }
 
     public bool canFly = false;
+
+    //[SerializeField] public bool allowForcedMovement = true;
 
     public virtual bool IsInvulnerable => damageInvulnerable;
 

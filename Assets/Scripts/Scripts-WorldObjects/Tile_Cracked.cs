@@ -46,13 +46,19 @@ public class Tile_Cracked : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        timer = timerLength;
-        isTimerCounting = true;
+        if (collision.CompareTag("Player"))
+        {
+            timer = timerLength;
+            isTimerCounting = true;
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        isTimerCounting = false;
+        if (collision.CompareTag("Player"))
+        {
+            isTimerCounting = false;
+        }
     }
 
 }
