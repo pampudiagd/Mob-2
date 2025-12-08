@@ -7,7 +7,7 @@ public class EnemyData : CharacterData
 {
     public int pointValue = 10;
 
-    public string damageSource;
+    public WeaponSource damageSource;
     public DamageType damageType = DamageType.Normal;
 
     //Boolean added to determine IMMORTALITY

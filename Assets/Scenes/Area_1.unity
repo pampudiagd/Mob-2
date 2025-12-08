@@ -1062,7 +1062,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthCurrent: 0
-  damageInvulnerable: 0
   canFly: 0
   enemyEvent: {fileID: 11400000, guid: 97fe82375b6951948b804939f6e4868e, type: 2}
   GridCoord: {x: 0, y: 0, z: 0}
@@ -14257,6 +14256,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 846726578}
     m_Modifications:
+    - target: {fileID: 429159393470426884, guid: 7d18260f950fb2b4095ad458408fcd44, type: 3}
+      propertyPath: m_Color.b
+      value: 0.30214354
+      objectReference: {fileID: 0}
+    - target: {fileID: 429159393470426884, guid: 7d18260f950fb2b4095ad458408fcd44, type: 3}
+      propertyPath: m_Color.g
+      value: 0.29703632
+      objectReference: {fileID: 0}
+    - target: {fileID: 429159393470426884, guid: 7d18260f950fb2b4095ad458408fcd44, type: 3}
+      propertyPath: m_Color.r
+      value: 0.8396226
+      objectReference: {fileID: 0}
     - target: {fileID: 551635672454222417, guid: 7d18260f950fb2b4095ad458408fcd44, type: 3}
       propertyPath: m_Name
       value: Enemy-Test Dummy

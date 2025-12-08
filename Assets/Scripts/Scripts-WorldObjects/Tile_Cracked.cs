@@ -34,8 +34,9 @@ public class Tile_Cracked : MonoBehaviour
     private void CollapseTile()
     {
         Vector3Int myGridPos = LevelManager.Instance.LevelTilemap.WorldToCell(transform.position);
-        LevelManager.Instance.LevelTilemap.SetTile(myGridPos, gridHole);
         Instantiate(holeObject, LevelManager.Instance.LevelTilemap.GetCellCenterWorld(myGridPos), Quaternion.identity, gameObject.transform);
+        LevelManager.Instance.LevelTilemap.SetTile(myGridPos, gridHole);
+        
     }
 
 

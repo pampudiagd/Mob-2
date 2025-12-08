@@ -11,3 +11,9 @@ public enum DamageType
     Explosive,
     Poison
 }
+
+public enum WeaponSource
+{
+    Gun,
+    Sword
+}

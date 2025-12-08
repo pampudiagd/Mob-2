@@ -6,7 +6,7 @@ using System;
 public class KnockHandler : MonoBehaviour
 {
     private Rigidbody2D rb;
-    //private StatEntity entityScript;
+    private StatEntity entityScript;
 
     [SerializeField] private float knockbackSpeed = GlobalConstants.knockbackSpeed;
     [SerializeField] private float knockDistance = GlobalConstants.knockMagnitudeModifier;
@@ -17,7 +17,7 @@ public class KnockHandler : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        //entityScript = rb.gameObject.GetComponent<StatEntity>();
+        entityScript = rb.gameObject.GetComponent<StatEntity>();
         //print(entityScript);
     }
 
@@ -34,7 +34,7 @@ public class KnockHandler : MonoBehaviour
         float remainingDistance = knockDistance;
         //int knockCount = 0;
         //print("Can Be Force moved?! " + entityScript.allowForcedMovement);
-        while (remainingDistance > 0.01f)// && entityScript.allowForcedMovement)
+        while (remainingDistance > 0.01f && !entityScript.isFalling)
         {
             // Step size per frame
             float step = knockbackSpeed * Time.fixedDeltaTime;

@@ -13,6 +13,8 @@ public abstract class StatEntity : MonoBehaviour, IDamageable, IMovable
 
     protected bool allowTriggerCheck;
 
+    public bool isFalling { get; set; }
+
     public virtual bool damageInvulnerable { get; set; }
 
     public bool canFly = false;
@@ -23,7 +25,7 @@ public abstract class StatEntity : MonoBehaviour, IDamageable, IMovable
 
     protected Vector3Int MyGridPos => LevelManager.Instance.LevelTilemap.WorldToCell(transform.position);
 
-    public abstract IEnumerator TakeDirectDamage(float amount, string damageSource, DamageType damageType, Vector2 sourcePos);
+    public abstract IEnumerator TakeDirectDamage(float amount, WeaponSource damageSource, DamageType damageType, Vector2 sourcePos);
 
     public abstract void TakePassiveDamage(float amount, DamageType damageType);
 

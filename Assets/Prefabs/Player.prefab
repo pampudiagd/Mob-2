@@ -106,13 +106,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthCurrent: 0
-  damageInvulnerable: 0
   canFly: 0
-  allowForcedMovement: 1
   myBaseStats: {fileID: 11400000, guid: f1fe829eb322a7e47a920b3d38aa7852, type: 2}
-  ammoCount: 4
+  ammoCount: 100
   ammoCharge: 0
-  rollMod: 5
+  rollMod: 3
   rollSpeed: 30
   lives: 0
   energyCurrentBarValue: 0
@@ -124,11 +122,11 @@ MonoBehaviour:
   level: 1
   isAttacking: 0
   isRolling: 0
-  isFalling: 0
   rollInvulnerable: 0
   wantsToRoll: 0
-  allowInput: 1
   allowSpriteRotation: 0
+  inputLockTokens: 0
+  invulTokens: 0
   comboTimer: 0
   moveTimer: 0
   rollTimer: 0

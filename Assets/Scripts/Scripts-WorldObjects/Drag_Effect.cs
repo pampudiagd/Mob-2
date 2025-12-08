@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -31,10 +32,16 @@ public class Drag_Effect : MonoBehaviour
             {
                 IMovable moveScript = collision.GetComponentInParent<IMovable>();
 
-                float dist = Vector2.Distance(transform.position, collision.transform.position);
-                float strength = dragSpeed / Mathf.Max(dist, 0.5f);
-                Vector2 dragDir = (transform.position - collision.transform.position).normalized;
-                moveScript.ApplyExternalForce(dragDir * strength);
+                if (moveScript.isFalling)
+                {
+                    float dist = Vector2.Distance(transform.position, collision.transform.position);
+                    float strength = dragSpeed; // / Mathf.Max(dist, 0.5f);
+                    Vector2 dragDir = (transform.position - collision.transform.position).normalized;
+
+                    Vector2 newPos = Vector2.MoveTowards(collision.transform.position, transform.position, strength);
+                    //moveScript.ApplyExternalForce(dragDir * strength);
+                    collision.attachedRigidbody.MovePosition(newPos);
+                }
             }
         }
     }

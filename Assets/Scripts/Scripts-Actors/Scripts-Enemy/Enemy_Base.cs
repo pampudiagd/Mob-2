@@ -132,7 +132,7 @@ public class Enemy_Base : StatEntity, IKnockable
     }
 
     // Called by sword/bullet scripts
-    public override IEnumerator TakeDirectDamage(float amount, string damageSource, DamageType damageType, Vector2 sourcePos)
+    public override IEnumerator TakeDirectDamage(float amount, WeaponSource damageSource, DamageType damageType, Vector2 sourcePos)
     {
         if (IsInvulnerable)
             yield break;
@@ -140,12 +140,12 @@ public class Enemy_Base : StatEntity, IKnockable
         damageInvulnerable = true;
         StartCoroutine(BlinkSprite());
         healthCurrent -= amount;
-        if (damageSource == "sword")
+        if (damageSource == WeaponSource.Sword)
             enemyEvent.RaiseEnemyHit();
 
         Debug.Log($"{gameObject.name} took {amount} damage!");
 
-        if (knockHandler != null)
+        if (knockHandler != null && damageSource != WeaponSource.Gun)
         {
             DisableHoleCollision();
             SetState(EnemyState.Knockback);
@@ -182,6 +182,7 @@ public class Enemy_Base : StatEntity, IKnockable
             Instantiate(myBaseStats.deathEffect, transform.position, Quaternion.identity);
 
         enemyEvent.RaiseEnemyDeath(myBaseStats.pointValue);
+        LevelManager.Instance.currentKills++;
         Destroy(gameObject);
     }
 

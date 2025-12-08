@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseMaxHealth: 40
   basePower: 5
-  baseSpeed: 7
+  baseSpeed: 5
   baseMaxAmmo: 8
-  BaseRollSpeed: 40
+  BaseRollSpeed: 30
   baseRollInvulWindow: 0.085
   baseMaxEnergy: 20
   baseLives: 0

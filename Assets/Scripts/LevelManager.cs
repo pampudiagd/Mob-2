@@ -12,6 +12,8 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private GameObject playerPrefab;
     public GameObject playerInstance;
 
+    public int currentKills = 0;
+
     public static LevelManager Instance { get; private set; }
     public GridScanner GridScanner { get; private set; }
 

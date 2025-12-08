@@ -7,6 +7,7 @@ public class Bullet_Base : MonoBehaviour
     [SerializeField] private TargetTag hitTag;
     [SerializeField] private float damage;
     [SerializeField] private DamageType type;
+    [SerializeField] private WeaponSource weapon;
 
     public float speed = 9;
     
@@ -49,7 +50,7 @@ public class Bullet_Base : MonoBehaviour
             {
                 MonoBehaviour targetMB = target as MonoBehaviour;
                 if (targetMB != null)
-                    targetMB.StartCoroutine(target.TakeDirectDamage(damage, "gun", type, this.gameObject.GetComponent<Rigidbody2D>().position));
+                    targetMB.StartCoroutine(target.TakeDirectDamage(damage, weapon, type, this.gameObject.GetComponent<Rigidbody2D>().position));
                 Destroy(gameObject);
             }
         }

@@ -12,15 +12,20 @@ public class Tile_Exit : MonoBehaviour
 
     public bool isLocked = true;
 
+    public int killRequirement = 1;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (LevelManager.Instance.currentKills >= killRequirement)
+            isLocked = false;
+
         if (!isLocked)
             transform.GetChild(0).gameObject.SetActive(false);
     }
@@ -31,6 +36,9 @@ public class Tile_Exit : MonoBehaviour
             if (TargetStartTile == null)
                 Debug.LogError("No Entry Tile assigned!");
             else
+            {
+                LevelManager.Instance.currentKills = 0;
                 collision.transform.position = TargetStartTile.playerWarpCoordinate;
+            }
     }
 }

@@ -53,7 +53,7 @@ public class Player : StatEntity, IKnockable
     [Header("Bools")]
     public bool isAttacking = false;
     public bool isRolling = false;
-    public bool isFalling = false;
+    //public bool isFalling = false;
     public bool rollInvulnerable = false;
     public bool wantsToRoll = false;
     public bool allowSpriteRotation = false;
@@ -406,7 +406,7 @@ public class Player : StatEntity, IKnockable
 
     // Called for direct sources of damage. (Enemy attacks/contact and harmful terrain)
     // Will not apply during roll's invulnerable frames and grants temporary intangibility after applying
-    public override IEnumerator TakeDirectDamage(float amount, string damageSource, DamageType damageType, Vector2 sourcePos)
+    public override IEnumerator TakeDirectDamage(float amount, WeaponSource damageSource, DamageType damageType, Vector2 sourcePos)
     {
         if (IsInvulnerable)
             yield break;
