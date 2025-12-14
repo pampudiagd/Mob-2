@@ -11,6 +11,9 @@ public class Enemy_Test_Dummy : Enemy_Base
     //private IGridNav navigator;
     private Behavior_Idle_Wander mover;
     private Behavior_Pursuit_Simple pursuer;
+
+    public GameObject attackPlaceholder;
+
     private Vector3 targetTilePos => LevelManager.Instance.LevelTilemap.WorldToCell(target.transform.position);
 
     // Start is called before the first frame update
@@ -81,12 +84,16 @@ public class Enemy_Test_Dummy : Enemy_Base
         {
             movementVector = Helper_Directional.VectorToTargetCardinal(targetTilePos, MyGridPos);
             FaceDirection(movementVector); // Rotates toward the direction var
+            yield return new WaitForSeconds(0.25f);
+            attackPlaceholder.SetActive(true);
 
             for (int i = 0; i < 2; i++)
             {
-                yield return new WaitForSeconds(0.5f);
+                yield return new WaitForSeconds(0.25f);
                 //Debug.Log("Simulating attack " + i);
             }
+            attackPlaceholder.SetActive(false);
+            yield return new WaitForSeconds(0.5f);
         }
         isAttacking = false;
 

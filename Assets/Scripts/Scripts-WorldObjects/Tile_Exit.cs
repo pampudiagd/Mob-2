@@ -7,6 +7,9 @@ public class Tile_Exit : MonoBehaviour
 {
     public bool floorEnd = false;
 
+    [Tooltip("Current room ID")]
+    public int myFloorID = 0;
+
     [Tooltip("Entry Tile to place player at.")]
     public Tile_Entry TargetStartTile;
 
@@ -23,7 +26,7 @@ public class Tile_Exit : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (LevelManager.Instance.currentKills >= killRequirement)
+        if (myFloorID == LevelManager.Instance.currentFloorID && LevelManager.Instance.currentKills >= killRequirement)
             isLocked = false;
 
         if (!isLocked)
@@ -37,7 +40,8 @@ public class Tile_Exit : MonoBehaviour
                 Debug.LogError("No Entry Tile assigned!");
             else
             {
-                LevelManager.Instance.currentKills = 0;
+                print("TOUCHED EXIT");
+                LevelManager.Instance.RoomEntered();
                 collision.transform.position = TargetStartTile.playerWarpCoordinate;
             }
     }

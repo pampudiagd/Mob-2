@@ -212,6 +212,7 @@ public class Enemy_Base : StatEntity, IKnockable
         transform.localScale = new Vector3(1, 1, 1);
     }
 
+    // NOTE: OnTriggerStay2D runs if EITHER collider in an interaction is a trigger.
     protected virtual void OnTriggerStay2D(Collider2D other)
     {
 

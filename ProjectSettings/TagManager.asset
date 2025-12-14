@@ -12,6 +12,7 @@ TagManager:
   - Floor
   - Enemy Detection
   - FallBox
+  - Room
   layers:
   - Default
   - TransparentFX
