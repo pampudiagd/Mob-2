@@ -5,6 +5,7 @@ using UnityEngine;
 public class Tile_Entry : MonoBehaviour
 {
     public bool floorStart = false;
+    private bool hasPlacedPlayerStart = false;
 
     public Vector3 playerWarpCoordinate; // Used for transition from prior room
     public static Vector3 playerSpawnCoordinate; // Used for first tile in an area
@@ -23,7 +24,7 @@ public class Tile_Entry : MonoBehaviour
     };
 
     // Start is called before the first frame update
-    void Awake()
+    void Start()
     {
         gridPos = (Vector2Int)LevelManager.Instance.LevelTilemap.WorldToCell(transform.position);
         playerWarpCoordinate = LevelManager.Instance.LevelTilemap.GetCellCenterWorld(Vector3Int.FloorToInt((Vector3)(playerSpawnVector + gridPos)));
@@ -53,5 +54,13 @@ public class Tile_Entry : MonoBehaviour
 
     }
 
+    private void Update()
+    {
+        if (floorStart && !hasPlacedPlayerStart)
+        {
+            LevelManager.Instance.playerInstance.transform.position = playerSpawnCoordinate;
+            hasPlacedPlayerStart = true;
+        }
+    }
 
 }

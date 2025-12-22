@@ -89,6 +89,7 @@ public class Player : StatEntity, IKnockable
 
     private SpriteRenderer mySprite;
     public GameObject mySpriteChild;
+    public GameObject myShield;
     public CircleCollider2D hurtBox; // Component that detects collisions with damage-sources
     private Rigidbody2D rb; // Component that allows player to be stopped by walls
     private Animator myAnimator; // Component that handles animations
@@ -559,11 +560,13 @@ public class Player : StatEntity, IKnockable
             case 1:
                 print("Energy Level 1");
                 energyLevel = 1;
+                myShield.SetActive(false);
                 energyCurrentBarValue = energyTotal;
                 break;
             case 2:
                 print("Energy Level 2");
                 energyLevel = 2;
+                myShield.SetActive(true);
                 energyCurrentBarValue = energyTotal - energyBarMax;
                 break;
             case 3:

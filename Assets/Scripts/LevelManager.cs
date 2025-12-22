@@ -1,3 +1,5 @@
+using Cinemachine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,8 +7,7 @@ using UnityEngine.Tilemaps;
 
 public class LevelManager : MonoBehaviour
 {
-    [SerializeField] private Tilemap levelTilemap; // The tile layer
-    public Tilemap LevelTilemap => levelTilemap;
+    public Tilemap LevelTilemap { get; private set; }
 
     public IGridNav gridNav;
     [SerializeField] private GameObject playerPrefab;
@@ -14,16 +15,16 @@ public class LevelManager : MonoBehaviour
 
     // !!!!! Placeholder! Value should be obtained from an Area script!!!!!!!!
     public int areaRoomCount = 10;
-    public GameObject[] roomList;
-    //public List<GameObject> roomList = new List<GameObject>();
+    public Room_Metadata[] roomList;
+    public Room_Metadata currentRoomScript;
 
     public int currentKills = 0;
     public int currentFloorID = 0;
 
-    public Camera mainCam;
-
     public static LevelManager Instance { get; private set; }
     public GridScanner GridScanner { get; private set; }
+
+    private CameraManager cameraManager;
 
     private void Awake()
     {
@@ -35,17 +36,19 @@ public class LevelManager : MonoBehaviour
         Instance = this;
         //GridScanner = GetComponentInChildren<GridScanner>();
 
+        cameraManager = FindObjectOfType<CameraManager>();
         gridNav = gameObject.AddComponent<TilemapNav>();
-        mainCam = FindObjectOfType<Camera>();
+        
+        playerInstance = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity, gameObject.transform);
         AreaStart();
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        print(Tile_Entry.playerSpawnCoordinate);
-        playerInstance = Instantiate(playerPrefab, Tile_Entry.playerSpawnCoordinate, Quaternion.identity, gameObject.transform);
-
+        //print(Tile_Entry.playerSpawnCoordinate);
+        
+        
     }
 
     // Update is called once per frame
@@ -56,27 +59,38 @@ public class LevelManager : MonoBehaviour
 
     public void AreaStart()
     {
+        // Creates an array of every room's Room_Metadata script, sorted by roomID
+        roomList = FindObjectsOfType<Room_Metadata>();
+        Array.Sort(roomList, (a, b) => a.roomID.CompareTo(b.roomID));
 
-        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Change to find objects with script component
-
-        roomList = GameObject.FindGameObjectsWithTag("Room");
         for (int i = 0; i < roomList.Length; i++)
         {
             print(roomList[i]);
         }
+
+        RoomEntered(true);
     }
 
     // Called upon touching an Exit Tile
-    public void RoomEntered()
+    public void RoomEntered(bool isFirstRoom)
     {
+        if (!isFirstRoom)
+        {
+            currentFloorID++;
+            playerInstance.transform.position = Tile_Entry.playerSpawnCoordinate;
+        }
+
+        currentRoomScript = roomList[currentFloorID];
+        LevelTilemap = currentRoomScript.RoomTilemap;
+
         currentKills = 0;
-        currentFloorID++;
         RoomTransition();
     }
 
     public void RoomTransition()
     {
-        mainCam.transform.position = new Vector3(roomList[currentFloorID].transform.position.x, roomList[currentFloorID].transform.position.y, mainCam.transform.position.z);
+        print(playerInstance + " " + cameraManager);
+        cameraManager.RoomChangeSetCamera(currentRoomScript, playerInstance.transform);
     }
 
 }

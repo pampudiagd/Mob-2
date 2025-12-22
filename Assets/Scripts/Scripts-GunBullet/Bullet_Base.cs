@@ -36,7 +36,7 @@ public class Bullet_Base : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // Check if collision is a wall and deletes bullet if so
-        if (collision.gameObject.CompareTag("Wall"))
+        if (collision.gameObject.CompareTag("Wall") || collision.gameObject.layer == LayerMask.NameToLayer("Shield-Player"))
         {
             Destroy(gameObject);
         }
@@ -44,7 +44,7 @@ public class Bullet_Base : MonoBehaviour
         if (collision.gameObject.CompareTag(hitTag.ToString()))
         {
             print("MATCHED");
-            // Check if collision has Enemy_Base script attached, and damages if it does.    
+            // Check if collision has an IDamageable script attached, and damages if it does.    
             IDamageable target = collision.GetComponent<IDamageable>();
             if (target != null)
             {
