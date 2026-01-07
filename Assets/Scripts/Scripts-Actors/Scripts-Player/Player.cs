@@ -90,6 +90,7 @@ public class Player : StatEntity, IKnockable
     private SpriteRenderer mySprite;
     public GameObject mySpriteChild;
     public GameObject myShield;
+    public GameObject mySwordBeamGun;
     public CircleCollider2D hurtBox; // Component that detects collisions with damage-sources
     private Rigidbody2D rb; // Component that allows player to be stopped by walls
     private Animator myAnimator; // Component that handles animations
@@ -132,6 +133,8 @@ public class Player : StatEntity, IKnockable
         EquipSword(Resources.Load<SwordData>("Sword Stats/Ice Sword")); // Grabs sword from filepath and instantiates its related object
         EquipGun(Resources.Load<GunData>("Gun Stats/Base Gun")); // Grabs gun from filepath and instantiates its related object
 
+        CheckEnergy();
+
         //This is for the UI, and while .Find seems to sometimes pose problems, it should work OK if put in Start()
         GameObject heartsVisualObject = GameObject.Find("HeartsVisual");
         GameObject ammoVisualObject = GameObject.Find("AmmoVisual");
@@ -145,6 +148,9 @@ public class Player : StatEntity, IKnockable
         {
             ammoVisualCS = ammoVisualObject.GetComponent<AmmoVisual>(); //now we can reference AmmoVisual.cs
         }
+
+        //energyTotal = 40;
+        //CheckEnergy();
     }
 
     void OnEnable()
@@ -319,10 +325,19 @@ public class Player : StatEntity, IKnockable
 
         // Call sword effects here
 
+        if (energyLevel == 3)
+        {
+            mySwordBeamGun.transform.position = transform.position + transform.up;
+            mySwordBeamGun.transform.rotation = transform.rotation;
+            mySwordBeamGun.SetActive(true);
+        }
+
         yield return new WaitForSeconds(0.2f);
 
         mySwordObject.SetActive(false);
         mySwordObject.GetComponent<BoxCollider2D>().enabled = false;
+
+        mySwordBeamGun.SetActive(false);
 
         isAttacking = false;
     }

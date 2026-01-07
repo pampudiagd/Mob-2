@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class Bullet_Base : MonoBehaviour
 {
-    [SerializeField] private TargetTag hitTag;
-    [SerializeField] private float damage;
-    [SerializeField] private DamageType type;
-    [SerializeField] private WeaponSource weapon;
+    [SerializeField] private TargetTag hitTag = TargetTag.Enemy;
+    [SerializeField] private float damage = 1.0f;
+    [SerializeField] private DamageType type = DamageType.Normal;
+    [SerializeField] private WeaponSource weapon = WeaponSource.Gun;
 
     public float speed = 9;
     

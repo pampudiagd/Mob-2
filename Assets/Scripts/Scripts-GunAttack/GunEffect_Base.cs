@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class GunEffect_Base : MonoBehaviour
 {
-    public float damage;
+    public float damage = 1.0f;
+    private DamageType damageType = DamageType.Normal;
     public GameObject myBullet;
     private GameObject tempBullet;
     private GunData myGunData;
@@ -26,10 +27,11 @@ public class GunEffect_Base : MonoBehaviour
     {
         myGunData = data;
         player = playerScript;
-        damage = data.damage;
+        damage = player.attack + data.damage;
+        damageType = data.damageType;
     }
 
-    private float CalculateDamage() => GlobalConstants.globalDamageMod * (player.attack + damage);
+    private float CalculateDamage() => GlobalConstants.globalDamageMod * damage;
 
     private void OnEnable()
     {
@@ -43,7 +45,7 @@ public class GunEffect_Base : MonoBehaviour
         tempBullet = Instantiate(myBullet, transform.position + transform.up, transform.rotation);
         Bullet_Base bullet = tempBullet.GetComponent<Bullet_Base>();
         if (bullet != null)
-            bullet.Initialize(myGunData.damageType, CalculateDamage(), TargetTag.Enemy);
+            bullet.Initialize(damageType, CalculateDamage(), TargetTag.Enemy);
         Debug.Log("Bullet fired");
     }
 
