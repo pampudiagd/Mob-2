@@ -1951,8 +1951,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 222113d42c6cf406ca539c9dca5754d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pauseMenuUI: {fileID: 0}
-  optionsMenuUI: {fileID: 0}
+  pauseMenuUI: {fileID: 2133640005122329861}
+  optionsMenuUI: {fileID: 5757583717520241052}
   musicMixer: {fileID: 24100000, guid: 3ce4db6c7f43449328a58b200f0b8c76, type: 2}
   sfxMixer: {fileID: 24100000, guid: 05115272fea984972b78796873b2fa31, type: 2}
   resolutionDropdown: {fileID: 8993951925460741088}
