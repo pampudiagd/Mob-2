@@ -139,46 +139,48 @@ public class HeartsVisual : MonoBehaviour
                 Debug.Log("Player max health should be a multiple of 4");
             }
         }
+        else
+            Debug.Log("PLAYER NOT FOUND");
 
-        //draw rows 1 and 2, up to 6 hearts each
-        for (int i = 0; i < maxHearts; i++)
-        {
-            //adjust drawing location based on row
-            if (i < 6)
+            //draw rows 1 and 2, up to 6 hearts each
+            for (int i = 0; i < maxHearts; i++)
             {
-                iAdjust = 0;
-                yCoord = 200;
-            }
-            else if (i < 12)
-            {
-                iAdjust = -6;
-                yCoord = 175;
-            }
+                //adjust drawing location based on row
+                if (i < 6)
+                {
+                    iAdjust = 0;
+                    yCoord = 200;
+                }
+                else if (i < 12)
+                {
+                    iAdjust = -6;
+                    yCoord = 175;
+                }
 
 
-            //Now for the once-per-heart stuff
-            //If current health is enough that the current heart being drawn is full
-            if (playerCS.healthCurrent >= (i * 4) + 4)
-            {
-                //create image
-                CreateHeartImage(new Vector2(-375 + 30 * (i + iAdjust), yCoord)).SetHeartFractions(4);
-            }
-            //And, if the current heart is partly full:
-            else if ((i * 4) < playerCS.healthCurrent && playerCS.healthCurrent < (i * 4) + 4)
-            {
-                //set value of lastHeartFraction
-                lastHeartFraction = Mathf.Floor(playerCS.healthCurrent - (i * 4));
+                //Now for the once-per-heart stuff
+                //If current health is enough that the current heart being drawn is full
+                if (playerCS.healthCurrent >= (i * 4) + 4)
+                {
+                    //create image
+                    CreateHeartImage(new Vector2(-375 + 30 * (i + iAdjust), yCoord)).SetHeartFractions(4);
+                }
+                //And, if the current heart is partly full:
+                else if ((i * 4) < playerCS.healthCurrent && playerCS.healthCurrent < (i * 4) + 4)
+                {
+                    //set value of lastHeartFraction
+                    lastHeartFraction = Mathf.Floor(playerCS.healthCurrent - (i * 4));
 
-                //create image
-                CreateHeartImage(new Vector2(-375 + 30 * (i + iAdjust), yCoord)).SetHeartFractions((int)lastHeartFraction);
+                    //create image
+                    CreateHeartImage(new Vector2(-375 + 30 * (i + iAdjust), yCoord)).SetHeartFractions((int)lastHeartFraction);
+                }
+                //And, if the current heart is empty:
+                else if (playerCS.healthCurrent <= (i * 4))
+                {
+                    //create image
+                    CreateHeartImage(new Vector2(-375 + 30 * (i + iAdjust), yCoord)).SetHeartFractions(0);
+                }
             }
-            //And, if the current heart is empty:
-            else if (playerCS.healthCurrent <= (i * 4))
-            {
-                //create image
-                CreateHeartImage(new Vector2(-375 + 30 * (i + iAdjust), yCoord)).SetHeartFractions(0);
-            }
-        }
 
     }
 

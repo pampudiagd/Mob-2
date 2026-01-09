@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21440f6c405b17141889ac43ee33cb74, type: 3}
   m_Name: PlayerStats
   m_EditorClassIdentifier: 
-  baseMaxHealth: 40
+  baseMaxHealth: 20
   basePower: 5
   baseSpeed: 5
-  baseMaxAmmo: 8
+  baseMaxAmmo: 16
   BaseRollSpeed: 30
   baseRollInvulWindow: 0.085
   baseMaxEnergy: 20

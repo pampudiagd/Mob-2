@@ -11,7 +11,7 @@ public class Player : StatEntity, IKnockable
     public PlayerData myBaseStats;
 
     [Header("Current Stats")]
-    public int ammoCount = 4;
+    public int ammoCount = 0;
     public int ammoCharge = 0;
     private int ammoChargeMax = 4;
 
@@ -47,7 +47,7 @@ public class Player : StatEntity, IKnockable
     public override float attack => CalculateStat(myBaseStats.basePower, modifiers[StatType.Attack]);
     public override float healthMax => CalculateStat(myBaseStats.baseMaxHealth, modifiers[StatType.Health]);
     public int energyBarMax => (int)CalculateStat(myBaseStats.baseMaxEnergy, modifiers[StatType.Energy]); // # of segments to fill single bar. Will be <= 20. Multiply by 2 to find max energy the player can hold
-    public float ammoMax => CalculateStat(myBaseStats.baseMaxAmmo, modifiers[StatType.Ammo]);
+    public int ammoMax => (int)CalculateStat(myBaseStats.baseMaxAmmo, modifiers[StatType.Ammo]);
     public override float moveSpeed => CalculateStat(myBaseStats.baseSpeed, modifiers[StatType.Speed]);
 
     [Header("Bools")]
@@ -134,6 +134,7 @@ public class Player : StatEntity, IKnockable
         EquipGun(Resources.Load<GunData>("Gun Stats/Base Gun")); // Grabs gun from filepath and instantiates its related object
 
         CheckEnergy();
+        ammoCount = ammoMax;
 
         //This is for the UI, and while .Find seems to sometimes pose problems, it should work OK if put in Start()
         GameObject heartsVisualObject = GameObject.Find("HeartsVisual");

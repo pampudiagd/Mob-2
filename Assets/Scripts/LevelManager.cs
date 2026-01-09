@@ -39,7 +39,8 @@ public class LevelManager : MonoBehaviour
         cameraManager = FindObjectOfType<CameraManager>();
         gridNav = gameObject.AddComponent<TilemapNav>();
         
-        playerInstance = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity, gameObject.transform);
+        playerInstance = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
+        playerInstance.name = "Player";
         AreaStart();
     }
 
