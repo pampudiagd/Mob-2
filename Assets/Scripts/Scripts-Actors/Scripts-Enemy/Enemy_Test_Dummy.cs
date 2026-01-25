@@ -14,7 +14,7 @@ public class Enemy_Test_Dummy : Enemy_Base
 
     public GameObject attackPlaceholder;
 
-    private Vector3 targetTilePos => LevelManager.Instance.LevelTilemap.WorldToCell(target.transform.position);
+    private Vector3 targetWorldPos => target.transform.position;
 
     // Start is called before the first frame update
     protected override void Start()
@@ -52,7 +52,7 @@ public class Enemy_Test_Dummy : Enemy_Base
         SetRandomCardinalVector(); // Sets movementVector to a random direction
         FaceDirection(movementVector);
 
-        Vector3? target = mover.GetNextTarget(MyGridPos, movementVector);
+        Vector3? target = mover.GetNextTarget(transform.position, movementVector);
         if (target == null) // Kills movement if there's a wall
         {
             mover.moveRoutine = null;
@@ -68,9 +68,9 @@ public class Enemy_Test_Dummy : Enemy_Base
             return;
 
         // Finds the normalized vector between self and target's position, then sums own tilemap position with the normalized vector.
-        Vector3 targetTileStep = MyGridPos + (Vector3)Helper_Directional.VectorToTargetOctilinear(targetTilePos, MyGridPos);
+        Vector3 targetTileStep = transform.position + (Vector3)Helper_Directional.VectorToTargetOctilinear(targetWorldPos, transform.position);
 
-        movementVector = Helper_Directional.VectorToTargetCardinal(targetTilePos, MyGridPos, 1);
+        movementVector = Helper_Directional.VectorToTargetCardinal(targetWorldPos, transform.position, 1);
         FaceDirection(movementVector); // Rotates toward the direction var
 
         pursuer.moveRoutine = StartCoroutine(pursuer.MoveToTileTargeting(targetTileStep, () => myBehaviorState != BehaviorState.Targeting || interrupted, moveSpeed));
@@ -80,7 +80,7 @@ public class Enemy_Test_Dummy : Enemy_Base
     {
         while (isTargetInAtkRng)
         {
-            movementVector = Helper_Directional.VectorToTargetCardinal(targetTilePos, MyGridPos);
+            movementVector = Helper_Directional.VectorToTargetCardinal(targetWorldPos, transform.position);
             FaceDirection(movementVector); // Rotates toward the direction var
             yield return new WaitForSeconds(0.25f);
             attackPlaceholder.SetActive(true);

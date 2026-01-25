@@ -16,7 +16,7 @@ public class Behavior_Pursuit_Simple : Behavior_Base
     public IEnumerator MoveToTileTargeting(Vector3 target, System.Func<bool> interruptCondition = null, float moveSpeed = 1f)
     {
         int moveAttempts = 0;
-        while ((transform.localPosition - target).sqrMagnitude > 0.001f)
+        while ((transform.position - target).sqrMagnitude > 0.001f)
         {
             if ((interruptCondition != null && interruptCondition()) || moveAttempts >= 50)
             {
@@ -25,7 +25,7 @@ public class Behavior_Pursuit_Simple : Behavior_Base
                 yield break; // stop movement early
             }
 
-            Vector2 newPos = Vector2.MoveTowards(rb.position, (Vector2)LevelManager.Instance.LevelTilemap.LocalToWorld(target), moveSpeed * Time.fixedDeltaTime);
+            Vector2 newPos = Vector2.MoveTowards(rb.position, target, moveSpeed * Time.fixedDeltaTime);
             rb.MovePosition(newPos);
             print("Moved a step");
             moveAttempts++;

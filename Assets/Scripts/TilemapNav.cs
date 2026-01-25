@@ -10,9 +10,9 @@ public class TilemapNav : MonoBehaviour, IGridNav
     [SerializeField] private TileBase wallTile;
     [SerializeField] private TileBase holeTile;
 
-    public bool IsWalkable(Vector3 gridPos, bool canFly)
+    public bool IsWalkable(Vector3 worldPos, bool canFly)
     {
-        CustomTile tile = (CustomTile)LevelTilemap.GetTile(Vector3Int.FloorToInt(gridPos));
+        CustomTile tile = (CustomTile)LevelTilemap.GetTile(LevelTilemap.WorldToCell(worldPos));
 
         if (tile == null) return false;
         if (!tile.isWalkable)

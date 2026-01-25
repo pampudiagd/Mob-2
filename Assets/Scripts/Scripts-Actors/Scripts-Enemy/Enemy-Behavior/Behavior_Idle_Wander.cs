@@ -28,7 +28,7 @@ public class Behavior_Idle_Wander : Behavior_Base
     {
         yield return new WaitForSeconds(0.5f);
         int moveAttempts = 0;
-        while ((transform.localPosition - target).sqrMagnitude > 0.001f)
+        while ((transform.position - target).sqrMagnitude > 0.001f)
         {
             if ((interruptCondition != null && interruptCondition()) || moveAttempts >= 50)
             {
@@ -36,7 +36,7 @@ public class Behavior_Idle_Wander : Behavior_Base
                 moveRoutine = null;
                 yield break; // stop movement early
             }
-            Vector2 newPos = Vector2.MoveTowards(rb.position, (Vector2)LevelManager.Instance.LevelTilemap.LocalToWorld(target), moveSpeed * Time.fixedDeltaTime);
+            Vector2 newPos = Vector2.MoveTowards(rb.position, target, moveSpeed * Time.fixedDeltaTime);
 
             rb.MovePosition(newPos);
 
@@ -44,7 +44,7 @@ public class Behavior_Idle_Wander : Behavior_Base
             yield return new WaitForFixedUpdate();
         }
 
-        rb.MovePosition(LevelManager.Instance.LevelTilemap.LocalToWorld(target)); // Snap to exact center
+        rb.MovePosition(target); // Snap to exact center
 
         yield return new WaitForSeconds(UnityEngine.Random.Range(minPause, maxPause));
 
@@ -56,6 +56,7 @@ public class Behavior_Idle_Wander : Behavior_Base
     {
         forwardTile = SetForwardTile(gridPos, movementVector);
         // If wall is in the way, cancel
+        print(forwardTile);
         if (!CheckTileOpen(forwardTile))
         {
             print("Tile not open!!!!!!!!!!");
@@ -74,7 +75,7 @@ public class Behavior_Idle_Wander : Behavior_Base
         //    }
         //}
         // Otherwise pick the next tile in the chosen direction
-        return gridPos + (Vector3)movementVector;
+        return forwardTile;
     }
 
     // Returns the grid coord of the tile a specified distance(tileDistance) in a direction(movementVector) away from the position(enemyTransform) if there isn't a wall in the way

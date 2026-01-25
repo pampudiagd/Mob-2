@@ -9,5 +9,5 @@ public static class GlobalConstants
 
     public static float globalDamageMod = 1;
 
-    //public static int
+    public static int tileLength = 32;
 }
