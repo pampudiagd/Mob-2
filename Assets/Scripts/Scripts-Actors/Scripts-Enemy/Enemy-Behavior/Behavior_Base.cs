@@ -15,7 +15,7 @@ public class Behavior_Base : MonoBehaviour
     }
 
     // Returns true if the level's tilemap at the position(forwardTile) is a tile that can be crossed by the actor
-    public bool CheckTileOpen(Vector3Int targetTile)
+    public bool CheckTileOpen(Vector3 targetTile)
     {
         if (LevelManager.Instance.gridNav.IsWalkable(targetTile, canFly))
             return true;

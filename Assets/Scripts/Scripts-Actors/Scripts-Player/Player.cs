@@ -490,7 +490,7 @@ public class Player : StatEntity, IKnockable
     // Sets lastFloorTouched to the current tile if IsWalkable returns true
     private void SetLatestFloorTouch()
     {
-        if (LevelManager.Instance.gridNav.IsRespawnSafe(MyGridPos))
+        if (LevelManager.Instance.gridNav.IsRespawnSafe(Vector3Int.FloorToInt(MyGridPos)))
             lastFloorTouched = LevelManager.Instance.LevelTilemap.WorldToCell(transform.position);
     }
 

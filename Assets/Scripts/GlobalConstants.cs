@@ -8,4 +8,6 @@ public static class GlobalConstants
     public const float knockMagnitudeModifier = 4f;
 
     public static float globalDamageMod = 1;
+
+    //public static int
 }

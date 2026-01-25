@@ -8,7 +8,6 @@ using UnityEngine.Tilemaps;
 public class LevelManager : MonoBehaviour
 {
     public Tilemap LevelTilemap { get; private set; }
-
     public IGridNav gridNav;
     [SerializeField] private GameObject playerPrefab;
     public GameObject playerInstance;

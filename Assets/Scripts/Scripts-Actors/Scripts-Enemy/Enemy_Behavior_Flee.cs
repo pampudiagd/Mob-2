@@ -45,7 +45,7 @@ public class Enemy_Behavior_Flee : Enemy_Base
 
         SetRandomOctilinearVector(); // Sets movementVector to a random direction
 
-        Vector3? target = mover.GetNextTarget(transform, movementVector, gridMoveIncrements);
+        Vector3? target = mover.GetNextTarget(MyGridPos, movementVector, gridMoveIncrements);
 
         if (target == null) // Kills movement if there's a wall
         {

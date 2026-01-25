@@ -126,12 +126,14 @@ public static class Helper_Directional
     public static Vector2 VectorToTargetOctilinear(Vector3 targetPos, Vector3 myGridPos)
     {
         // Convert targetPos to a Vector2
-        Vector2 targetGridPos = (Vector2)targetPos;
+        Vector3Int targetGridPos = Vector3Int.FloorToInt(targetPos);
+        Vector3Int flatGridPos = Vector3Int.FloorToInt(myGridPos);
+
         Vector2 normalVector = Vector2.zero;
 
         // Check x and y relations
         // Switch statement
-        switch (myGridPos.x.CompareTo((int)targetGridPos.x))
+        switch (flatGridPos.x.CompareTo(targetGridPos.x))
         {
             case < 0:
                 normalVector = Vector2.right;
@@ -144,7 +146,7 @@ public static class Helper_Directional
                 break;
         }
 
-        switch (myGridPos.y.CompareTo((int)targetGridPos.y))
+        switch (flatGridPos.y.CompareTo(targetGridPos.y))
         {
             case < 0:
                 normalVector += Vector2.up;

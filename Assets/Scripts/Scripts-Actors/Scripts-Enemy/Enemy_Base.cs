@@ -7,7 +7,6 @@ using UnityEngine;
 public class Enemy_Base : StatEntity, IKnockable
 {
     public EnemyEvent enemyEvent;
-    public Vector3Int GridCoord;
     [Header("Enemy Stats")]
     public EnemyData baseStats;
     protected EnemyData myBaseStats; // Clone of statSheet to allow modifying individual enemies' stats without affecting every single instance of an enemy
@@ -86,7 +85,7 @@ public class Enemy_Base : StatEntity, IKnockable
     // Update is called once per frame
     protected virtual void Update()
     {
-        GridCoord = LevelManager.Instance.LevelTilemap.WorldToCell(transform.position);
+
     }
 
     void OnDisable()

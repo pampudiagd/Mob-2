@@ -16,25 +16,26 @@ public class Behavior_Pursuit_Simple : Behavior_Base
     public IEnumerator MoveToTileTargeting(Vector3 target, System.Func<bool> interruptCondition = null, float moveSpeed = 1f)
     {
         int moveAttempts = 0;
-        while ((rb.position - (Vector2)target).sqrMagnitude > 0.001f)
+        while ((transform.localPosition - target).sqrMagnitude > 0.001f)
         {
             if ((interruptCondition != null && interruptCondition()) || moveAttempts >= 50)
             {
                 moveRoutine = null;
+                print("Failed targetting move step");
                 yield break; // stop movement early
             }
 
-            Vector2 newPos = Vector2.MoveTowards(rb.position, target, moveSpeed * Time.fixedDeltaTime);
+            Vector2 newPos = Vector2.MoveTowards(rb.position, (Vector2)LevelManager.Instance.LevelTilemap.LocalToWorld(target), moveSpeed * Time.fixedDeltaTime);
             rb.MovePosition(newPos);
-
+            print("Moved a step");
             moveAttempts++;
             yield return new WaitForFixedUpdate();
         }
 
-        rb.MovePosition(target); // Snap to exact center
+        //rb.MovePosition(LevelManager.Instance.LevelTilemap.LocalToWorld(target)); // Snap to exact center
 
         yield return null;
-
+        print("Finished step");
         moveRoutine = null;
     }
 }

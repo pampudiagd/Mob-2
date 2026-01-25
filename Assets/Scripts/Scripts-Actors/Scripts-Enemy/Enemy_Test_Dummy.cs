@@ -52,8 +52,7 @@ public class Enemy_Test_Dummy : Enemy_Base
         SetRandomCardinalVector(); // Sets movementVector to a random direction
         FaceDirection(movementVector);
 
-        Vector3? target = mover.GetNextTarget(transform, movementVector);
-
+        Vector3? target = mover.GetNextTarget(MyGridPos, movementVector);
         if (target == null) // Kills movement if there's a wall
         {
             mover.moveRoutine = null;
@@ -69,8 +68,7 @@ public class Enemy_Test_Dummy : Enemy_Base
             return;
 
         // Finds the normalized vector between self and target's position, then sums own tilemap position with the normalized vector.
-        // Then converts that to a Vector3Int, and finally gets the world coords of the center of that tile.
-        Vector3 targetTileStep = LevelManager.Instance.LevelTilemap.GetCellCenterWorld(Vector3Int.RoundToInt(MyGridPos + (Vector3)Helper_Directional.VectorToTargetOctilinear(targetTilePos, MyGridPos)));
+        Vector3 targetTileStep = MyGridPos + (Vector3)Helper_Directional.VectorToTargetOctilinear(targetTilePos, MyGridPos);
 
         movementVector = Helper_Directional.VectorToTargetCardinal(targetTilePos, MyGridPos, 1);
         FaceDirection(movementVector); // Rotates toward the direction var

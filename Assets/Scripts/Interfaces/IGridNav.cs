@@ -5,7 +5,7 @@ using UnityEngine.Tilemaps;
 
 public interface IGridNav
 {
-    bool IsWalkable(Vector3Int gridPos, bool canFly);
+    bool IsWalkable(Vector3 gridPos, bool canFly);
 
     public bool IsRespawnSafe(Vector3Int gridPos);
 
