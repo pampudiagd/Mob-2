@@ -36,7 +36,7 @@ public class Behavior_Idle_Wander : Behavior_Base
                 moveRoutine = null;
                 yield break; // stop movement early
             }
-            Vector2 newPos = Vector2.MoveTowards(rb.position, target, moveSpeed * Time.fixedDeltaTime);
+            Vector2 newPos = Vector2.MoveTowards(rb.position, LevelManager.Instance.LevelTilemap.GetCellCenterWorld(LevelManager.Instance.LevelTilemap.WorldToCell(target)), moveSpeed * Time.fixedDeltaTime);
 
             rb.MovePosition(newPos);
 
@@ -44,7 +44,7 @@ public class Behavior_Idle_Wander : Behavior_Base
             yield return new WaitForFixedUpdate();
         }
 
-        rb.MovePosition(target); // Snap to exact center
+        rb.MovePosition(LevelManager.Instance.LevelTilemap.GetCellCenterWorld(LevelManager.Instance.LevelTilemap.WorldToCell(target))); // Snap to exact center
 
         yield return new WaitForSeconds(UnityEngine.Random.Range(minPause, maxPause));
 
