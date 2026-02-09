@@ -21,14 +21,14 @@ public class Behavior_Idle_Wander : Behavior_Base
         //navigator = LevelManager.Instance.gridNav;
     }
 
-    protected Vector3 SetForwardTile(Vector3 myGridPos, Vector2 movementVector) => myGridPos + (Vector3)movementVector;
+    protected Vector3 SetForwardTile(Vector3 myWorldPos, Vector2 movementVector) => myWorldPos + (Vector3)movementVector;
 
     // Moves an actor to a target tile, allowing for movement to be interrupted by a bool function
-    public IEnumerator MoveToTile(Vector3 target, System.Func<bool> interruptCondition = null, float moveSpeed = 1f, float minPause = 0.3f, float maxPause = 2f)
+    public IEnumerator MoveToTile(Vector3 targetWorldPos, System.Func<bool> interruptCondition = null, float moveSpeed = 1f, float minPause = 0.3f, float maxPause = 2f)
     {
         yield return new WaitForSeconds(0.5f);
         int moveAttempts = 0;
-        while ((transform.position - target).sqrMagnitude > 0.001f)
+        while ((transform.position - targetWorldPos).sqrMagnitude > 0.001f)
         {
             if ((interruptCondition != null && interruptCondition()) || moveAttempts >= 50)
             {
@@ -36,7 +36,7 @@ public class Behavior_Idle_Wander : Behavior_Base
                 moveRoutine = null;
                 yield break; // stop movement early
             }
-            Vector2 newPos = Vector2.MoveTowards(rb.position, LevelManager.Instance.LevelTilemap.GetCellCenterWorld(LevelManager.Instance.LevelTilemap.WorldToCell(target)), moveSpeed * Time.fixedDeltaTime);
+            Vector2 newPos = Vector2.MoveTowards(rb.position, LevelManager.Instance.LevelTilemap.GetCellCenterWorld(LevelManager.Instance.LevelTilemap.WorldToCell(targetWorldPos)), moveSpeed * Time.fixedDeltaTime);
 
             rb.MovePosition(newPos);
 
@@ -44,17 +44,17 @@ public class Behavior_Idle_Wander : Behavior_Base
             yield return new WaitForFixedUpdate();
         }
 
-        rb.MovePosition(LevelManager.Instance.LevelTilemap.GetCellCenterWorld(LevelManager.Instance.LevelTilemap.WorldToCell(target))); // Snap to exact center
+        rb.MovePosition(LevelManager.Instance.LevelTilemap.GetCellCenterWorld(LevelManager.Instance.LevelTilemap.WorldToCell(targetWorldPos))); // Snap to exact center
 
         yield return new WaitForSeconds(UnityEngine.Random.Range(minPause, maxPause));
 
         moveRoutine = null;
     }
 
-    // Returns the LOCAL grid coord of the tile in a direction(movementVector) away from the position(enemyTransform) if there isn't a wall in the way
-    public Vector3? GetNextTarget(Vector3 gridPos, Vector2 movementVector)
+    // Returns the world coord of the tile in a direction(movementVector) away from the position(enemyTransform) if there isn't a wall in the way
+    public Vector3? GetNextTarget(Vector3 myWorldPos, Vector2 movementVector)
     {
-        forwardTile = SetForwardTile(gridPos, movementVector);
+        forwardTile = SetForwardTile(myWorldPos, movementVector);
         // If wall is in the way, cancel
         print(forwardTile);
         if (!CheckTileOpen(forwardTile))
@@ -78,10 +78,10 @@ public class Behavior_Idle_Wander : Behavior_Base
         return forwardTile;
     }
 
-    // Returns the grid coord of the tile a specified distance(tileDistance) in a direction(movementVector) away from the position(enemyTransform) if there isn't a wall in the way
-    public Vector3? GetNextTarget(Vector3 gridPos, Vector2 movementVector, int tileDistance)
+    // Returns the world coord of the tile a specified distance(tileDistance) in a direction(movementVector) away from the position(enemyTransform) if there isn't a wall in the way
+    public Vector3? GetNextTarget(Vector3 myWorldPos, Vector2 movementVector, int tileDistance)
     {
-        forwardTile = SetForwardTile(gridPos, movementVector);
+        forwardTile = SetForwardTile(myWorldPos, movementVector);
 
         for (int i = 0; i < tileDistance; i++)
         {
@@ -106,6 +106,6 @@ public class Behavior_Idle_Wander : Behavior_Base
             forwardTile = SetForwardTile(forwardTile, movementVector);
         }
 
-        return gridPos + (Vector3)movementVector * tileDistance;
+        return forwardTile;
     }
 }

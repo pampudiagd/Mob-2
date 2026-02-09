@@ -45,7 +45,7 @@ public class Enemy_Behavior_Flee : Enemy_Base
 
         SetRandomOctilinearVector(); // Sets movementVector to a random direction
 
-        Vector3? target = mover.GetNextTarget(MyGridPos, movementVector, gridMoveIncrements);
+        Vector3? target = mover.GetNextTarget(transform.position, movementVector, gridMoveIncrements);
 
         if (target == null) // Kills movement if there's a wall
         {
@@ -61,7 +61,7 @@ public class Enemy_Behavior_Flee : Enemy_Base
         if (myState != EnemyState.Default || runner.moveRoutine != null || myBehaviorState != BehaviorState.Targeting)
             return;
 
-        Vector3 targetTileStep = LevelManager.Instance.LevelTilemap.GetCellCenterWorld(Vector3Int.RoundToInt(MyGridPos + (Vector3)(gridMoveIncrements * (-Helper_Directional.VectorToTargetOctilinear(targetTilePos, MyGridPos)))));
+        Vector3 targetTileStep = transform.position + (Vector3)(gridMoveIncrements * (-Helper_Directional.VectorToTargetOctilinear(targetTilePos, transform.position)));
 
         //movementVector = Helper_Directional.VectorToTargetCardinal(targetTilePos, myGridPos, 1);
         //FaceDirection(movementVector); // Rotates toward the direction var

@@ -6,15 +6,15 @@ public abstract class Effect : MonoBehaviour, IEffect
 {
     // Base class for all effects.
 
-    protected StatEntity modScript;
-    protected GameObject myTarget;
+    protected StatEntity myTargetScript;
+    protected GameObject myTargetObject;
     protected EffectEventWithData effectEvent;
 
     // Stores the passed script and its GameObject
     public virtual void Apply(StatEntity targetScript)
     {
-        modScript = targetScript;
-        myTarget = modScript.gameObject;
+        myTargetScript = targetScript;
+        myTargetObject = myTargetScript.gameObject;
     }
 
     public abstract void RevertChanges();

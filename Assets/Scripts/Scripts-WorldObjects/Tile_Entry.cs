@@ -24,7 +24,7 @@ public class Tile_Entry : MonoBehaviour
     };
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         gridPos = (Vector2Int)LevelManager.Instance.LevelTilemap.WorldToCell(transform.position);
         playerWarpCoordinate = LevelManager.Instance.LevelTilemap.GetCellCenterWorld(Vector3Int.FloorToInt((Vector3)(playerSpawnVector + gridPos)));

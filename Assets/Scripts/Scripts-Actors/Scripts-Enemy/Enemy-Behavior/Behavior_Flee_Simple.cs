@@ -13,28 +13,28 @@ public class Behavior_Flee_Simple : Behavior_Base
         rb = GetComponent<Rigidbody2D>();
     }
 
-    public IEnumerator MoveToTileTargeting(Vector3 target, System.Func<bool> interruptCondition = null, float moveSpeed = 1f, float minPause = 0f, float maxPause = 0f)
+    public IEnumerator MoveToTileTargeting(Vector3 targetWorldPos, System.Func<bool> interruptCondition = null, float moveSpeed = 1f, float minPause = 0f, float maxPause = 0f)
     {
         yield return new WaitForSeconds(0.5f);
 
         int moveAttempts = 0;
-        while ((rb.position - (Vector2)target).sqrMagnitude > 0.001f)
+        while ((transform.position - targetWorldPos).sqrMagnitude > 0.001f)
         {
-            if ((interruptCondition != null && interruptCondition()) || moveAttempts >= 50 || !CheckTileOpen(Vector3Int.FloorToInt(target)))
+            if ((interruptCondition != null && interruptCondition()) || moveAttempts >= 50 || !CheckTileOpen(targetWorldPos))
             {
                 print("Movement step aborted!");
                 moveRoutine = null;
                 yield break; // stop movement early
             }
 
-            Vector2 newPos = Vector2.MoveTowards(rb.position, target, moveSpeed * Time.fixedDeltaTime);
+            Vector2 newPos = Vector2.MoveTowards(rb.position, targetWorldPos, moveSpeed * Time.fixedDeltaTime);
             rb.MovePosition(newPos);
 
             moveAttempts++;
             yield return new WaitForFixedUpdate();
         }
 
-        rb.MovePosition(target); // Snap to exact center
+        //rb.MovePosition(targetWorldPos); // Snap to exact center
 
         yield return new WaitForSeconds(UnityEngine.Random.Range(minPause, maxPause));
 

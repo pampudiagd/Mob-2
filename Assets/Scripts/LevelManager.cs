@@ -17,6 +17,8 @@ public class LevelManager : MonoBehaviour
     public Room_Metadata[] roomList;
     public Room_Metadata currentRoomScript;
 
+    private Vector3 currentRoomStartCoordinate;
+
     public int currentKills = 0;
     public int currentFloorID = 0;
 
@@ -47,8 +49,12 @@ public class LevelManager : MonoBehaviour
     void Start()
     {
         //print(Tile_Entry.playerSpawnCoordinate);
-        
-        
+        for (int i = 0; i < roomList.Length; i++)
+        {
+            if (i != currentFloorID)
+                roomList[i].gameObject.SetActive(false);
+        }
+
     }
 
     // Update is called once per frame
@@ -63,11 +69,6 @@ public class LevelManager : MonoBehaviour
         roomList = FindObjectsOfType<Room_Metadata>();
         Array.Sort(roomList, (a, b) => a.roomID.CompareTo(b.roomID));
 
-        for (int i = 0; i < roomList.Length; i++)
-        {
-            print(roomList[i]);
-        }
-
         RoomEntered(true);
     }
 
@@ -77,7 +78,8 @@ public class LevelManager : MonoBehaviour
         if (!isFirstRoom)
         {
             currentFloorID++;
-            playerInstance.transform.position = Tile_Entry.playerSpawnCoordinate;
+            roomList[currentFloorID].gameObject.SetActive(true);
+            roomList[currentFloorID - 1].gameObject.SetActive(false);
         }
 
         currentRoomScript = roomList[currentFloorID];
@@ -89,8 +91,15 @@ public class LevelManager : MonoBehaviour
 
     public void RoomTransition()
     {
+        playerInstance.transform.position = currentRoomStartCoordinate;
+
         print(playerInstance + " " + cameraManager);
         cameraManager.RoomChangeSetCamera(currentRoomScript, playerInstance.transform);
+    }
+
+    public void SetPlayerRoomStart(Vector3 startCoordinate)
+    {
+        currentRoomStartCoordinate = startCoordinate;
     }
 
 }

@@ -41,8 +41,8 @@ public class Tile_Exit : MonoBehaviour
             else
             {
                 print("TOUCHED EXIT");
+                LevelManager.Instance.SetPlayerRoomStart(TargetStartTile.playerWarpCoordinate);
                 LevelManager.Instance.RoomEntered(false);
-                collision.transform.position = TargetStartTile.playerWarpCoordinate;
             }
     }
 }

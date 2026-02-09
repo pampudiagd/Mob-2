@@ -24,7 +24,7 @@ public abstract class SwordEffect_Base : MonoBehaviour
 
     private float CalculateDamage() => GlobalConstants.globalDamageMod * (player.attack + damage);
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    protected void OnTriggerEnter2D(Collider2D collision)
     {
         Debug.Log("Sword Trigger");
 
@@ -34,24 +34,22 @@ public abstract class SwordEffect_Base : MonoBehaviour
         {
             Debug.Log("Attempting to start coroutine");
             enemy.StartCoroutine(enemy.TakeDirectDamage(CalculateDamage(), myData.weapon, myData.damageType, transform.parent.gameObject.GetComponent<Rigidbody2D>().position));
-            //IKnockable knockable = collision.GetComponent<IKnockable>();
-            //if (knockable != null)
-            //    knockable.ReceiveKnockback(transform.parent.gameObject.GetComponent<Rigidbody2D>().position);
-
-
         }
     }
 
+    // For effects that happen upon pressing the attack button
     protected virtual void SwingEffect()
     {
 
     }
 
+    // For effects that happen when actually hitting an enemy
     protected virtual void HitEffect()
     {
 
     }
 
+    //For effects that happen when an enemy dies as a result of hitting them
     // Callback function
     protected virtual void KillEffect()
     {
